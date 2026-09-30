@@ -1,7 +1,7 @@
 import type {GameState,Match,Role,Gains} from '../game/types.ts';
 import {labels,roleStats} from '../game/types.ts';
 import {appearanceName,evaluateSelection} from '../game/competition.ts';
-import {duelDialogue,identifyDuel,schoolRivalry,schoolDialogue,selectionDialogue,summarizeDuels} from '../game/rivalry.ts';
+import {duelDialogue,duelSummaryText,identifyDuel,schoolRivalry,schoolDialogue,selectionDialogue,summarizeDuels} from '../game/rivalry.ts';
 import {namedRivals} from '../content/rivals.ts';
 import {matchPlan,recordTitle} from '../game/season.ts';
 
@@ -28,7 +28,7 @@ export function SchoolRivalryPanel({s}:{s:GameState}) {
  const h=schoolRivalry(s.records),rows=s.records.filter(r=>r.match.opponentId==='haesol'),tracked=rows.filter(r=>r.match.duels!==null),totals=summarizeDuels(tracked.flatMap(r=>r.match.duels!));
  const name=namedRivals[s.role==='batter'?'taeo':'jihwan'].name;
  return <section className="panel school-rivalry"><p className="scene-no">승부로 쌓아가는 관계</p><h3>청람고 × 해솔고</h3><div className="school-record"><strong>{h.wins}승 {h.losses}패</strong><span>{h.stage==='first'?'첫 만남을 앞두고':h.stage==='rematch'?'다시 만나고 싶은 상대':'서로를 기억하는 라이벌'}</span></div><p className="quote">{schoolDialogue(h,s.phase==='complete'?'after':'before')}</p>
-  <div className="rival-opponent"><strong>{name}와의 개인 맞대결</strong><p>{tracked.length?`${totals.ab}타수 ${totals.hits}${s.role==='pitcher'?'피안타':'안타'} · ${totals.walks}볼넷 · ${totals.k}${s.role==='pitcher'?'탈삼진':'삼진'}`:'아직 추적한 맞대결 기록이 없습니다.'}</p>{rows.length>tracked.length&&<p className="reason">이전 경기 {rows.length-tracked.length}건은 세부 기록 없음. 팀 전적에는 포함됩니다.</p>}</div>
+  <div className="rival-opponent"><strong>{name} · 개인 맞대결</strong><p>{tracked.length?duelSummaryText(s.role,totals):'아직 추적한 맞대결 기록이 없습니다.'}</p>{rows.length>tracked.length&&<p className="reason">이전 경기 {rows.length-tracked.length}건은 세부 기록 없음. 팀 전적에는 포함됩니다.</p>}</div>
   {!!rows.length&&<details className="gap-top"><summary>해솔고와의 경기별 기록</summary><ul className="rival-history">{rows.map(r=><li key={r.match.id}><strong>{recordTitle(r.month,r.match)}</strong><p>청람고 {r.match.score[1]} : {r.match.score[0]} 해솔고</p><p className="reason">{duelDialogue(s.role,r.match.duels)}</p></li>)}</ul></details>}
  </section>;
 }

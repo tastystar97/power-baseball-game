@@ -1,4 +1,5 @@
 import {SchoolRivalryPanel,growthText} from './ui/RivalryPanel.tsx';
+import {competitorTrainingFeedback} from './game/rivalry.ts';
 import { useEffect, useRef, useState } from 'react';
 import { activities } from './content/activities.ts';
 import { currentEvent } from './content/events.ts';
@@ -34,6 +35,7 @@ function TrainingFeedback({s}:{s:GameState}) {
   const entry=latestTrainingEntry(s);
   if(!entry?.training)return null;
   const result=entry.training,failed=result.outcome==='failure';
+  const rivalGrowth=competitorTrainingFeedback(s,entry);
   const last=s.log.at(-1)!;
   const changes={...entry.changes,...(last===entry?{}:Object.fromEntries(Object.entries(last.changes).filter(([k])=>k!=='skillPoints')))};
   return <section className={`training-feedback ${failed?'failed':'succeeded'}`} role="status">
@@ -42,7 +44,7 @@ function TrainingFeedback({s}:{s:GameState}) {
     <Changes changes={changes}/>
     <p className="reason">시작 체력 {result.energyBefore} · 실패 확률 {result.failureChance}% · 스킬 +{result.points} Pt</p>
     {last!==entry&&last.title==='함께 쌓은 연습'&&<p className="reason">{last.text}</p>}
-    {s.competitor.weeks.find(w=>w.key===(entry.month-3)*4+entry.week)&&<p className="reason">차준서 · {growthText(s.competitor.weeks.find(w=>w.key===(entry.month-3)*4+entry.week)!.gains)}</p>}{failed&&<p className="reason">능력 성장 없이 체력·스트레스·멘탈 손해를 받았습니다. 함께한 인연은 유지됩니다.</p>}
+    {rivalGrowth&&<p className="reason">차준서 · {growthText(rivalGrowth.gains)}</p>}{failed&&<p className="reason">능력 성장 없이 체력·스트레스·멘탈 손해를 받았습니다. 함께한 인연은 유지됩니다.</p>}
   </section>;
 }
 

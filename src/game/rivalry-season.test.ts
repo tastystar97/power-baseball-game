@@ -6,6 +6,7 @@ import {parseSave} from '../persistence/save.ts';
 import {defaultSupports} from '../content/supports.ts';
 import {activities} from '../content/activities.ts';
 import type {GameState,Action,Role} from './types.ts';
+import {competitorTrainingFeedback} from './rivalry.ts';
 
 function step(s:GameState,style='training'):GameState {
  const a:Omit<Action,'revision'>=s.phase==='lineup'?{type:'lineup',supports:style==='training'?[s.role==='batter'?'bat_senior':'pitch_senior','rival','catcher']:defaultSupports(s.role)}
@@ -15,6 +16,29 @@ function step(s:GameState,style='training'):GameState {
  :s.phase==='match'?{type:'tactic',id:s.role==='batter'?'contact':'control'}:{type:'continue'};
  return transition(s,{...a,revision:s.revision});
 }
+test('weekend practice never repeats weekday competitor growth in training feedback',()=>{
+ let s=createGame('피드백','batter',1);s=step(s);
+ s=transition(s,{type:'activity',id:'batting',revision:s.revision});
+ const weekday=s.log.find(l=>l.training)!;
+ assert.equal(competitorTrainingFeedback(s,weekday),s.competitor.weeks[0]);
+ while(s.phase!=='weekend')s=step(s);
+ const before=structuredClone(s.competitor);
+ s=transition(s,{type:'activity',id:'practice',target:'contact',revision:s.revision});
+ const weekend=[...s.log].reverse().find(l=>l.training)!;
+ assert.notEqual(weekday.title,weekend.title);assert.deepEqual(s.competitor,before);
+ assert.equal(competitorTrainingFeedback(s,weekend),null);
+});
+test('switching from study to training can reclaim a starter place for both roles',()=>{
+ for(const role of ['batter','pitcher'] as const){
+  let reclaimed=0;
+  for(let seed=1;seed<=20;seed++){
+   let s=createGame('재도전',role,seed);
+   while(s.phase!=='complete')s=step(s,s.month<=4?'study':'training');
+   if(s.selectionHistory.some(h=>h.previous==='junseo'&&h.starter==='player'))reclaimed++;
+  }
+  console.log(`${role} 학업→훈련 선발 탈환: ${reclaimed}/20`);assert.ok(reclaimed>0);
+ }
+});
 test('120 full seasons preserve every phase, actual haesol history and all rival weeks',()=>{
  const report:Record<string,{starter:number;substitute:number;reserve:number;changes:number;minGap:number;maxGap:number}>={};
  for(const role of ['batter','pitcher'] as const)for(const style of ['training','balanced','study'])for(let seed=1;seed<=20;seed++){

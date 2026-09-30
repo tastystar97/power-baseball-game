@@ -401,7 +401,7 @@ dialog::backdrop { background: rgba(31,45,77,.45); }
   .mobile-condition { display: block; padding: 10px 12px; background: var(--paper); border-radius: 8px; margin-bottom: 12px; }
   .match > div:first-child > .panel { grid-column: 1 / -1; }
   .match > div:first-child > details { margin-top: 0; }
-  .match > div:first-child > section { display: none; }
+  .match > div:first-child > section:not(.match-end-records) { display: none; }
   dialog.status { width: 100%; height: 100dvh; max-height: 100dvh; }
   .profile { grid-template-columns: 72px 1fr; gap: 4px 12px; }
   .profile .portrait { grid-row: 1 / 5; }

@@ -10,7 +10,7 @@
 
 **Spec:** [승인된 4차 설계](../specs/2026-09-30-rivalries-design.md).
 
-**Status:** 설계 승인 후 작성한 구현 계획. 아직 제품 코드·테스트·저장 형식을 변경하지 않았다. 실행 방식은 사용자 선택을 기다린다.
+**Status:** v0.4.0 구현·검증 완료. 직접 순차 구현과 최종 독립 리뷰를 마쳤다. 아래 단계의 결과와 실제 수행 순서 차이는 마지막 실행 기록에 남겼다.
 
 ## Global Constraints
 
@@ -20,7 +20,7 @@
 - 기존 중요 승부 횟수와 타석 진행을 유지한다. 경기 확률·대진·스킬 가격을 라이벌 추가와 함께 변경하지 않는다.
 - 한국어와 기존 디자인 유지. 사용자 원본 저장·프로토타입 보존. QA는 별도 localhost origin에서 한다.
 - 현재 저장 v3 → v4, 저장 키 `last-summer.save.v1` 유지. 읽기는 저장 쓰기를 하지 않는다.
-- 현재 저장소는 최초 커밋이 없고 .git 쓰기가 제한되어 있다. 작업은 현재 폴더에서 수행하며 task별 커밋·워크트리 생성·병합·공개 배포 단계는 생략한다.
+- 계획 작성 당시 저장소는 최초 커밋이 없고 .git 쓰기가 제한되어 있었다. 승인대로 현재 폴더에서 수행하며 task별 커밋·워크트리 생성·병합·공개 배포 단계는 생략한다.
 
 ## Review Focus
 
@@ -84,10 +84,10 @@ v4에서는 `GameState.competitor: RivalProgress`, `selectionHistory: Competitio
 
 **Interfaces:** `parseV3(raw: string): V3GameState` exported from v3.ts; reads validated v1/v2 via existing frozen parser and v3 directly. It does not return v4 or access storage.
 
-- [ ] 1. Before changing current runtime, generate the 18 fixtures by valid `transition` calls in the current v3 app. Capture pending selection/match/result in 4월 and complete in 6월. Check each with current `parseSave`; do not read user browser storage. Keep fixtures as captured rather than rebuilding them from future v4.
-- [ ] 2. Add a failing test for the new parser: `assert.deepEqual(parseV3(raw), JSON.parse(raw))` for each v3 fixture; `assert.throws` for changed rank, consumed weekday awaiting action, duplicate record and inconsistent bracket. Run `node --experimental-strip-types --test src/persistence/v3.test.ts` and confirm the missing export failure.
-- [ ] 3. Copy current schema and validation into v3 files, retaining current checks and v1/v2 conversion behavior. Freeze its old evaluateSelection locally. Read-only schedule/support helpers may be shared only with narrow structural inputs and unchanged behavior; avoid importing latest state constructors or new competition behavior. Isolate legacy defaults/snapshot locally where necessary instead of broad casts or ts-ignore.
-- [ ] 4. Run the new parser tests, `npm test`, `npm run typecheck`; all must pass. Record baseline fixture coverage. Runtime remains v3 at this point.
+- [x] 1. Before changing current runtime, generate the 18 fixtures by valid `transition` calls in the current v3 app. Capture pending selection/match/result in 4월 and complete in 6월. Check each with current `parseSave`; do not read user browser storage. Keep fixtures as captured rather than rebuilding them from future v4.
+- [x] 2. Add a failing test for the new parser: `assert.deepEqual(parseV3(raw), JSON.parse(raw))` for each v3 fixture; `assert.throws` for changed rank, consumed weekday awaiting action, duplicate record and inconsistent bracket. Run `node --experimental-strip-types --test src/persistence/v3.test.ts` and confirm the missing export failure.
+- [x] 3. Copy current schema and validation into v3 files, retaining current checks and v1/v2 conversion behavior. Freeze its old evaluateSelection locally. Read-only schedule/support helpers may be shared only with narrow structural inputs and unchanged behavior; avoid importing latest state constructors or new competition behavior. Isolate legacy defaults/snapshot locally where necessary instead of broad casts or ts-ignore.
+- [x] 4. Run the new parser tests, `npm test`, `npm run typecheck`; all must pass. Record baseline fixture coverage. Runtime remains v3 at this point.
 
 ### Task 2: 차준서 성장과 선발 판단 규칙
 
@@ -100,12 +100,12 @@ v4에서는 `GameState.competitor: RivalProgress`, `selectionHistory: Competitio
 - `decideStarter(playerTotal: number, rivalTotal: number, previous: Starter | null): {starter: Starter; reason: CompetitionSnapshot['reason']}`.
 - `compareCandidates(s: Pick<GameState, 'role' | 'stats' | 'trust' | 'records' | 'month' | 'week'>, competitor: RivalProgress, history: CompetitionSnapshot[], matchId: string): CompetitionSnapshot` excludes current matchId from previous history and performance.
 
-- [ ] 1. Write RED assertions: batter start `contact===42`, `power===40`, trust25; pitcher start velocity42/control38; week1 batter power44/trust26; week2 contact46/field39/trust27; repeated key returns unchanged. Add pitcher odd/even growth, stats59/60/79/80/89/90/100 and input immutability checks.
-- [ ] 2. Write RED assertions for same-week shared growth: combine basic +4 and shared +1 before `trainingGrowth(start, raw, 0)` once; power60 becomes63, not64. With null sharedPrimary only planned growth applies. Ensure migrated history never receives shared growth and growth does not read player stats, RNG or current lineup.
-- [ ] 3. Write RED selection assertions: `decideStarter(64,64,null).starter==='other'`; `(65,64,null)` player; `(65,65,null)` player; `(65,65,'junseo')` junseo; `(78,76,'junseo')` player; `(72,75,'player')` junseo. If previous starter was other, equal eligible candidates give player first chance. Player appearance remains starter if selected, otherwise substitute at52+, reserve below52.
-- [ ] 4. Write score tests: ability uses the existing role weights, practice is round((contact+power)/10) or round((control+velocity)/10), readiness is max(practice, actual appearance performance average). Filter match.id=current and reserve before taking last3; include a played zero-hit game. Equal practice/match values use practice as source. NPC performance is null. History containing the current match must not alter tie resolution.
-- [ ] 5. Run `node --experimental-strip-types --test src/game/rivalry.test.ts src/game/competition.test.ts`; confirm new tests fail, then implement these pure interfaces and definitions with the exact spec initial values. Keep existing v3 evaluateSelection until Task 4 integration.
-- [ ] 6. Run these tests and `npm run typecheck`; new rules must pass without changing existing game progression.
+- [x] 1. Write RED assertions: batter start `contact===42`, `power===40`, trust25; pitcher start velocity42/control38; week1 batter power44/trust26; week2 contact46/field39/trust27; repeated key returns unchanged. Add pitcher odd/even growth, stats59/60/79/80/89/90/100 and input immutability checks.
+- [x] 2. Write RED assertions for same-week shared growth: combine basic +4 and shared +1 before `trainingGrowth(start, raw, 0)` once; power60 becomes63, not64. With null sharedPrimary only planned growth applies. Ensure migrated history never receives shared growth and growth does not read player stats, RNG or current lineup.
+- [x] 3. Write RED selection assertions: `decideStarter(64,64,null).starter==='other'`; `(65,64,null)` player; `(65,65,null)` player; `(65,65,'junseo')` junseo; `(78,76,'junseo')` player; `(72,75,'player')` junseo. If previous starter was other, equal eligible candidates give player first chance. Player appearance remains starter if selected, otherwise substitute at52+, reserve below52.
+- [x] 4. Write score tests: ability uses the existing role weights, practice is round((contact+power)/10) or round((control+velocity)/10), readiness is max(practice, actual appearance performance average). Filter match.id=current and reserve before taking last3; include a played zero-hit game. Equal practice/match values use practice as source. NPC performance is null. History containing the current match must not alter tie resolution.
+- [x] 5. Run `node --experimental-strip-types --test src/game/rivalry.test.ts src/game/competition.test.ts`; confirm new tests fail, then implement these pure interfaces and definitions with the exact spec initial values. Keep existing v3 evaluateSelection until Task 4 integration.
+- [x] 6. Run these tests and `npm run typecheck`; new rules must pass without changing existing game progression.
 
 ### Task 3: 실제 개인 맞대결과 학교 관계 계산
 
@@ -118,11 +118,11 @@ v4에서는 `GameState.competitor: RivalProgress`, `selectionHistory: Competitio
 - `schoolRivalry(records: GameState['records'], excludeMatchId?: string): SchoolRivalry` includes completed haesol games only.
 - `schoolDialogue(history: SchoolRivalry, when: 'before' | 'after'): string` and `duelDialogue(role: Role, entries: DuelEntry[] | null): string`; data strings in content/rivals.ts.
 
-- [ ] 1. Add failing identity cases: haesol batter6회→taeo,7회→null; pitcher order3 and12→jihwan, order4→null; non-haesol/retired pitcher/non-player turn→null. Ensure reserve has no opponent and substitute respects 7회 entry.
-- [ ] 2. Add failing summary assertions: single, walk, strikeout, sacrifice, homer → `{ab:3,hits:2,hr:1,walks:1,k:1,sacrifices:1}`. Capture half/order before outcome. A repeated half/order is invalid when later appended/validated.
-- [ ] 3. Add failing relationship cases for 0/1/2/3 meetings, win-win/loss-loss/win-loss/loss-win, previous loss then win revenge only, score gap1/2 close and3 not close. Current match exclusion must not create premature revenge; other schools do not count. Dialogue must distinguish null details from [] no meeting and never count bench as personal defeat.
-- [ ] 4. Run the two test files to confirm RED; implement the pure functions. New identities use existing opponent characteristics and add no probability modifier or random draw.
-- [ ] 5. Run `node --experimental-strip-types --test src/game/rivalry.test.ts src/game/duels.test.ts` and typecheck. At this boundary rules are independently testable; gameplay wiring follows next.
+- [x] 1. Add failing identity cases: haesol batter6회→taeo,7회→null; pitcher order3 and12→jihwan, order4→null; non-haesol/retired pitcher/non-player turn→null. Ensure reserve has no opponent and substitute respects 7회 entry.
+- [x] 2. Add failing summary assertions: single, walk, strikeout, sacrifice, homer → `{ab:3,hits:2,hr:1,walks:1,k:1,sacrifices:1}`. Capture half/order before outcome. A repeated half/order is invalid when later appended/validated.
+- [x] 3. Add failing relationship cases for 0/1/2/3 meetings, win-win/loss-loss/win-loss/loss-win, previous loss then win revenge only, score gap1/2 close and3 not close. Current match exclusion must not create premature revenge; other schools do not count. Dialogue must distinguish null details from [] no meeting and never count bench as personal defeat.
+- [x] 4. Run the two test files to confirm RED; implement the pure functions. New identities use existing opponent characteristics and add no probability modifier or random draw.
+- [x] 5. Run `node --experimental-strip-types --test src/game/rivalry.test.ts src/game/duels.test.ts` and typecheck. At this boundary rules are independently testable; gameplay wiring follows next.
 
 ### Task 4: v4 전이·실제 경기·기존 저장 이관 통합
 
@@ -130,15 +130,15 @@ v4에서는 `GameState.competitor: RivalProgress`, `selectionHistory: Competitio
 
 **Interfaces:** `evaluateSelection(s: GameState)` returns extended evaluation. `migrateToV4(raw: string): GameState` in save.ts calls parseV3 before conversion. `validateRivalryState(s: GameState): void` in new `src/persistence/rivalry-validation.ts` owns new invariants. Existing transition, parseSave, loadGame/saveGame API signatures stay unchanged.
 
-- [ ] 1. Write failing v4 migration assertions across new v3 and existing v1/v2 fixtures: stats/RNG/skills/bonds/match score/last choice unchanged; version4; current evaluation basis legacy; current and past match.duels null; no invented selectionHistory. v3 complete stays complete; v1/v2 completion retains existing April/May extension. Read-only load makes zero writes.
-- [ ] 2. Write failing save assertions for backup key `last-summer.backup.v3`, no overwrite when backup write throws, repeated migration deterministic. Existing v1/v2 keys and original raw preservation remain unchanged.
-- [ ] 3. Add transition tests: createGame has competitor and empty history; valid weekday commits exactly one growth even on rest/failure; only successful partnered baseball weekday training passes primary stat; other actions/repeated revision don't grow NPC. Expose `previewActivity(...).competitorGrowth` with success/failure planned gains so UI reuses the exact rule.
-- [ ] 4. Add selection tests: snapshot appended once at selection, `evaluation.competition` equals corresponding history, previous excludes same match. Ineligible candidates use other. Replacement appearance derives from the new result and uses existing actual entry rules. March creates no selection history. Legacy selection/ongoing match continue with the old appearance; next unconfirmed evaluation uses rival basis.
-- [ ] 5. Add actual match regressions: manual and auto capture entry before `applyOutcome`; auto tactic ids are contact/control as currently used. Compare games with tracked [] versus disabled null duels under same seed/actions: scores, personal totals, RNG, highlights and burden must match. Exercise role/appearance combinations, 6→7 inning boundary, 4番 next batter, extra innings and final plate appearance. No actual meeting yields [] and no duplicated current record.
-- [ ] 6. Run affected tests for RED, then add the v4 fields and integrate rules. Fresh createMatch starts duels[]; when starting an already legacy-evaluated game, set duels null even though match did not exist at migration. `opponent` uses named identity only on tracked games. Track entries only while playerTurn is true; generic team at-bats never add personal entries. No changes to choose/advance highlight limits or sampling.
-- [ ] 7. Implement migration and validator. Rebuild NPC from count of consumed weekdays with source migrated/sharedPrimary null; newly processed weeks use played. Validate consecutive keys/role stats/trust and replay growth. Legacy snapshots preserve old score/rank; rivalry snapshots require correct arithmetic, histories and prior starter. Validate 52/65-based appearance, unique IDs and current snapshot equality before and after game trust rewards.
-- [ ] 8. Validate duels: half matches role; entry order < current order; inning range; taeo only batter/haesol/inning≤6, jihwan only pitcher/haesol/order%9===3; unique increasing half/order; supported tactic/source; tracked personal totals bound AB/hits/HR/walks/K/sacrifices by actual record or faced/outs as available. Reject entries for reserve and current-record disagreement. Keep all existing schedule/bracket/baserunner checks.
-- [ ] 9. Update version assertions and competition tests to the approved rules, preserving old expectations in frozen v3 tests. Shared save helpers take narrow structural inputs if legacy types differ; do not relax old schemas to make fixtures pass. Run `npm test` and `npm run typecheck`; all suites pass before UI work.
+- [x] 1. Write failing v4 migration assertions across new v3 and existing v1/v2 fixtures: stats/RNG/skills/bonds/match score/last choice unchanged; version4; current evaluation basis legacy; current and past match.duels null; no invented selectionHistory. v3 complete stays complete; v1/v2 completion retains existing April/May extension. Read-only load makes zero writes.
+- [x] 2. Write failing save assertions for backup key `last-summer.backup.v3`, no overwrite when backup write throws, repeated migration deterministic. Existing v1/v2 keys and original raw preservation remain unchanged.
+- [x] 3. Add transition tests: createGame has competitor and empty history; valid weekday commits exactly one growth even on rest/failure; only successful partnered baseball weekday training passes primary stat; other actions/repeated revision don't grow NPC. Expose `previewActivity(...).competitorGrowth` with success/failure planned gains so UI reuses the exact rule.
+- [x] 4. Add selection tests: snapshot appended once at selection, `evaluation.competition` equals corresponding history, previous excludes same match. Ineligible candidates use other. Replacement appearance derives from the new result and uses existing actual entry rules. March creates no selection history. Legacy selection/ongoing match continue with the old appearance; next unconfirmed evaluation uses rival basis.
+- [x] 5. Add actual match regressions: manual and auto capture entry before `applyOutcome`; auto tactic ids are contact/control as currently used. Compare games with tracked [] versus disabled null duels under same seed/actions: scores, personal totals, RNG, highlights and burden must match. Exercise role/appearance combinations, 6→7 inning boundary, 4番 next batter, extra innings and final plate appearance. No actual meeting yields [] and no duplicated current record.
+- [x] 6. Run affected tests for RED, then add the v4 fields and integrate rules. Fresh createMatch starts duels[]; when starting an already legacy-evaluated game, set duels null even though match did not exist at migration. `opponent` uses named identity only on tracked games. Track entries only while playerTurn is true; generic team at-bats never add personal entries. No changes to choose/advance highlight limits or sampling.
+- [x] 7. Implement migration and validator. Rebuild NPC from count of consumed weekdays with source migrated/sharedPrimary null; newly processed weeks use played. Validate consecutive keys/role stats/trust and replay growth. Legacy snapshots preserve old score/rank; rivalry snapshots require correct arithmetic, histories and prior starter. Validate 52/65-based appearance, unique IDs and current snapshot equality before and after game trust rewards.
+- [x] 8. Validate duels: half matches role; entry order < current order; inning range; taeo only batter/haesol/inning≤6, jihwan only pitcher/haesol/order%9===3; unique increasing half/order; supported tactic/source; tracked personal totals bound AB/hits/HR/walks/K/sacrifices by actual record or faced/outs as available. Reject entries for reserve and current-record disagreement. Keep all existing schedule/bracket/baserunner checks.
+- [x] 9. Update version assertions and competition tests to the approved rules, preserving old expectations in frozen v3 tests. Shared save helpers take narrow structural inputs if legacy types differ; do not relax old schemas to make fixtures pass. Run `npm test` and `npm run typecheck`; all suites pass before UI work.
 
 ### Task 5: 주전 경쟁·재대결 이야기를 기존 화면에 연결
 
@@ -146,22 +146,22 @@ v4에서는 `GameState.competitor: RivalProgress`, `selectionHistory: Competitio
 
 **Interfaces:** React components `CompetitionComparison({s,detail?})`, `SchoolRivalryPanel({s})`, `DuelRecords({role,match})` in RivalryPanel.tsx. Existing CompetitionPanel delegates comparison display. Formatting is pure and never updates the game.
 
-- [ ] 1. Add failing narrative tests for first selection, kept/lost/regained starter. Cases with other starter or no new history must not imply either candidate previously started. Put narrative selection in pure `selectionDialogue(snapshot: CompetitionSnapshot, history: CompetitionSnapshot[]): string` in rivalry.ts; implement then pass tests.
-- [ ] 2. Show role/ability/readiness source/trust/total comparison, current lead and week changes, exact tie/minimum rules. Legacy current decision says 이전 기준으로 확정 and retains the original score/rank. Include comparison in lineup and status ability view; expose it in mobile gameplay without relying on hidden desktop sidebar.
-- [ ] 3. Show competitor growth on activity preview with success/failure values, then actual weekly history in status. The player bonus and NPC bonus use separate labels. Leave original support portraits and bond values intact.
-- [ ] 4. Add school history and named-rival totals to status 시즌; add per-game DuelRecords to 기록. Before haesol games show prior history excluding current ID; after completion show current team score alongside actual duel outcome and record completeness. End screen includes this season's rivalry outcome. Other schools retain existing scouting information.
-- [ ] 5. Use existing 4월 competition event/selection/match-end areas for dynamic dialogue without new time slots or automatic rewards. Actual duel screen shows correct name and prior completed encounter summary; generic or legacy opponent remains generic. Add no extra modal between actions.
-- [ ] 6. Run `npm test` and `npm run build`. Inspect visible role names, unknown/none distinctions, numeric labels and threshold messages for contradictions. Keep the existing design responsive with stacked comparisons at mobile width.
+- [x] 1. Add failing narrative tests for first selection, kept/lost/regained starter. Cases with other starter or no new history must not imply either candidate previously started. Put narrative selection in pure `selectionDialogue(snapshot: CompetitionSnapshot, history: CompetitionSnapshot[]): string` in rivalry.ts; implement then pass tests.
+- [x] 2. Show role/ability/readiness source/trust/total comparison, current lead and week changes, exact tie/minimum rules. Legacy current decision says 이전 기준으로 확정 and retains the original score/rank. Include comparison in lineup and status ability view; expose it in mobile gameplay without relying on hidden desktop sidebar.
+- [x] 3. Show competitor growth on activity preview with success/failure values, then actual weekly history in status. The player bonus and NPC bonus use separate labels. Leave original support portraits and bond values intact.
+- [x] 4. Add school history and named-rival totals to status 시즌; add per-game DuelRecords to 기록. Before haesol games show prior history excluding current ID; after completion show current team score alongside actual duel outcome and record completeness. End screen includes this season's rivalry outcome. Other schools retain existing scouting information.
+- [x] 5. Use existing 4월 competition event/selection/match-end areas for dynamic dialogue without new time slots or automatic rewards. Actual duel screen shows correct name and prior completed encounter summary; generic or legacy opponent remains generic. Add no extra modal between actions.
+- [x] 6. Run `npm test` and `npm run build`. Inspect visible role names, unknown/none distinctions, numeric labels and threshold messages for contradictions. Keep the existing design responsive with stacked comparisons at mobile width.
 
 ### Task 6: 전체 회차·저장·균형 확인과 완료 문서
 
 **Files:** Extend `src/persistence/progression.test.ts`, `src/game/tournament.test.ts`; create `src/game/rivalry-season.test.ts`; update `README.md`, `tesk.md`, `docs/development-log.md`, approved spec status, this execution ledger, `package.json`/`package-lock.json` to0.4.0 after successful implementation.
 
-- [ ] 1. Add end-to-end assertions for both roles × training/balanced/study across seeds1..20: complete16weeks/allweekends, per-phase parse equality, sixteen competitor weeks, at most5 new selection snapshots, actual3 haesol results, no duplicate duels, player growth log totals unchanged. Existing tournament win/loss coverage remains tested, without requiring old seeds to keep the same win result when appearances legitimately change.
-- [ ] 2. Collect starter/substitute/reserve counts, relative score gaps and changes between player/junseo/other for these runs. Report whether deliberate recovery/training can overtake after a loss of place. Do not silently adjust approved weights to force equal win rates; distinguish functional failure from balance feedback.
-- [ ] 3. Run `npm test` and `npm run build` after final fixes/version update; record actual test totals and warnings. Obtain an independent final code review as required by the selected execution skill, examine findings and add focused regressions for real defects.
-- [ ] 4. Browser-play both roles in separate test origins through haesol first meeting, rematch and summer matchup. Inspect actual role assignment, rival growth preview, team loss with positive personal outcome when observed, no-meeting/legacy cases, selection/match/result reload, mobile390px and keyboard focus. Do not inject hidden browser state to manufacture successes. Use deterministic test cases for branches not observed naturally.
-- [ ] 5. Update README current behavior and backup format, tesk completed checklist and development log with actual evidence and balance limitations. Verify local Markdown links. Refresh the user's127.0.0.1:4173 preview read-only, preserve player phase and open panel, and inspect errors. Do not advance their game or overwrite their save.
+- [x] 1. Add end-to-end assertions for both roles × training/balanced/study across seeds1..20: complete16weeks/allweekends, per-phase parse equality, sixteen competitor weeks, at most5 new selection snapshots, actual3 haesol results, no duplicate duels, player growth log totals unchanged. Existing tournament win/loss coverage remains tested, without requiring old seeds to keep the same win result when appearances legitimately change.
+- [x] 2. Collect starter/substitute/reserve counts, relative score gaps and changes between player/junseo/other for these runs. Report whether deliberate recovery/training can overtake after a loss of place. Do not silently adjust approved weights to force equal win rates; distinguish functional failure from balance feedback.
+- [x] 3. Run `npm test` and `npm run build` after final fixes/version update; record actual test totals and warnings. Obtain an independent final code review as required by the selected execution skill, examine findings and add focused regressions for real defects.
+- [x] 4. Browser-play both roles in separate test origins through haesol first meeting, rematch and summer matchup. Inspect actual role assignment, rival growth preview, team loss with positive personal outcome when observed, no-meeting/legacy cases, selection/match/result reload, mobile390px and keyboard focus. Do not inject hidden browser state to manufacture successes. Use deterministic test cases for branches not observed naturally.
+- [x] 5. Update README current behavior and backup format, tesk completed checklist and development log with actual evidence and balance limitations. Verify local Markdown links. Refresh the user's127.0.0.1:4173 preview read-only, preserve player phase and open panel, and inspect errors. Do not advance their game or overwrite their save.
 
 ## Execution ledger and handoff
 
@@ -170,6 +170,13 @@ v4에서는 `GameState.competitor: RivalProgress`, `selectionHistory: Competitio
 - 대안: 단계별 구현 에이전트와 검토 에이전트로 진행. 단계마다 독립 검토를 받지만 문맥 전달과 검토 비용이 늘어난다.
 - 셀프 리뷰: 설계1–9절을 Tasks1–6에 대응시켰다. Review Focus 다섯 항목의 테스트 위치를 명시했고, 구형 확정 평가/개인 기록 없음/중복 타석/동점 이력/공동 성장 합산의 구체적인 처리를 계획에 포함했다.
 
-- 실행 시작: 사용자가 직접 순차 구현 방식을 승인했다. Task 1: complete — v3 실제 fixture18개와 검증기/기본값 고정, RED→GREEN. Tasks 2–3: complete — 성장·후보 비교·맞대결 식별·학교 관계, RED→GREEN 및 전체79개 통과. Task 4 진행 — v4 이관과 실제 추적 테스트6개 통과, 전체82/83이며 남은1개는 변경 승인된 준비도 항목의 구형 기대값을 갱신 중.
+- 실행 완료: 사용자가 직접 순차 구현 방식을 승인했다. Tasks 1–6 complete. v3 실제 fixture18개와 검증기/기본값 고정, 경쟁·맞대결 규칙, v4 전이·이관·검증, 화면과 문서까지 구현했다. 규칙·이관 및 최종 리뷰 회귀는 RED→GREEN을 확인했다. 일부 대사 검사는 구현 이후 추가했으므로 해당 검사의 선행 RED를 주장하지 않는다.
 - Ruling: 최초 커밋과 .git 쓰기가 없는 승인된 작업 폴더에서 진행하며 실행 기록은 이 문서에 보존한다. 임시 브리프/커밋 스크립트 대신 파일과 실제 테스트 결과를 기록한다. 원본 시안은 건드리지 않는다.
 - Ruling: 공동 훈련 성장도 주간 기본 성장에 합산한 뒤 능력 구간 배율을 한 번 적용한다. 고능력 구간의 반올림 중복을 방지하며 계획의 power60 +5 → +3 기준을 따른다.
+- Ruling: 전술 공부는 기존 인연 보너스에서도 주력 야구 능력이 있는 안전한 야구 활동이다. 실패 없는 공동 성장 대상으로 유지한다. 설계의 학업 제외는 학교 공부를 가리킨다. 리뷰와 함께 이 해석을 확인했다.
+- 최종 독립 리뷰: 성장·선발·맞대결·저장 핵심 흐름을 확인했고 두 표시 문제를 보고했다. 홈런/희생번트 요약 누락과 주말 개인 연습 후 평일 준서 성장 재표시를 회귀 검사 후 한 수정 단계에서 해결했다. 전술 공부 공동 성장은 위 Ruling으로 유지했고, 전체 선수단·추가 확률 보정은 범위 밖이다.
+- 자동 검증: `npm test` 90/90 통과, `npm run build` 타입·프로덕션 빌드 통과. 기존 Zod PURE 주석 경고2건. 120시즌 모든 단계 저장 왕복, 구형 진행16개 시즌 완료, 실제 v3 fixture18개, 추적 유무48경기의 동일 결과를 검사했다.
+- 균형 확인: 일정한 훈련/균형 경로는 선발 유지, 학업은3월 이후 교체 경향. 학업(3~4월)→훈련(5~6월) 전환20시드에서 선발 탈환 타자12/20·투수11/20. 강제로 선발 교체를 만들기 위한 수치 변경은 하지 않았다.
+- 브라우저: localhost의 별도 타자/투수 회차를16주 완주. 세 차례 해솔고전, 타자4월 대타→5월 선발, 투수구원→선발, 실제 직접/요약 타석, 미대결 구분, 결과·명단·완료 재개, 모바일390px·키보드 검사. 런타임 error/warn0건. 모바일 결과에서도 개인 기록을 표시하도록 보완했다.
+- 최종 사용자 미리보기: 사용자는 검증 중 기존 회차를6월 완료까지 진행했다. 새로고침 직전의 최신 상태(123·투수·준우승·혼합형·6경기·26 1/3이닝·11K·1BB·8실점)를 기준으로 읽기만 수행했다. 동일 완료 상태와 기록을 유지했고, 과거 해솔고3전은 세부 기록 없음으로 표시했다. 기존의4월 상태로 되돌리지 않았다.
+- 완료 문서: README·tesk·상세 설계·개발 기록 갱신, 패키지0.4.0. 실행 폴더에서 구현했으며 커밋·머지·공개 배포는 수행하지 않았다.

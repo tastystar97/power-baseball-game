@@ -21,6 +21,10 @@ test('duel summaries keep walks and sacrifices distinct from at bats and missing
  const entries=outcomes.map((o,i)=>{m.order[1]=4+i*9;return duelEntry(m,'taeo','contact','manual',o);});
  assert.equal(entries[0].order,4);assert.equal(entries[0].inning,3);
  assert.deepEqual(summarizeDuels(entries),{ab:3,hits:2,hr:1,walks:1,k:1,sacrifices:1});
+ for(const role of ['batter','pitcher'] as const){
+  const text=duelDialogue(role,entries);
+  assert.match(text,role==='batter'?/1홈런/:/1피홈런/);assert.match(text,/1희생번트/);
+ }
  assert.match(duelDialogue('batter',null),/세부 기록 없음/);assert.match(duelDialogue('batter',[]),/대결 없음/);
 });
 test('tracking actual manual and auto duels does not change game outcomes or random draws',()=>{

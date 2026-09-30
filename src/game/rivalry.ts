@@ -17,6 +17,11 @@ export function growCompetitor(current:RivalProgress,role:Role,key:number,shared
  const trustDelta=Math.min(1,100-current.trust);next.trust+=trustDelta;
  next.weeks.push({key,gains,trustDelta,sharedPrimary,source});return next;
 }
+export function competitorTrainingFeedback(s:GameState,entry:GameState['log'][number]) {
+ const weekday=s.schedule.find(w=>w.month===entry.month&&w.week===entry.week)?.weekday;
+ if(!entry.training||!weekday||!(entry.title===weekday||entry.title.startsWith(weekday+' · ')))return null;
+ return s.competitor.weeks.find(w=>w.key===(entry.month-3)*4+entry.week&&w.source==='played')??null;
+}
 export function identifyDuel(role:Role,m:Match,playerTurn:boolean):NamedRivalId|null {
  if(!playerTurn||m.opponentId!=='haesol'||m.appearance==='reserve'||m.over||(m.appearance==='substitute'&&m.inning<7))return null;
  if(role==='batter')return m.half===1&&m.inning<=6?'taeo':null;
@@ -39,13 +44,15 @@ export function schoolRivalry(records:GameState['records'],excludeMatchId?:strin
 export function schoolDialogue(h:SchoolRivalry,when:'before'|'after'):string {
  if(!h.games)return rivalryLines.first;
  if(when==='after')return (h.revenge?rivalryLines.revenge:h.lastWon?rivalryLines.won:rivalryLines.lost)+(h.closeLast?' 마지막까지 점수 차가 두 점 이내였던 승부였다.':'');
- return (h.stage==='rematch'?rivalryLines.rematch:'이제 서로의 이름을 아는 라이벌. ')+(h.wins>h.losses?rivalryLines.lead:h.wins<h.losses?rivalryLines.trail:rivalryLines.even);
+ return (h.stage==='rematch'?rivalryLines.rematch+' ':'이제 서로의 이름을 아는 라이벌. ')+(h.wins>h.losses?rivalryLines.lead:h.wins<h.losses?rivalryLines.trail:rivalryLines.even);
 }
 export function duelDialogue(role:Role,entries:DuelEntry[]|null):string {
  if(entries===null)return '세부 기록 없음 · 이전 버전의 경기는 개인 맞대결을 추적하지 않았습니다.';
  if(!entries.length)return '대결 없음 · 이번 경기에서는 간판 선수와 직접 만나지 않았습니다.';
- const r=summarizeDuels(entries);
- return role==='batter'?`정태오 상대 ${r.ab}타수 ${r.hits}안타 · ${r.walks}볼넷 · ${r.k}삼진`:`서지환 상대 ${r.ab}타수 ${r.hits}피안타 · ${r.walks}볼넷 · ${r.k}탈삼진`;
+ return `${role==='batter'?'정태오':'서지환'} 상대 ${duelSummaryText(role,summarizeDuels(entries))}`;
+}
+export function duelSummaryText(role:Role,r:DuelSummary):string {
+ return `${r.ab}타수 ${r.hits}${role==='batter'?'안타':'피안타'} · ${r.hr}${role==='batter'?'홈런':'피홈런'} · ${r.walks}볼넷 · ${r.k}${role==='batter'?'삼진':'탈삼진'} · ${r.sacrifices}희생번트`;
 }
 export function selectionDialogue(c:CompetitionSnapshot,history:CompetitionSnapshot[]):string {
  const prior=history.filter(h=>h.matchId!==c.matchId),had=prior.some(h=>h.starter==='player');
