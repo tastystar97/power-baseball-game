@@ -1,0 +1,10 @@
+import type {Gains,Stats,StatKey,Outcome} from './types.ts';
+export type Starter='player'|'junseo'|'other';
+export type NamedRivalId='taeo'|'jihwan';
+export type RivalWeek={key:number;gains:Gains;trustDelta:number;sharedPrimary:StatKey|null;source:'played'|'migrated'};
+export type RivalProgress={stats:Stats;trust:number;weeks:RivalWeek[]};
+export type CandidateScore={ability:number;practice:number;performance:number|null;readiness:number;readinessSource:'practice'|'match';trust:number;total:number};
+export type CompetitionSnapshot={matchId:string;month:number;week:number;player:CandidateScore;junseo:CandidateScore;starter:Starter;previous:Starter|null;reason:'lead'|'incumbent'|'first_chance'|'below_threshold'};
+export type DuelEntry={half:0|1;order:number;inning:number;opponent:NamedRivalId;tactic:string;source:'manual'|'auto';outcome:Outcome};
+export type DuelSummary={ab:number;hits:number;hr:number;walks:number;k:number;sacrifices:number};
+export type SchoolRivalry={games:number;wins:number;losses:number;stage:'first'|'rematch'|'rival';lastWon:boolean|null;closeLast:boolean;revenge:boolean};

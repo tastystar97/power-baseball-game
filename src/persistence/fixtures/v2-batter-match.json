@@ -1,0 +1,438 @@
+{
+  "version": 2,
+  "name": "여름검증",
+  "role": "batter",
+  "month": 3,
+  "week": 4,
+  "phase": "match",
+  "revision": 18,
+  "rng": 1728603570,
+  "stats": {
+    "contact": 100,
+    "power": 32,
+    "eye": 43,
+    "speed": 38,
+    "field": 36,
+    "mental": 42,
+    "velocity": 0,
+    "control": 0,
+    "breaking": 0,
+    "stamina": 0
+  },
+  "energy": 72,
+  "stress": 10,
+  "academics": 45,
+  "trust": 24,
+  "rival": 13,
+  "catcher": 68,
+  "completedEvents": [
+    1,
+    2,
+    3
+  ],
+  "log": [
+    {
+      "month": 3,
+      "week": 1,
+      "title": "타격 훈련 · 훈련 성공",
+      "text": "시작 체력 80 · 실패 확률 0%. 끝까지 연습을 마쳐 준비한 성장을 얻었다.",
+      "changes": {
+        "contact": 14,
+        "eye": 2,
+        "energy": -20,
+        "stress": 7
+      },
+      "training": {
+        "outcome": "success",
+        "energyBefore": 80,
+        "failureChance": 0,
+        "points": 9
+      }
+    },
+    {
+      "month": 3,
+      "week": 1,
+      "title": "함께 쌓은 연습",
+      "text": "함께한 파트너: 강민재, 박하람, 한서현. 인연 보너스 · 컨택 +3 포함 (강민재 인연 10, 박하람 인연 10, 한서현 인연 10).",
+      "changes": {
+        "catcher": 15,
+        "skillPoints": 9,
+        "bond_bat_senior": 15,
+        "bond_manager": 15
+      }
+    },
+    {
+      "month": 3,
+      "week": 1,
+      "title": "그라운드의 첫 인사",
+      "text": "“좋아. 매일 쌓인 기본기가 위기에서 널 지켜 줄 거다.”",
+      "changes": {
+        "contact": 1,
+        "trust": 2
+      }
+    },
+    {
+      "month": 3,
+      "week": 1,
+      "title": "집에서 푹 쉬기",
+      "text": "몸을 회복하고 다음 주를 준비합니다.",
+      "changes": {
+        "energy": 32,
+        "stress": -18
+      }
+    },
+    {
+      "month": 3,
+      "week": 2,
+      "title": "타격 훈련 · 훈련 성공",
+      "text": "시작 체력 92 · 실패 확률 0%. 끝까지 연습을 마쳐 준비한 성장을 얻었다.",
+      "changes": {
+        "contact": 11,
+        "eye": 2,
+        "energy": -28,
+        "stress": 10
+      },
+      "training": {
+        "outcome": "success",
+        "energyBefore": 92,
+        "failureChance": 0,
+        "points": 7
+      }
+    },
+    {
+      "month": 3,
+      "week": 2,
+      "title": "함께 쌓은 연습",
+      "text": "함께한 파트너: 강민재. 인연 보너스 · 컨택 +2 포함 (강민재 인연 25).",
+      "changes": {
+        "skillPoints": 7,
+        "bond_bat_senior": 15
+      }
+    },
+    {
+      "month": 3,
+      "week": 2,
+      "title": "한 번 더, 같은 스윙",
+      "text": "내 감각을 말로 정리하자 다음 연습의 목표가 또렷해졌다.",
+      "changes": {
+        "mental": 1,
+        "trust": 1
+      }
+    },
+    {
+      "month": 3,
+      "week": 2,
+      "title": "스킬 힌트",
+      "text": "강민재의 조언으로 스킬 비용이 4 Pt 줄었다.",
+      "changes": {
+        "bond_bat_senior": 10
+      }
+    },
+    {
+      "month": 3,
+      "week": 2,
+      "title": "같은 유니폼, 다른 목표",
+      "text": "이상하게 혼자 할 때보다 집중이 잘됐다. 서로 고칠 점을 하나씩 찾았다.",
+      "changes": {
+        "contact": 1,
+        "rival": 3
+      }
+    },
+    {
+      "month": 3,
+      "week": 2,
+      "title": "집에서 푹 쉬기",
+      "text": "몸을 회복하고 다음 주를 준비합니다.",
+      "changes": {
+        "energy": 32,
+        "stress": -14
+      }
+    },
+    {
+      "month": 3,
+      "week": 3,
+      "title": "타격 훈련 · 훈련 성공 · 합동 훈련",
+      "text": "시작 체력 96 · 실패 확률 0%. 끝까지 연습을 마쳐 준비한 성장을 얻었다.",
+      "changes": {
+        "contact": 19,
+        "eye": 2,
+        "energy": -28,
+        "stress": 10
+      },
+      "training": {
+        "outcome": "success",
+        "energyBefore": 96,
+        "failureChance": 0,
+        "points": 10
+      }
+    },
+    {
+      "month": 3,
+      "week": 3,
+      "title": "함께 쌓은 연습",
+      "text": "함께한 파트너: 강민재, 박하람. 인연 보너스 · 컨택 +5 포함 (강민재 인연 50, 박하람 인연 25).",
+      "changes": {
+        "catcher": 15,
+        "skillPoints": 10,
+        "bond_bat_senior": 15
+      }
+    },
+    {
+      "month": 3,
+      "week": 3,
+      "title": "말하지 않아도 통하는 신호",
+      "text": "내가 놓치던 습관을 동료가 기억하고 있었다. 짧은 신호 하나를 새로 정했다.",
+      "changes": {
+        "mental": 1,
+        "trust": 1
+      }
+    },
+    {
+      "month": 3,
+      "week": 3,
+      "title": "스킬 힌트",
+      "text": "박하람의 조언으로 스킬 비용이 4 Pt 줄었다.",
+      "changes": {
+        "catcher": 10
+      }
+    },
+    {
+      "month": 3,
+      "week": 3,
+      "title": "혼자서는 못 하는 야구",
+      "text": "짧은 눈빛만으로도 무엇을 할지 알아차렸다. 이제 그라운드가 조금 덜 낯설다.",
+      "changes": {
+        "field": 1,
+        "catcher": 3
+      }
+    },
+    {
+      "month": 3,
+      "week": 3,
+      "title": "집에서 푹 쉬기",
+      "text": "몸을 회복하고 다음 주를 준비합니다.",
+      "changes": {
+        "energy": 32,
+        "stress": -10
+      }
+    },
+    {
+      "month": 3,
+      "week": 4,
+      "title": "타격 훈련 · 훈련 성공 · 합동 훈련",
+      "text": "시작 체력 100 · 실패 확률 0%. 끝까지 연습을 마쳐 준비한 성장을 얻었다.",
+      "changes": {
+        "contact": 14,
+        "eye": 2,
+        "energy": -28,
+        "stress": 10
+      },
+      "training": {
+        "outcome": "success",
+        "energyBefore": 100,
+        "failureChance": 0,
+        "points": 9
+      }
+    },
+    {
+      "month": 3,
+      "week": 4,
+      "title": "함께 쌓은 연습",
+      "text": "함께한 파트너: 박하람. 인연 보너스 · 컨택 +2 포함 (박하람 인연 53).",
+      "changes": {
+        "catcher": 15,
+        "skillPoints": 9
+      }
+    }
+  ],
+  "schedule": [
+    {
+      "month": 3,
+      "week": 1,
+      "weekday": "타격 훈련",
+      "weekend": "집에서 푹 쉬기"
+    },
+    {
+      "month": 3,
+      "week": 2,
+      "weekday": "타격 훈련",
+      "weekend": "집에서 푹 쉬기"
+    },
+    {
+      "month": 3,
+      "week": 3,
+      "weekday": "타격 훈련",
+      "weekend": "집에서 푹 쉬기"
+    },
+    {
+      "month": 3,
+      "week": 4,
+      "weekday": "타격 훈련",
+      "weekend": ""
+    }
+  ],
+  "initial": {
+    "contact": 40,
+    "power": 32,
+    "eye": 35,
+    "speed": 38,
+    "field": 35,
+    "mental": 40,
+    "velocity": 0,
+    "control": 0,
+    "breaking": 0,
+    "stamina": 0,
+    "energy": 80,
+    "stress": 15,
+    "academics": 45,
+    "trust": 20,
+    "rival": 10,
+    "catcher": 10,
+    "skillPoints": 8,
+    "bond_bat_senior": 10,
+    "bond_pitch_senior": 10,
+    "bond_manager": 10,
+    "bond_classmate": 10
+  },
+  "weekStart": {
+    "contact": 86,
+    "power": 32,
+    "eye": 41,
+    "speed": 38,
+    "field": 36,
+    "mental": 42,
+    "velocity": 0,
+    "control": 0,
+    "breaking": 0,
+    "stamina": 0,
+    "energy": 100,
+    "stress": 0,
+    "academics": 45,
+    "trust": 24,
+    "rival": 13,
+    "catcher": 53,
+    "skillPoints": 34,
+    "bond_bat_senior": 65,
+    "bond_pitch_senior": 10,
+    "bond_manager": 25,
+    "bond_classmate": 10
+  },
+  "monthStart": {
+    "contact": 40,
+    "power": 32,
+    "eye": 35,
+    "speed": 38,
+    "field": 35,
+    "mental": 40,
+    "velocity": 0,
+    "control": 0,
+    "breaking": 0,
+    "stamina": 0,
+    "energy": 80,
+    "stress": 15,
+    "academics": 45,
+    "trust": 20,
+    "rival": 10,
+    "catcher": 10,
+    "skillPoints": 8,
+    "bond_bat_senior": 10,
+    "bond_pitch_senior": 10,
+    "bond_manager": 10,
+    "bond_classmate": 10
+  },
+  "notice": "타격 훈련 · 훈련 성공 · 합동 훈련 · 컨택 +14 · 선구안 +2 · 체력 -28 · 스트레스 +10 · 동료 친밀도 +15 · 스킬 Pt +9",
+  "eventReply": "짧은 눈빛만으로도 무엇을 할지 알아차렸다. 이제 그라운드가 조금 덜 낯설다.",
+  "match": {
+    "appearance": "starter",
+    "inning": 2,
+    "half": 1,
+    "outs": 1,
+    "bases": [
+      null,
+      null,
+      null
+    ],
+    "score": [
+      0,
+      0
+    ],
+    "lines": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        0
+      ]
+    ],
+    "order": [
+      10,
+      4
+    ],
+    "highlights": 0,
+    "faced": 0,
+    "load": 0,
+    "retired": false,
+    "awaiting": true,
+    "over": false,
+    "batting": {
+      "ab": 0,
+      "hits": 0,
+      "hr": 0,
+      "rbi": 0,
+      "walks": 0,
+      "k": 0
+    },
+    "pitching": {
+      "outs": 0,
+      "k": 0,
+      "walks": 0,
+      "hits": 0,
+      "runs": 0
+    },
+    "recent": [],
+    "last": null
+  },
+  "matchRecorded": false,
+  "supports": [
+    "bat_senior",
+    "catcher",
+    "manager"
+  ],
+  "bonds": {
+    "bat_senior": 65,
+    "pitch_senior": 10,
+    "manager": 25,
+    "classmate": 10
+  },
+  "placements": {
+    "bat_senior": "weights",
+    "catcher": "batting",
+    "manager": "rest"
+  },
+  "trainingSeed": 71,
+  "supportCompleted": [
+    "bat_senior",
+    "catcher"
+  ],
+  "activeSupport": null,
+  "skillPoints": 43,
+  "skills": [],
+  "hints": [
+    "contact_focus",
+    "calm"
+  ],
+  "lineupHistory": [
+    {
+      "month": 3,
+      "supports": [
+        "bat_senior",
+        "catcher",
+        "manager"
+      ]
+    }
+  ],
+  "records": [],
+  "evaluation": null
+}

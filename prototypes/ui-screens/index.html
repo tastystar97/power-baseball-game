@@ -1,0 +1,1374 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UI 예시 화면</title>
+<style>
+  :root {
+    color-scheme: light;
+    --navy: #1f2d4d;
+    --navy-soft: #4a5775;
+    --cream: #f7f1e1;
+    --paper: #fffaf0;
+    --border: #e4dcc6;
+    --grass: #4f8f4a;
+    --grass-infield: #5a9b53;
+    --grass-soft: #e3efdc;
+    --dirt: #c79a63;
+    --line: #fffdf5;
+    --gold: #c98a12;
+    --gold-soft: #fff3d6;
+    --warn: #b4441f;
+    --warn-soft: #fbe6dc;
+    --dusk: #f6e3e0;
+    --dusk-deep: #b0485c;
+    --board: #1c2a22;
+    --board-text: #f3ecd2;
+    --board-accent: #f2c14e;
+    --focus: #e0761b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #e9e1cc;
+    color: var(--navy);
+    font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+    line-height: 1.5;
+    font-size: 16px;
+  }
+  body.modal-open { overflow: hidden; }
+  h1, h2, h3, p { margin: 0; }
+  button {
+    font: inherit; color: var(--navy);
+    min-height: 44px; padding: 8px 14px;
+    border-radius: 8px; border: 2px solid var(--navy);
+    background: var(--paper); cursor: pointer; text-align: inherit;
+  }
+  button:hover:not(:disabled) { background: var(--gold-soft); }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  button.primary { background: var(--navy); color: var(--paper); text-align: center; }
+  button.primary:hover:not(:disabled) { background: #2d3f68; }
+  button.small { min-height: 36px; padding: 4px 10px; font-size: 0.88rem; }
+  button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* 시안 안내 도구 (게임 화면 바깥) */
+  .kit { max-width: 1200px; margin: 0 auto; padding: 16px 16px 8px; }
+  .kit h1 { font-size: 1.1rem; }
+  .kit .note { font-size: 0.88rem; color: var(--navy-soft); margin: 2px 0 10px; }
+  .kit-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .kit-row + .kit-row { margin-top: 6px; }
+  .kit-row .label { font-size: 0.85rem; font-weight: 700; margin-right: 4px; }
+  .kit button { min-height: 36px; padding: 4px 10px; font-size: 0.88rem; }
+  .kit button[aria-pressed="true"], .kit button[aria-current="page"] { background: var(--navy); color: var(--paper); }
+
+  /* 게임 화면 틀 */
+  .app {
+    max-width: 1200px; margin: 8px auto 32px;
+    background: var(--cream);
+    border: 1px solid var(--border); border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 6px 24px rgba(31, 45, 77, 0.12);
+  }
+  .app[data-mood="weekend"] { background: linear-gradient(180deg, #f9e8dc 0%, var(--dusk) 100%); }
+  .topbar {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px;
+    padding: 8px 16px; background: var(--paper); border-bottom: 1px solid var(--border);
+  }
+  .brand { font-weight: 800; letter-spacing: -0.02em; }
+  .topbar .date { font-weight: 700; }
+  .topbar .who { color: var(--navy-soft); }
+  .topbar .right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+  .save-state { font-size: 0.85rem; color: var(--grass); }
+  .save-state::before { content: "● "; }
+
+  .body { display: grid; grid-template-columns: 240px 1fr 260px; gap: 16px; padding: 16px; min-height: 560px; }
+  .app[data-layout="full"] .body, .app[data-layout="match"] .body, .app[data-layout="scene"] .body { grid-template-columns: 1fr; }
+  .app[data-layout="full"] .side, .app[data-layout="match"] .side, .app[data-layout="scene"] .side { display: none; }
+  .center { min-width: 0; }
+  .app[data-layout="full"] .center, .app[data-layout="scene"] .center { max-width: 720px; width: 100%; margin: 0 auto; }
+  .app[data-wide="true"] .center { max-width: none; }
+
+  .panel { background: var(--paper); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+  .panel + .panel { margin-top: 12px; }
+  .panel h3 { font-size: 0.95rem; margin-bottom: 8px; }
+  .screen-title { font-size: 1.2rem; margin-bottom: 4px; }
+  .screen-title:focus { outline: none; }
+  .lead { color: var(--navy-soft); margin-bottom: 14px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 14px; }
+  .reason { font-size: 0.88rem; color: var(--navy-soft); }
+  .muted { color: var(--navy-soft); font-size: 0.88rem; }
+  .gap-top { margin-top: 8px; }
+  .link-btn { border: 0; background: none; padding: 0 2px; min-height: 0; color: var(--navy); text-decoration: underline; font-size: inherit; font-weight: 700; }
+  .link-btn:hover:not(:disabled) { background: none; color: var(--gold); }
+
+  /* ---------- 에셋 자리 ---------- */
+  /* 배경: 원본 16:9. 배너로 쓸 때는 가운데 가로 띠만 보인다. */
+  .bg-slot { position: relative; aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; background: #dfe8ee; }
+  .bg-slot.banner { aspect-ratio: 16 / 5; margin-bottom: 12px; }
+  .bg-slot.fill { position: absolute; inset: 0; aspect-ratio: auto; border-radius: 0; }
+  .bg-slot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .bg-slot.ph { background-image: repeating-linear-gradient(135deg, rgba(255,255,255,0.25) 0 10px, transparent 10px 20px), var(--bg-grad); }
+  .bg-slot[data-mood="day"] { --bg-grad: linear-gradient(180deg, #cfe4f2 0%, #e9efe0 60%, #bcd4a8 100%); }
+  .bg-slot[data-mood="dusk"] { --bg-grad: linear-gradient(180deg, #f3c9a8 0%, #f6e3e0 55%, #d9b8c4 100%); }
+  .bg-slot[data-mood="indoor"] { --bg-grad: linear-gradient(180deg, #efe3cc 0%, #e6d5b8 100%); }
+  .ph-label {
+    position: absolute; left: 8px; bottom: 8px; z-index: 1;
+    font-size: 0.75rem; line-height: 1.3; padding: 2px 8px; border-radius: 6px;
+    background: rgba(255, 250, 240, 0.9); color: var(--navy-soft); border: 1px dashed rgba(31,45,77,0.35);
+  }
+  .banner-caption { position: absolute; right: 8px; top: 8px; z-index: 1; font-size: 0.8rem; font-weight: 700; padding: 2px 10px; border-radius: 999px; background: rgba(31,45,77,0.75); color: var(--paper); }
+
+  /* 포트레이트: 원본 3:4, 투명 배경 PNG */
+  .portrait { position: relative; aspect-ratio: 3 / 4; width: 100%; display: grid; place-items: end center; }
+  .portrait img { width: 100%; height: 100%; object-fit: contain; object-position: bottom center; display: block; }
+  .portrait.ph { border: 2px dashed rgba(31,45,77,0.35); border-radius: 10px; background: rgba(255,250,240,0.55); }
+  .portrait.ph svg { width: 80%; height: auto; display: block; }
+  .portrait .ph-label { left: 50%; transform: translateX(-50%); bottom: 6px; white-space: nowrap; }
+  .portrait.md { width: 120px; flex: none; }
+  .portrait.sm { width: 84px; flex: none; }
+
+  /* 얼굴 아이콘: 1:1. 없으면 포트레이트 위쪽을 잘라 쓰고, 그것도 없으면 이름 첫 글자 */
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: grid; place-items: center; font-weight: 700; font-size: 0.85rem;
+    background: var(--grass-soft); color: #2d5b2a; flex: none; overflow: hidden;
+  }
+  .avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .avatar.crop { background-color: var(--paper); background-size: 230% auto; background-position: 50% 6%; background-repeat: no-repeat; }
+  .avatar.lg { width: 44px; height: 44px; font-size: 1rem; }
+
+  /* 이번 주 진행 막대 */
+  .steps { list-style: none; margin: 0 0 12px; padding: 0; display: flex; flex-wrap: wrap; gap: 4px; font-size: 0.82rem; }
+  .steps li { padding: 3px 10px; border-radius: 999px; border: 1px solid var(--border); background: var(--paper); color: var(--navy-soft); }
+  .steps li.done { color: #2d5b2a; border-color: #b9d6b1; }
+  .steps li.now { color: var(--navy); font-weight: 800; border: 2px solid var(--gold); background: var(--gold-soft); }
+
+  /* 수치 */
+  .meter { display: grid; grid-template-columns: 5.5em 1fr 2.4em; align-items: center; gap: 8px; font-size: 0.9rem; }
+  .meter + .meter { margin-top: 6px; }
+  .bar { height: 8px; border-radius: 4px; background: #ece4cf; overflow: hidden; }
+  .bar > span { display: block; height: 100%; background: var(--grass); }
+  .bar.bad > span { background: var(--warn); }
+  .meter .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .grade { font-weight: 800; color: var(--grass); }
+  .up { color: var(--grass); font-weight: 700; }
+  .down { color: var(--warn); font-weight: 700; }
+
+  /* 목록·칩 */
+  .people { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .people li { display: grid; grid-template-columns: 32px 1fr; gap: 8px; align-items: center; font-size: 0.9rem; }
+  .people .sub { color: var(--navy-soft); font-size: 0.8rem; }
+  .cal { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 0.85rem; }
+  .cal li { display: grid; grid-template-columns: 3.2em 1fr; gap: 6px; }
+  .cal li.now { font-weight: 700; }
+  .cal .wk { color: var(--navy-soft); }
+  .chips { display: flex; flex-wrap: wrap; gap: 4px; }
+  .chip { font-size: 0.78rem; padding: 1px 7px; border-radius: 999px; background: var(--grass-soft); color: #2d5b2a; }
+  .chip.cost { background: var(--warn-soft); color: var(--warn); }
+  .chip.new { background: var(--dusk); color: var(--dusk-deep); font-weight: 700; }
+  .notes { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  .notes li { padding: 8px 10px; border-radius: 8px; font-size: 0.9rem; background: var(--grass-soft); }
+  .notes li.risk { background: var(--warn-soft); color: var(--warn); }
+  .notes li strong { margin-right: 6px; }
+  .recap { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; padding: 8px 12px; margin-bottom: 12px; border-radius: 8px; background: var(--paper); border: 1px solid var(--border); font-size: 0.9rem; }
+  .recap .k { font-weight: 700; }
+
+  /* 카드 선택지 */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+  .cards.one { grid-template-columns: 1fr; }
+  .card { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; width: 100%; text-align: left; }
+  .card .name { font-weight: 700; }
+  .card .desc { font-size: 0.85rem; color: var(--navy-soft); }
+  .card[aria-pressed="true"] { border-color: var(--gold); box-shadow: inset 0 0 0 2px var(--gold); background: var(--gold-soft); }
+  .card .top { display: flex; justify-content: space-between; align-items: center; gap: 8px; width: 100%; }
+  .person-card { flex-direction: row; align-items: center; gap: 10px; }
+
+  /* 시작 */
+  .hero { position: relative; border-radius: 12px; overflow: hidden; margin-bottom: 12px; }
+  .hero .bg-slot { aspect-ratio: 16 / 7; border-radius: 0; }
+  .hero .title-block { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; }
+  .hero .logo { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.03em; text-shadow: 0 1px 0 var(--paper); }
+  .hero .tag { color: var(--navy); margin-top: 4px; font-weight: 600; }
+  .confirm-box { margin-top: 12px; padding: 12px; border-radius: 8px; background: var(--warn-soft); color: var(--warn); }
+
+  /* 선수 생성 */
+  .field-label { display: block; font-weight: 700; margin-bottom: 4px; }
+  input[type="text"] {
+    font: inherit; width: 100%; max-width: 280px; min-height: 44px; padding: 8px 12px;
+    border: 2px solid var(--navy); border-radius: 8px; background: #fff; color: var(--navy);
+  }
+  .roles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 520px) { .roles { grid-template-columns: 1fr; } }
+  .role-card { flex-direction: row; gap: 12px; align-items: flex-start; }
+  .role-card dl { margin: 4px 0 0; font-size: 0.85rem; }
+  .role-card dt { font-weight: 700; margin-top: 4px; }
+  .role-card dd { margin: 0; color: var(--navy-soft); }
+
+  /* 사건 */
+  .event-body { display: flex; gap: 14px; align-items: flex-start; }
+  .quote { border-left: 4px solid var(--gold); padding: 6px 12px; margin: 10px 0; background: var(--gold-soft); border-radius: 0 8px 8px 0; }
+
+  /* 주말 대화: 배경 위에 포트레이트, 대사는 아래 카드에 둔다 */
+  .stage { position: relative; aspect-ratio: 16 / 9; border-radius: 14px; overflow: hidden; margin-bottom: 12px; }
+  .stage .portrait { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); height: 94%; width: auto; }
+  .stage .portrait.ph { background: rgba(255,250,240,0.35); }
+  .stage .place { position: absolute; left: 10px; top: 10px; z-index: 1; font-size: 0.85rem; font-weight: 700; padding: 2px 10px; border-radius: 999px; background: rgba(176,72,92,0.9); color: #fff; }
+  .scene-card { background: var(--paper); border: 1px solid #ebcfc9; border-radius: 14px; padding: 16px; }
+  .speaker { display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px; }
+  .speaker .who { font-weight: 800; font-size: 1.1rem; }
+  .narration { color: var(--navy-soft); font-size: 0.95rem; }
+  .line { margin: 10px 0; padding: 12px 14px; border-radius: 12px; background: #fdf1ee; font-size: 1.02rem; }
+  .line.me { background: var(--gold-soft); margin-left: 24px; }
+  .rel-change { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 10px; padding: 10px 12px; border-radius: 8px; background: var(--dusk); }
+
+  /* 경기 */
+  .match { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 16px; }
+  @media (max-width: 860px) { .match { grid-template-columns: 1fr; } }
+  .board { background: var(--board); color: var(--board-text); border-radius: 10px; padding: 10px 12px; font-variant-numeric: tabular-nums; }
+  .board table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  .board th, .board td { padding: 1px 3px; text-align: center; }
+  .board thead th { color: #b9b39c; font-weight: 500; font-size: 0.75rem; }
+  .board tbody th { text-align: left; white-space: nowrap; }
+  .board .r { color: var(--board-accent); font-weight: 800; }
+  .board .cur { outline: 1px solid var(--board-accent); outline-offset: -1px; }
+  .board .sit { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 8px; padding-top: 8px; border-top: 1px solid #34453a; }
+  .board .sit strong { color: var(--board-accent); }
+  .outs { display: inline-flex; gap: 3px; margin-left: 4px; vertical-align: -1px; }
+  .outs i { width: 11px; height: 11px; border-radius: 50%; border: 1px solid #6c7a70; }
+  .outs i.on { background: #e5534b; border-color: #e5534b; }
+  .diamond-wrap { margin-top: 10px; background: var(--paper); border: 1px solid var(--border); border-radius: 10px; padding: 8px; }
+  .diamond { display: block; width: 100%; max-width: 320px; margin: 0 auto; height: auto; }
+  .diamond-text { text-align: center; font-size: 0.9rem; margin-top: 4px; }
+  .cheer { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 0.88rem; padding: 8px 10px; border-radius: 8px; background: var(--dusk); }
+  .traits { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .trait { font-size: 0.8rem; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--navy-soft); }
+  .scene-no { font-size: 0.85rem; font-weight: 700; color: var(--gold); }
+  .outlook { font-size: 0.8rem; font-weight: 800; padding: 0 8px; border-radius: 999px; white-space: nowrap; }
+  .outlook.good { background: var(--grass-soft); color: #2d5b2a; }
+  .outlook.mid { background: #ece4cf; color: var(--navy); }
+  .outlook.bad { background: var(--warn-soft); color: var(--warn); }
+  .tactics { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+  @media (max-width: 520px) { .tactics { grid-template-columns: 1fr; } }
+  .result-name { font-size: 1.5rem; font-weight: 800; }
+  .factors { margin: 6px 0 0; padding-left: 18px; font-size: 0.92rem; }
+
+  /* 표 */
+  .compare { width: 100%; border-collapse: collapse; font-size: 0.92rem; font-variant-numeric: tabular-nums; }
+  .compare th, .compare td { padding: 4px 6px; border-bottom: 1px dashed var(--border); }
+  .compare th { text-align: left; font-weight: 500; }
+  .compare td { text-align: right; }
+  .compare td.text { text-align: left; }
+  .compare thead th { font-size: 0.8rem; color: var(--navy-soft); }
+  .stop { margin-top: 12px; padding: 12px; border-radius: 8px; border: 2px dashed var(--navy-soft); }
+  .career-head { display: flex; gap: 16px; align-items: flex-end; margin-bottom: 12px; }
+  .career { font-size: 1.6rem; font-weight: 800; }
+  .stats-line { display: flex; flex-wrap: wrap; gap: 6px 16px; font-variant-numeric: tabular-nums; }
+  .memories { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .memories li { display: grid; grid-template-columns: 44px 1fr; gap: 10px; align-items: center; }
+
+  /* ---------- 상태창 ---------- */
+  .overlay { position: fixed; inset: 0; background: rgba(31,45,77,0.45); display: grid; place-items: center; padding: 16px; z-index: 10; }
+  .overlay[hidden] { display: none; }
+  .status {
+    width: min(960px, 100%); max-height: calc(100vh - 32px); overflow: auto;
+    background: var(--cream); border-radius: 14px; border: 1px solid var(--border);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+  }
+  .status-head { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: var(--paper); border-bottom: 1px solid var(--border); }
+  .status-head h2 { font-size: 1.1rem; }
+  .status-head h2:focus { outline: none; }
+  .status-head .muted { margin-left: 4px; }
+  .status-head .close { margin-left: auto; }
+  .status-body { display: grid; grid-template-columns: 220px 1fr; gap: 16px; padding: 16px; }
+  .profile .portrait { max-width: 220px; margin: 0 auto 10px; }
+  .profile .name { font-size: 1.15rem; font-weight: 800; }
+  .profile dl { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; margin: 8px 0 0; font-size: 0.9rem; }
+  .profile dt { color: var(--navy-soft); }
+  .profile dd { margin: 0; }
+  .status-tabs { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px; }
+  .status-tabs button { min-height: 38px; padding: 4px 12px; border-color: var(--border); }
+  .status-tabs button[aria-pressed="true"] { border-color: var(--navy); background: var(--navy); color: var(--paper); }
+  .ability-list { display: grid; gap: 6px; }
+  .ability-row { display: grid; grid-template-columns: 4.5em 1.6em 1fr 2.4em; gap: 8px; align-items: center; font-size: 0.92rem; }
+  .ability-row .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 640px) { .two { grid-template-columns: 1fr; } }
+  .two .panel + .panel { margin-top: 0; }
+  .seg { display: inline-flex; border: 2px solid var(--navy); border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+  .seg button { border: 0; border-radius: 0; min-height: 34px; padding: 2px 12px; font-size: 0.88rem; }
+  .seg button[aria-pressed="true"] { background: var(--navy); color: var(--paper); }
+  .cause { font-size: 0.8rem; color: var(--navy-soft); }
+  .people-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+  .person { display: grid; grid-template-columns: 72px 1fr; gap: 10px; align-items: end; }
+  .person .portrait { width: 72px; }
+  .person .ph-label { display: none; }
+
+  /* ---------- 에셋 슬롯 (시안 도구) ---------- */
+  .asset-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+  .asset-grid.portraits { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+  .asset { display: grid; gap: 6px; align-content: start; }
+  .asset .portrait { max-width: 150px; margin: 0 auto; }
+  .asset .title { font-weight: 700; font-size: 0.92rem; }
+  .asset .meta { font-size: 0.78rem; color: var(--navy-soft); }
+  .file-btn { display: inline-flex; align-items: center; min-height: 36px; padding: 4px 10px; font-size: 0.85rem; border: 2px solid var(--navy); border-radius: 8px; background: var(--paper); cursor: pointer; }
+  .file-btn:focus-within { outline: 3px solid var(--focus); outline-offset: 2px; }
+  .asset .row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .count { font-weight: 700; }
+
+  /* 모바일 */
+  @media (max-width: 760px) {
+    .body { grid-template-columns: 1fr; padding: 12px; min-height: 0; }
+    .topbar .who, .save-state { display: none; }
+    .app[data-layout="three"] .side { display: none; }
+    /* 경기: 전광판은 합계만, 야구장은 옆에 작게 두어 작전 선택을 첫 화면에 보이게 한다 */
+    .match > div:first-child { display: grid; grid-template-columns: minmax(0, 1fr) 150px; gap: 8px; align-items: start; }
+    .board tbody td:not(.r), .board thead th:not(:first-child):not(:last-child) { display: none; }
+    .board .sit { flex-direction: column; gap: 2px; }
+    .diamond-wrap { margin-top: 0; padding: 4px; }
+    .diamond-text { font-size: 0.78rem; }
+    .cheer { grid-column: 1 / -1; margin-top: 0; }
+    .match .panel { padding: 10px 12px; }
+    .match .panel + .panel { margin-top: 8px; }
+    .bg-slot.banner { aspect-ratio: 16 / 6; }
+    .portrait.md { width: 88px; }
+    /* 상태창은 전체 화면으로 */
+    .overlay { padding: 0; }
+    .status { width: 100%; height: 100%; max-height: none; border-radius: 0; }
+    .status-head > .muted { display: none; }
+    .status-head h2 { white-space: nowrap; }
+    .status-body { grid-template-columns: 1fr; padding: 12px; }
+    .profile { display: grid; grid-template-columns: 96px 1fr; gap: 12px; align-items: end; }
+    .profile .portrait { margin: 0; }
+  }
+</style>
+</head>
+<body>
+
+<header class="kit" aria-label="시안 안내">
+  <h1>마지막 여름 — UI 예시 화면</h1>
+  <p class="note">UI 기획안의 화면을 옮긴 정적 시안입니다. 이름·수치·대사는 임시 값이며 게임 규칙과 연결되지 않았습니다. 점선 틀은 그림이 들어갈 자리이며, ‘에셋 슬롯’에서 내 컴퓨터의 이미지를 넣어 미리 볼 수 있습니다(저장되지 않음). 예시 상황은 1학년 3월 4주차(토요일 연습경기)이고, 활동 수치는 활동표 예시를 따릅니다. 미연시는 보류되어 넣지 않았습니다.</p>
+  <div class="kit-row" id="screen-nav"><span class="label">화면</span></div>
+  <div class="kit-row" id="role-nav"><span class="label">역할</span></div>
+</header>
+
+<div class="app" id="app" data-layout="full">
+  <div class="topbar">
+    <span class="brand">마지막 여름</span>
+    <span class="date" id="top-date"></span>
+    <span class="who" id="top-who"></span>
+    <span class="right">
+      <span class="save-state">자동 저장됨</span>
+      <button type="button" class="small" id="status-open" data-action="open-status">상태창</button>
+    </span>
+  </div>
+  <div class="body">
+    <aside class="side side-left" aria-label="선수 요약" id="side-left"></aside>
+    <main class="center" id="center"></main>
+    <aside class="side side-right" aria-label="관계와 이번 달" id="side-right"></aside>
+  </div>
+</div>
+
+<div class="overlay" id="overlay" hidden></div>
+
+<script>
+  // ---------- 임시 콘텐츠 ----------
+  const NAME = "김야구";
+  const LIFE = [
+    { name: "체력", start: 80, now: 62, end: 28, good: true, week: "평일 −20 · 사건 −4 · 경기 −2 · 주말 −8" },
+    { name: "스트레스", start: 20, now: 26, end: 21, good: false, week: "평일 +6 · 경기 뒤 −6 · 주말 −5" },
+    { name: "학업", start: 50, now: 53, end: 53, good: true, week: "변화 없음" },
+    { name: "감독 신뢰", start: 30, now: 32, end: 36, good: true, week: "연습경기 +4" },
+  ];
+  // 미연시는 보류. 현재 관계는 감독 평가와 라이벌·동료 포수의 친밀도만 다룬다.
+  const PEOPLE = [
+    { id: "coach", initial: "감", name: "감독", stage: "지켜보는 중", close: "▲", last: "4주 토요일 · 연습경기 평가" },
+    { id: "rival", initial: "라", name: "라이벌", stage: "경쟁 상대", close: "▲", last: "4주 평일 · 라이벌의 도발" },
+    { id: "catcher", initial: "포", name: "동료 포수", stage: "호흡을 맞추는 중", close: "▲", last: "4주 일요일 · 하천 둔치 캐치볼" },
+  ];
+  // 활동 수치는 docs/superpowers/specs/2026-09-30-activity-examples.md 의 초기값
+  const COMMON_WEEKDAY = [
+    { id: "study", name: "학교 공부", fx: [["학업", 5], ["체력", -6], ["스트레스", 8]], desc: "시험과 진학 준비." },
+    { id: "rest", name: "휴식", fx: [["체력", 30], ["스트레스", -15]], desc: "과훈련을 끊거나 경기 전 컨디션을 챙깁니다." },
+  ];
+  const WEEKEND = [
+    { id: "rest", name: "휴식", fx: [["체력", 22], ["스트레스", -12]], desc: "집에서 푹 쉽니다." },
+    { id: "out", name: "혼자 외출", fx: [["체력", 8], ["스트레스", -16]], desc: "동네 산책이나 서점 구경." },
+    { id: "practice", name: "개인 연습", fx: [["main", 1], ["체력", -10], ["스트레스", 4]], desc: "짧게 약점을 보완합니다." },
+    { id: "self", name: "자습", fx: [["학업", 3], ["체력", -4], ["스트레스", 3]], desc: "혼자 과제와 시험공부." },
+    { id: "mates", name: "동료 교류", fx: [["수비", 1], ["친밀도", 3], ["체력", -8], ["스트레스", -5]], desc: "야구부 동료와 가볍게 캐치볼. 상대를 고릅니다." },
+  ];
+  const MEET = [
+    { id: "catcher", place: "하천 둔치 캐치볼", bg: "riverside", tag: "경기 뒤 이야기" },
+    { id: "rival", disabled: "이번 주말에는 가족 행사로 만날 수 없습니다." },
+  ];
+
+  // ---------- 에셋 목록 ----------
+  // 실제 게임에서는 content 영역의 데이터가 된다. 파일이 없으면 화면은 임시 모양으로 대신한다.
+  const ASSETS = {
+    bg: {
+      school_gate: { name: "학교 정문 · 봄", mood: "day", used: "시작 화면, 첫 달 끝" },
+      school_field: { name: "학교 운동장 · 평일 오후", mood: "day", used: "평일 활동" },
+      batting_cage: { name: "타격 연습장", mood: "indoor", used: "학교 사건(타자)" },
+      bullpen: { name: "불펜", mood: "day", used: "학교 사건(투수)" },
+      town: { name: "동네 거리 · 일요일", mood: "dusk", used: "주말 활동" },
+      riverside: { name: "하천 둔치 · 일요일 오후", mood: "dusk", used: "동료 교류(캐치볼)" },
+    },
+    portrait: {
+      hero_batter: { name: "주인공 · 타자", exprs: ["default"], used: "선수 생성, 상태창, 졸업" },
+      hero_pitcher: { name: "주인공 · 투수", exprs: ["default"], used: "선수 생성, 상태창, 졸업" },
+      coach: { name: "감독", exprs: ["default"], used: "상태창 관계" },
+      rival: { name: "라이벌", exprs: ["default"], used: "학교 사건, 상태창 관계" },
+      catcher: { name: "동료 포수", exprs: ["default", "smile"], used: "경기 응원, 동료 교류, 상태창 관계" },
+    },
+  };
+  const EXPR = { default: "기본", smile: "웃음" };
+  const uploads = {}; // "bg:id" | "portrait:id:expr" | "face:id" → 이 창에서만 쓰는 임시 주소
+  const SILHOUETTE = `<svg viewBox="0 0 120 150" aria-hidden="true"><circle cx="60" cy="52" r="28" fill="rgba(31,45,77,0.14)"/><path d="M10 150 C12 108 34 92 60 92 C86 92 108 108 110 150 Z" fill="rgba(31,45,77,0.14)"/></svg>`;
+
+  const ROLES = {
+    batter: {
+      label: "타자", hero: "hero_batter",
+      abilities: [["컨택", 38, 44], ["파워", 32, 34], ["선구안", 35, 38], ["주루", 40, 43], ["수비", 36, 39], ["멘탈", 30, 32]],
+      weekAbility: [["컨택", 5, "평일 +3 · 사건 +2"], ["선구안", 1, "평일 +1"], ["수비", 1, "주말 캐치볼 +1"]],
+      weekday: [
+        { id: "batting", name: "타격 훈련", fx: [["컨택", 3], ["선구안", 1], ["체력", -20], ["스트레스", 6]], desc: "정확하게 맞히기와 출루 능력 육성." },
+        { id: "weights", name: "웨이트", fx: [["파워", 3], ["체력", -24], ["스트레스", 8]], desc: "장타를 노리는 타자 육성." },
+        { id: "field", name: "주루·수비 훈련", fx: [["주루", 2], ["수비", 2], ["체력", -18], ["스트레스", 4]], desc: "공격과 수비에서 팀에 기여." },
+        { id: "tactics", name: "전술 공부", fx: [["선구안", 2], ["멘탈", 1], ["체력", -8], ["스트레스", 2]], desc: "몸의 부담을 줄이며 경기 판단 준비." },
+      ],
+      history: [["타격 훈련", "혼자 외출"], ["전술 공부", "휴식"], ["주루·수비 훈련", "개인 연습"]],
+      recap: "주루·수비 훈련 — 주루 ▲2 · 수비 ▲2 · 체력 ▼18 / 주말 개인 연습 — 컨택 ▲1",
+      eventBg: "batting_cage",
+      tactics: "타격 작전",
+      records: "타수·안타·홈런·타점",
+      rivalScene: "타격 연습장에서 라이벌이 먼저 배팅 케이지에 들어섰다.",
+      rivalLine: "토요일 연습경기, 1학년 중에 타석에 서는 건 한 명뿐일 거야.",
+      match: {
+        inning: "7회말", scene: "중요 승부 2/3",
+        away: [0, 1, 0, 0, 2, 0, 0], home: [0, 0, 1, 0, 0, 1, 0], homeAfter: [0, 0, 1, 0, 0, 1, 1],
+        curTeam: "home", outs: 2, runners: { 1: "mate", 2: "mate" }, meAt: "bat",
+        situation: "2사 1루·2루",
+        opponentTitle: "상대 투수 · 3학년 우완",
+        traits: ["구위 강함", "제구 불안", "변화구 적음"],
+        options: [
+          { name: "정확하게 맞히기", outlook: "mid", reason: "컨택 E로 맞힐 수 있지만 상대 공이 묵직합니다." },
+          { name: "장타 노리기", outlook: "bad", reason: "파워 F로는 상대 구위를 이겨내기 어렵습니다." },
+          { name: "공 골라내기", outlook: "good", reason: "상대 제구가 불안해 볼넷으로 만루를 만들 수 있습니다." },
+          { name: "희생번트", disabled: "2사라 희생번트를 할 수 없습니다." },
+        ],
+        result: {
+          chose: "정확하게 맞히기", name: "우중간 안타",
+          text: "2루 주자 득점, 1루 주자 3루로, 나는 1루로",
+          runnersAfter: { 1: "me", 3: "mate" }, outsAfter: 2,
+          moves: [[2, 4], [1, 3], [0, 1]], hit: [150, 22],
+          factors: ["작전: 정확하게 맞히기 — 안타 가능성 중심", "컨택 E — 보통", "상대 구위 강함 — 불리", "체력 42 — 약간 불리"],
+          record: "이번 경기 3타수 2안타 1타점",
+          extra: null,
+          scoreText: "우리 고교 3 : 3 상대 고교",
+        },
+      },
+      gameLine: "연습경기 4 : 3 승 · 4타수 2안타 1타점",
+      season: [["경기", 1], ["타수", 4], ["안타", 2], ["홈런", 0], ["타점", 1], ["볼넷", 0]],
+      coach: "“찬스에서 무리하지 않고 맞혀낸 게 좋았다.”",
+      skillHint: "찬스 강자 — 득점권에서 좋은 결과를 쌓으면 열립니다(예시).",
+      mateLine: "7회 적시타, 벤치에서 소리 질렀다. 초구부터 노린 거야?",
+      cheer: "벤치: 동료 포수가 주먹을 쥐어 보인다.",
+      ending: {
+        career: "대학 야구", place: "대학 야구부 진학",
+        reasons: ["컨택 B·선구안 C로 대학 스카우트 평가 ‘상위’", "3학년 여름 대회 타율 0.389", "학업 64로 진학 기준 충족"],
+        record: [["타수", 212], ["안타", 68], ["홈런", 7], ["타점", 41]],
+      },
+    },
+    pitcher: {
+      label: "투수", hero: "hero_pitcher",
+      abilities: [["구속", 36, 39], ["제구", 32, 36], ["변화구", 30, 33], ["지구력", 41, 44], ["수비", 33, 35], ["멘탈", 30, 33]],
+      weekAbility: [["변화구", 3, "평일 +3"], ["구속", 2, "사건 +2"], ["수비", 1, "주말 캐치볼 +1"]],
+      // 첫 항목이 예시 회차에서 4주차에 고른 활동이다.
+      weekday: [
+        { id: "breaking", name: "변화구 훈련", fx: [["변화구", 3], ["체력", -20], ["스트레스", 6]], desc: "상대에 맞는 승부 선택 확대." },
+        { id: "velo", name: "구속 훈련", fx: [["구속", 3], ["체력", -22], ["스트레스", 7]], desc: "직구 중심 승부 강화." },
+        { id: "control", name: "제구 훈련", fx: [["제구", 3], ["체력", -18], ["스트레스", 5]], desc: "볼넷과 실투 부담 완화." },
+        { id: "stamina", name: "지구력·수비 훈련", fx: [["지구력", 2], ["수비", 1], ["체력", -18], ["스트레스", 4]], desc: "투구 부담에 버티는 능력과 수비 육성." },
+        { id: "tactics", name: "전술 공부", fx: [["제구", 1], ["멘탈", 2], ["체력", -8], ["스트레스", 2]], desc: "몸의 부담을 줄이며 경기 판단 준비." },
+      ],
+      history: [["제구 훈련", "자습"], ["구속 훈련", "휴식"], ["지구력·수비 훈련", "개인 연습"]],
+      recap: "지구력·수비 훈련 — 지구력 ▲2 · 수비 ▲1 · 체력 ▼18 / 주말 개인 연습 — 구속 ▲1",
+      eventBg: "bullpen",
+      tactics: "투구 작전",
+      records: "잡은 아웃·탈삼진·볼넷·피안타·실점",
+      rivalScene: "불펜에서 라이벌이 포수 미트를 울리는 소리가 들린다.",
+      rivalLine: "토요일 연습경기 선발은 내가 맡을 거야. 공 끝부터 비교해 볼래?",
+      match: {
+        inning: "6회초", scene: "중요 승부 3/3",
+        away: [0, 1, 0, 0, 1, 0], home: [0, 2, 0, 1, 0], awayAfter: [0, 1, 0, 0, 1, 1],
+        curTeam: "away", outs: 1, runners: { 1: "mate", 3: "mate" }, meAt: "mound",
+        situation: "1사 1루·3루",
+        opponentTitle: "상대 타자 · 4번 우타",
+        traits: ["장타력 높음", "변화구에 약함", "선구안 보통"],
+        load: 62, loadLimit: 80,
+        options: [
+          { name: "직구로 승부", outlook: "bad", reason: "구속 E로는 4번 타자에게 장타를 맞을 위험이 큽니다.", cost: 10 },
+          { name: "변화구로 유도", outlook: "mid", reason: "상대가 변화구에 약하지만 변화구 F라 실투 위험이 있습니다.", cost: 8 },
+          { name: "맞혀 잡기", outlook: "good", reason: "내야 수비가 안정적이라 땅볼로 아웃을 노리기 좋습니다.", cost: 5 },
+          { name: "유인구 위주", outlook: "mid", reason: "장타는 피하지만 볼넷이면 만루가 됩니다.", cost: 9 },
+        ],
+        result: {
+          chose: "맞혀 잡기", name: "2루 땅볼",
+          text: "타자 아웃, 3루 주자 득점, 1루 주자 2루로",
+          runnersAfter: { 2: "mate" }, outsAfter: 2,
+          moves: [[3, 4], [1, 2]], hit: [128, 70],
+          factors: ["작전: 맞혀 잡기 — 아웃 가능성 중심", "제구 F — 불리", "팀 내야 수비 안정 — 유리", "투구 부담 62 — 영향 적음"],
+          record: "이번 경기 5⅔이닝(아웃 17개) · 탈삼진 5 · 볼넷 2 · 피안타 6 · 실점 3",
+          extra: "투구 부담 62 → 67 · 교체 기준 80까지 13 남음",
+          scoreText: "상대 고교 3 : 3 우리 고교",
+        },
+      },
+      gameLine: "연습경기 4 : 5 패 · 6이닝(아웃 18개) 탈삼진 5 실점 3",
+      season: [["경기", 1], ["잡은 아웃", "18 (6이닝)"], ["탈삼진", 5], ["볼넷", 2], ["피안타", 6], ["실점", 3]],
+      coach: "“위기에서 도망가지 않았다. 다음엔 7회까지 맡겨보마.”",
+      skillHint: "찬스 강자 — 실점 위기에서 좋은 결과를 쌓으면 열립니다(예시).",
+      mateLine: "6회 1사 1·3루, 맞혀 잡자는 내 사인 받아줘서 고마웠어. 그때 떨렸지?",
+      cheer: "포수석: 동료 포수가 미트를 두드리며 낮게 던지라고 신호한다.",
+      ending: {
+        career: "대학 야구", place: "대학 야구부 진학",
+        reasons: ["제구 B·지구력 B로 대학 스카우트 평가 ‘상위’", "3학년 여름 대회 29이닝 4실점", "학업 64로 진학 기준 충족"],
+        record: [["잡은 아웃", "402 (134이닝)"], ["탈삼진", 118], ["볼넷", 47], ["실점", 52]],
+      },
+    },
+  };
+
+  const STEPS = ["평일", "학교 사건", "토요일 경기", "일요일 주말"];
+  const SCREENS = [
+    { id: "start", label: "1 시작", layout: "full", date: "" },
+    { id: "create", label: "2 선수 생성", layout: "full", date: "" },
+    { id: "weekday", label: "3 평일 활동", layout: "three", date: "1학년 3월 4주차 · 평일" },
+    { id: "event", label: "4 학교 사건", layout: "three", date: "1학년 3월 4주차 · 평일" },
+    { id: "match", label: "5 경기 · 선택", layout: "match", date: "1학년 3월 4주차 · 토요일 연습경기" },
+    { id: "result", label: "6 경기 · 결과", layout: "match", date: "1학년 3월 4주차 · 토요일 연습경기" },
+    { id: "weekend", label: "7 주말 활동", layout: "three", mood: "weekend", date: "1학년 3월 4주차 · 일요일" },
+    { id: "talk", label: "8 동료 교류", layout: "scene", mood: "weekend", date: "1학년 3월 4주차 · 일요일" },
+    { id: "monthEnd", label: "9 첫 달 끝", layout: "full", date: "1학년 3월 → 4월" },
+    { id: "ending", label: "10 졸업", layout: "full", date: "3학년 2월 · 졸업" },
+    { id: "assets", label: "에셋 슬롯", layout: "full", wide: true, date: "시안 도구" },
+  ];
+
+  // ---------- 화면 상태 (시안 전용) ----------
+  const view = {
+    screen: "start", role: "batter",
+    confirmNew: false, createRole: "batter", createName: NAME,
+    weekday: "batting", eventChoice: null, weekend: "mates", meet: "catcher", talkChoice: null,
+    statusOpen: false, statusTab: "ability", changeRange: "week", statusOpener: null,
+  };
+
+  // ---------- 도우미 ----------
+  function grade(v) {
+    return [[90, "S"], [80, "A"], [70, "B"], [60, "C"], [50, "D"], [40, "E"], [20, "F"]].find(([m]) => v >= m)?.[1] ?? "G";
+  }
+  function delta(d, good = true) {
+    if (!d) return `<span class="muted">±0</span>`;
+    const better = good ? d > 0 : d < 0;
+    return `<span class="${better ? "up" : "down"}">${d > 0 ? "▲" : "▼"}${Math.abs(d)}</span>`;
+  }
+  const role = () => ROLES[view.role];
+  const mainStat = () => role().abilities[0][0];
+  const person = (id) => PEOPLE.find((p) => p.id === id);
+  function chips(fx) {
+    return `<span class="chips">${fx.map(([k, v]) => {
+      const key = k === "main" ? mainStat() : k;
+      const good = key === "스트레스" ? v < 0 : v > 0;
+      return `<span class="chip${good ? "" : " cost"}">${key} ${v > 0 ? "+" : ""}${v}</span>`;
+    }).join("")}</span>`;
+  }
+  function stepsBar(current) {
+    return `<ol class="steps" aria-label="이번 주 진행">${STEPS.map((s, i) => {
+      const cls = i < current ? "done" : i === current ? "now" : "";
+      const state = i < current ? " ✓" : i === current ? " · 지금" : "";
+      return `<li class="${cls}"${i === current ? ' aria-current="step"' : ""}>${s}${state}</li>`;
+    }).join("")}</ol>`;
+  }
+  function relLine(p) {
+    return `${p.stage} · 친밀도 ${p.close}`;
+  }
+  // 효과 목록을 “컨택 ▲3 · 체력 ▼20” 형태의 글로 바꾼다.
+  function fxText(fx) {
+    return fx.map(([k, v]) => `${k === "main" ? mainStat() : k} ${v > 0 ? "▲" : "▼"}${Math.abs(v)}`).join(" · ");
+  }
+
+  // ---------- 에셋 그리기 ----------
+  function bgSlot(id, { banner = false, fill = false, caption = "" } = {}) {
+    const a = ASSETS.bg[id], url = uploads[`bg:${id}`];
+    const cls = ["bg-slot", banner ? "banner" : "", fill ? "fill" : "", url ? "" : "ph"].join(" ");
+    return `<div class="${cls}" data-mood="${a.mood}" aria-hidden="true">
+      ${url ? `<img src="${url}" alt="">` : `<span class="ph-label">배경 · ${a.name} · 16:9</span>`}
+      ${caption ? `<span class="banner-caption">${caption}</span>` : ""}
+    </div>`;
+  }
+  function portrait(id, expr = "default", size = "") {
+    const p = ASSETS.portrait[id];
+    const url = uploads[`portrait:${id}:${expr}`] ?? uploads[`portrait:${id}:default`];
+    return `<div class="portrait ${size} ${url ? "" : "ph"}" aria-hidden="true">
+      ${url ? `<img src="${url}" alt="">` : `${SILHOUETTE}<span class="ph-label">${p.name} · ${EXPR[expr]}</span>`}
+    </div>`;
+  }
+  function face(id, size = "") {
+    const p = person(id) ?? { initial: "나" };
+    const url = uploads[`face:${id}`], purl = uploads[`portrait:${id}:default`];
+    if (url) return `<span class="avatar ${size}" aria-hidden="true"><img src="${url}" alt=""></span>`;
+    if (purl) return `<span class="avatar crop ${size}" aria-hidden="true" style="background-image:url('${purl}')"></span>`;
+    return `<span class="avatar ${size}" aria-hidden="true">${p.initial}</span>`;
+  }
+
+  // ---------- 보조 영역 ----------
+  function sideLeft() {
+    const r = role();
+    const meter = (l, bad = false) => `<div class="meter"><span>${l.name}</span><span class="bar${bad ? " bad" : ""}"><span style="width:${l.now}%"></span></span><span class="num">${l.now}</span></div>`;
+    return `
+      <section class="panel">
+        <div style="display:flex; gap:10px; align-items:end; margin-bottom:10px">
+          ${portrait(r.hero, "default", "sm")}
+          <div><h3 style="margin:0">${NAME}</h3><span class="muted">1학년 ${r.label}</span></div>
+        </div>
+        ${meter(LIFE[0])}${meter(LIFE[1], true)}${meter(LIFE[2])}${meter(LIFE[3])}
+        <button type="button" class="small gap-top" data-action="open-status" style="width:100%">상태창 열기</button>
+      </section>`;
+  }
+  function sideRight() {
+    const r = role();
+    return `
+      <section class="panel">
+        <h3>관계</h3>
+        <ul class="people">${PEOPLE.map((p) => `
+          <li>${face(p.id)}<span>${p.name}<br><span class="sub">${relLine(p)}</span></span></li>`).join("")}
+        </ul>
+      </section>
+      <section class="panel">
+        <h3>이번 달</h3>
+        <ul class="cal">
+          ${r.history.map(([wd, we], i) => `<li><span class="wk">${i + 1}주</span><span>${wd} · ${we}</span></li>`).join("")}
+          <li class="now"><span class="wk">4주</span><span>평일 → <strong>토 연습경기</strong> → 일 자유</span></li>
+        </ul>
+      </section>`;
+  }
+
+  // ---------- 경기 그림 ----------
+  const BASE = { 0: [100, 150], 1: [160, 90], 2: [100, 30], 3: [40, 90], 4: [100, 150] };
+  function diamond({ runners, meAt, moves = [], hit = null, label, showBatter = true }) {
+    const marker = (x, y, who) => who === "me"
+      ? `<circle cx="${x}" cy="${y}" r="10" fill="var(--gold)" stroke="var(--navy)" stroke-width="2"/><text x="${x}" y="${y + 4}" text-anchor="middle" font-size="11" font-weight="800" fill="var(--navy)">나</text>`
+      : `<circle cx="${x}" cy="${y}" r="8" fill="var(--navy)" stroke="var(--line)" stroke-width="2"/>`;
+    const bags = [1, 2, 3].map((b) => {
+      const [x, y] = BASE[b];
+      return `<rect x="${x - 6}" y="${y - 6}" width="12" height="12" transform="rotate(45 ${x} ${y})" fill="var(--line)" stroke="var(--navy)"/>`;
+    }).join("");
+    const runnerMarks = Object.entries(runners).map(([b, who]) => marker(BASE[b][0], BASE[b][1] - 15, who)).join("");
+    const moveLines = moves.map(([from, to]) => {
+      const pts = [];
+      for (let b = from; b <= to; b++) pts.push(BASE[b].join(","));
+      return `<polyline points="${pts.join(" ")}" fill="none" stroke="var(--gold)" stroke-width="3" stroke-dasharray="5 4" marker-end="url(#arrow)"/>`;
+    }).join("");
+    const hitLine = hit ? `<line x1="100" y1="148" x2="${hit[0]}" y2="${hit[1]}" stroke="var(--line)" stroke-width="2" stroke-dasharray="3 3"/><circle cx="${hit[0]}" cy="${hit[1]}" r="4" fill="var(--line)" stroke="var(--navy)"/>` : "";
+    const me = meAt === "mound" ? marker(100, 92, "me") : meAt === "bat" ? marker(84, 150, "me") : "";
+    const opp = meAt === "mound" && showBatter ? `<circle cx="84" cy="150" r="7" fill="#8a8f99" stroke="var(--line)" stroke-width="2"/>` : "";
+    return `
+      <svg class="diamond" viewBox="0 0 200 172" role="img" aria-label="${label}">
+        <defs><marker id="arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="var(--gold)"/></marker></defs>
+        <rect x="0" y="0" width="200" height="172" rx="10" fill="var(--grass)"/>
+        <polygon points="100,168 182,90 100,8 18,90" fill="var(--dirt)"/>
+        <polygon points="100,138 148,90 100,42 52,90" fill="var(--grass-infield)"/>
+        <circle cx="100" cy="93" r="9" fill="var(--dirt)"/>
+        <circle cx="100" cy="150" r="14" fill="var(--dirt)"/>
+        <path d="M95 147 H105 V151 L100 155 L95 151 Z" fill="var(--line)"/>
+        ${hitLine}${bags}${moveLines}${runnerMarks}${me}${opp}
+      </svg>`;
+  }
+  function runnerText(runners) {
+    const list = Object.entries(runners).map(([b, who]) => `${b}루${who === "me" ? "(나)" : ""}`);
+    if (list.length === 0) return "주자 없음";
+    if (list.length === 3) return "만루";
+    return list.join("·") + " 주자";
+  }
+  function board(m, after) {
+    const away = after && m.awayAfter ? m.awayAfter : m.away;
+    const home = after && m.homeAfter ? m.homeAfter : m.home;
+    const inningNo = parseInt(m.inning, 10);
+    const row = (key, name, runs) => `<tr><th scope="row">${name}</th>${Array.from({ length: 9 }, (_, i) => {
+      const isCur = key === m.curTeam && i + 1 === inningNo;
+      return `<td${isCur ? ' class="cur"' : ""}>${runs[i] ?? ""}</td>`;
+    }).join("")}<td class="r">${runs.reduce((a, b) => a + b, 0)}</td></tr>`;
+    const outs = after ? m.result.outsAfter : m.outs;
+    const runners = after ? m.result.runnersAfter : m.runners;
+    return `
+      <section class="board" aria-label="전광판">
+        <table>
+          <thead><tr><th><span class="visually-hidden">팀</span></th>${Array.from({ length: 9 }, (_, i) => `<th scope="col">${i + 1}</th>`).join("")}<th scope="col">계</th></tr></thead>
+          <tbody>${row("away", "상대 고교", away)}${row("home", "우리 고교", home)}</tbody>
+        </table>
+        <div class="sit">
+          <span><strong>${m.inning}</strong></span>
+          <span>${outs === 0 ? "무사" : outs + "사"}<span class="outs" aria-hidden="true">${[0, 1].map((i) => `<i class="${i < outs ? "on" : ""}"></i>`).join("")}</span></span>
+          <span>${runnerText(runners)}</span>
+        </div>
+      </section>`;
+  }
+
+  // ---------- 화면 ----------
+  const screens = {
+    start() {
+      return `
+        <div class="hero">
+          ${bgSlot("school_gate")}
+          <div class="title-block">
+            <h2 class="screen-title logo" tabindex="-1">마지막 여름</h2>
+            <p class="tag">한 명의 야구 선수로 보내는 3년의 고교생활</p>
+          </div>
+        </div>
+        <section class="panel">
+          <h3>저장된 기록</h3>
+          <p>${role().label} · ${NAME} · 1학년 3월 4주차 · 평일 활동 고르는 중</p>
+          <p class="muted">마지막 저장: 오늘 21:14</p>
+          <div class="actions">
+            <button type="button" class="primary" data-go="weekday">이어서 하기</button>
+            <button type="button" data-action="new-game">새 게임</button>
+          </div>
+          ${view.confirmNew ? `
+            <div class="confirm-box" role="alertdialog" aria-labelledby="confirm-title">
+              <p id="confirm-title"><strong>기존 저장을 덮어씁니다.</strong> ${NAME}의 1학년 3월 기록이 사라집니다. 계속할까요?</p>
+              <div class="actions">
+                <button type="button" class="primary" data-go="create">새 게임 시작</button>
+                <button type="button" data-action="cancel-new">취소</button>
+              </div>
+            </div>` : ""}
+        </section>
+        <section class="panel">
+          <h3>저장 상태 예시</h3>
+          <ul class="notes">
+            <li class="risk"><strong>주의</strong>저장 데이터를 읽을 수 없습니다(지원하지 않는 버전). 데이터는 지우지 않았으며 이어서 하기를 사용할 수 없습니다.</li>
+            <li><strong>안내</strong>이 브라우저에서는 저장할 수 없어 이번 플레이는 저장되지 않습니다. 새 게임은 할 수 있습니다.</li>
+          </ul>
+        </section>`;
+    },
+
+    create() {
+      const valid = view.createName.trim().length >= 1;
+      const roleCard = (id) => {
+        const r = ROLES[id];
+        return `
+          <button type="button" class="card role-card" aria-pressed="${view.createRole === id}" data-action="pick-role" data-role="${id}">
+            ${portrait(r.hero, "default", "sm")}
+            <span>
+              <span class="name">${r.label}</span>
+              <dl>
+                <dt>능력</dt><dd>${r.abilities.map((a) => a[0]).join(" · ")}</dd>
+                <dt>경기에서</dt><dd>${r.tactics}을 고릅니다.</dd>
+                <dt>기록</dt><dd>${r.records}</dd>
+              </dl>
+            </span>
+          </button>`;
+      };
+      return `
+        <h2 class="screen-title" tabindex="-1">선수 만들기</h2>
+        <p class="lead">3월, 입학식 날입니다. 이름과 역할을 정하세요.</p>
+        <section class="panel">
+          <label class="field-label" for="player-name">이름 <span class="muted">(1~8자)</span></label>
+          <input type="text" id="player-name" maxlength="8" value="${view.createName}" autocomplete="off">
+        </section>
+        <section class="panel">
+          <h3 id="role-title">역할</h3>
+          <div class="roles" role="group" aria-labelledby="role-title">${roleCard("batter")}${roleCard("pitcher")}</div>
+          <p class="muted gap-top">역할은 입학 후 바꿀 수 없습니다.</p>
+        </section>
+        <div class="actions">
+          <button type="button" class="primary" data-go="weekday" ${valid ? "" : "disabled"}>입학하기</button>
+          <span class="reason" id="create-reason">${valid ? "" : "이름을 1~8자로 입력해야 합니다."}</span>
+        </div>`;
+    },
+
+    weekday() {
+      const r = role();
+      const all = [...r.weekday, ...COMMON_WEEKDAY];
+      const picked = all.find((a) => a.id === view.weekday);
+      const stamina = LIFE[0].now, stress = LIFE[1].now;
+      let notes = `<li><strong>안내</strong>평일 활동을 고르면 예상 변화가 여기에 나옵니다.</li>`;
+      if (picked) {
+        const fx = Object.fromEntries(picked.fx);
+        const st = Math.min(100, stamina + (fx["체력"] ?? 0));
+        const ss = Math.max(0, stress + (fx["스트레스"] ?? 0));
+        notes = `<li><strong>안내</strong>${picked.name}: 토요일 경기 전 예상 체력 ${st}, 스트레스 ${ss}</li>`;
+        if (st < 45) notes += `<li class="risk"><strong>주의</strong>경기 전 체력이 45 아래라 토요일 승부 전망이 한 단계 나빠질 수 있습니다.</li>`;
+      }
+      return `
+        ${bgSlot("school_field", { banner: true, caption: "평일" })}
+        ${stepsBar(0)}
+        <p class="recap"><span class="k">지난 주</span><span>${r.recap}</span><button type="button" class="link-btn" data-action="open-status" data-tab="change">상태창에서 보기</button></p>
+        <h2 class="screen-title" tabindex="-1">이번 주 평일 활동</h2>
+        <p class="lead">이번 주 토요일에 <strong>연습경기</strong>가 있습니다. 현재 체력 ${stamina}, 스트레스 ${stress}.</p>
+        <section class="panel">
+          <h3>평일 활동 <span class="muted">· ${r.label} ${all.length}종</span></h3>
+          <div class="cards">${all.map((a) => `
+            <button type="button" class="card" data-action="pick-weekday" data-id="${a.id}" aria-pressed="${view.weekday === a.id}">
+              <span class="name">${a.name}</span>${chips(a.fx)}<span class="desc">${a.desc}</span>
+            </button>`).join("")}
+          </div>
+        </section>
+        <section class="panel">
+          <h3>선택 전 확인</h3>
+          <ul class="notes" aria-live="polite">${notes}</ul>
+          <div class="actions">
+            <button type="button" class="primary" data-go="event" ${picked ? "" : "disabled"}>이번 주 시작</button>
+            <span class="reason">${picked ? "시작하면 이번 주 평일 활동은 바꿀 수 없습니다." : "활동을 하나 골라야 합니다."}</span>
+          </div>
+        </section>`;
+    },
+
+    event() {
+      const r = role();
+      const choices = [
+        { name: "같은 훈련으로 맞붙는다", hint: `${mainStat()} 성장 기회 · 체력 소모 · 라이벌과의 관계가 달라질 수 있음`, result: [[mainStat(), 2], ["체력", -4], ["라이벌 친밀도", 1]] },
+        { name: "내 페이스를 지킨다", hint: "멘탈 성장 기회 · 스트레스 안정", result: [["멘탈", 2], ["스트레스", -4]] },
+        { name: "동료 포수에게 조언을 구한다", hint: "동료 포수와 가까워질 수 있음 · 경기 힌트", result: [["동료 포수 친밀도", 1], "토요일 경기 힌트 획득"] },
+      ];
+      const picked = view.eventChoice;
+      return `
+        ${bgSlot(r.eventBg, { banner: true, caption: "학교 사건" })}
+        ${stepsBar(1)}
+        <p class="recap"><span class="k">평일 결과</span><span>${r.weekday[0].name} — ${fxText(r.weekday[0].fx)}</span></p>
+        <section class="panel" aria-labelledby="event-title">
+          <div class="event-body">
+            ${portrait("rival", "default", "md")}
+            <div style="min-width:0">
+              <h2 class="screen-title" id="event-title" tabindex="-1">라이벌의 도발</h2>
+              <p class="muted">라이벌 · 같은 학년 ${r.label}</p>
+              <p class="gap-top">${r.rivalScene}</p>
+              <p class="quote">“${r.rivalLine}”</p>
+            </div>
+          </div>
+          <div class="cards one">${choices.map((c, i) => `
+            <button type="button" class="card" data-action="choose-event" data-index="${i}" aria-pressed="${picked === i}" ${picked !== null ? "disabled" : ""}>
+              <span class="name">${c.name}</span><span class="desc">${c.hint}</span>
+            </button>`).join("")}
+          </div>
+          <div aria-live="polite">${picked !== null ? `
+            <ul class="notes gap-top"><li><strong>결과</strong>${choices[picked].result.map((x) => typeof x === "string" ? x : `${x[0]} ${x[1] > 0 ? "▲" : "▼"}${Math.abs(x[1])}`).join(" · ")}</li></ul>
+            <div class="actions"><button type="button" class="primary" data-go="match">토요일 연습경기로</button></div>` : `
+            <p class="muted gap-top">선택하면 결과가 바로 반영되고 다시 고를 수 없습니다.</p>`}
+          </div>
+        </section>`;
+    },
+
+    match() {
+      const r = role(), m = r.match;
+      const isPitcher = view.role === "pitcher";
+      const loadBlock = isPitcher ? `
+        <div class="meter"><span>투구 부담</span><span class="bar bad"><span style="width:${m.load}%"></span></span><span class="num">${m.load}</span></div>
+        <p class="muted">교체 기준 ${m.loadLimit} · 지금 ${m.loadLimit - m.load} 남음</p>` : "";
+      return `
+        <div class="match">
+          <div>
+            ${board(m, false)}
+            <div class="diamond-wrap">
+              ${diamond({ runners: m.runners, meAt: m.meAt, label: `${m.situation}, ${isPitcher ? "내가 마운드에 있음" : "내가 타석에 있음"}` })}
+              <p class="diamond-text">${m.situation} · ${isPitcher ? "마운드: 나" : "타석: 나"}</p>
+            </div>
+            <p class="cheer">${face("catcher")}<span>${r.cheer}</span></p>
+          </div>
+          <div>
+            <p class="scene-no">${m.scene}</p>
+            <h2 class="screen-title" tabindex="-1">${r.tactics} 선택</h2>
+            <section class="panel">
+              <h3 style="margin-bottom:2px">${m.opponentTitle}</h3>
+              <div class="traits">${m.traits.map((t) => `<span class="trait">${t}</span>`).join("")}</div>
+            </section>
+            <section class="panel">
+              <h3 style="margin-bottom:6px">내 상태</h3>
+              <div class="meter"><span>체력</span><span class="bar"><span style="width:42%"></span></span><span class="num">42</span></div>
+              ${loadBlock}
+            </section>
+            <div class="tactics">${m.options.map((o, i) => o.disabled ? `
+              <button type="button" class="card" disabled aria-describedby="why-${i}">
+                <span class="top"><span class="name">${o.name}</span><span class="outlook mid">불가</span></span>
+                <span class="desc" id="why-${i}">${o.disabled}</span>
+              </button>` : `
+              <button type="button" class="card" data-go="result">
+                <span class="top"><span class="name">${o.name}</span><span class="outlook ${o.outlook}">${{ good: "유리", mid: "보통", bad: "불리" }[o.outlook]}</span></span>
+                <span class="desc">${o.reason}</span>
+                ${o.cost ? `<span class="chips"><span class="chip cost">투구 부담 +${o.cost}</span></span>` : ""}
+              </button>`).join("")}
+            </div>
+          </div>
+        </div>`;
+    },
+
+    result() {
+      const r = role(), m = r.match, res = m.result;
+      return `
+        <div class="match">
+          <div>
+            ${board(m, true)}
+            <div class="diamond-wrap">
+              ${diamond({ runners: res.runnersAfter, meAt: view.role === "pitcher" ? "mound" : null, showBatter: false, moves: res.moves, hit: res.hit, label: `${res.name}. ${res.text}` })}
+              <p class="diamond-text">${res.text}</p>
+            </div>
+          </div>
+          <div aria-live="polite">
+            <p class="scene-no">${m.scene} · 결과</p>
+            <h2 class="screen-title result-name" tabindex="-1">${res.name}</h2>
+            <p class="lead">선택한 작전: ${res.chose} · ${res.scoreText}</p>
+            <section class="panel">
+              <h3>판정 이유</h3>
+              <ul class="factors">${res.factors.map((f) => `<li>${f}</li>`).join("")}</ul>
+            </section>
+            <section class="panel">
+              <h3>기록</h3>
+              <p>${res.record}</p>
+              ${res.extra ? `<p class="muted gap-top">${res.extra}</p>` : ""}
+            </section>
+            <div class="actions"><button type="button" class="primary" data-go="weekend">경기 계속</button>
+              <span class="reason">남은 경기는 요약하고 일요일로 넘어갑니다.</span></div>
+          </div>
+        </div>`;
+    },
+
+    weekend() {
+      const r = role();
+      const picked = WEEKEND.find((w) => w.id === view.weekend);
+      const meetList = view.weekend === "mates" ? `
+        <section class="panel">
+          <h3>누구와 캐치볼을 할까요?</h3>
+          <div class="cards one">${MEET.map((m) => {
+            const p = person(m.id);
+            return m.disabled ? `
+            <button type="button" class="card person-card" disabled aria-describedby="meet-why-${m.id}">
+              ${face(m.id, "lg")}
+              <span><span class="name">${p.name}</span><br><span class="desc" id="meet-why-${m.id}">${m.disabled}</span></span>
+            </button>` : `
+            <button type="button" class="card person-card" data-action="pick-meet" data-id="${m.id}" aria-pressed="${view.meet === m.id}">
+              ${face(m.id, "lg")}
+              <span><span class="name">${p.name}</span> <span class="muted">· ${m.place}</span><br>
+                <span class="desc">${p.stage} · 반복 교류</span> ${m.tag ? `<span class="chip new">${m.tag}</span>` : ""}</span>
+            </button>`;
+          }).join("")}
+          </div>
+        </section>` : "";
+      const ready = picked && (view.weekend !== "mates" || view.meet);
+      return `
+        ${bgSlot("town", { banner: true, caption: "일요일" })}
+        ${stepsBar(3)}
+        <h2 class="screen-title" tabindex="-1">일요일, 무엇을 할까요?</h2>
+        <p class="lead">토요일 연습경기를 마쳤습니다. ${r.gameLine}. 현재 체력 36, 스트레스 26.</p>
+        <section class="panel">
+          <h3>주말 활동</h3>
+          <div class="cards">${WEEKEND.map((w) => `
+            <button type="button" class="card" data-action="pick-weekend" data-id="${w.id}" aria-pressed="${view.weekend === w.id}">
+              <span class="name">${w.name}</span>${chips(w.fx)}<span class="desc">${w.desc}</span>
+            </button>`).join("")}
+          </div>
+        </section>
+        ${meetList}
+        <div class="actions">
+          <button type="button" class="primary" data-go="${view.weekend === "mates" ? "talk" : "monthEnd"}" ${ready ? "" : "disabled"}>주말 보내기</button>
+          <span class="reason">${ready ? "" : "활동을 고르고, 동료 교류라면 상대도 골라야 합니다."}</span>
+        </div>`;
+    },
+
+    talk() {
+      const r = role();
+      const meet = MEET.find((m) => m.id === view.meet && !m.disabled) ?? MEET[0];
+      const p = person(meet.id);
+      // 짧은 야구부 대화. 기본 효과(수비 +1, 친밀도 +3)에 대답에 따른 작은 차이만 둔다.
+      const choices = [
+        { say: "솔직히 떨렸어. 그래도 네 덕분에 버텼어.", reply: "그럼 다음에도 나만 보면 돼. 초반엔 그걸로 충분해.", extra: "스트레스 ▼2", expr: "smile" },
+        { say: "(공을 받으며) 내 약점, 어디가 제일 눈에 띄어?", reply: "하체가 먼저 열려. 다음 주에 같이 영상 보자.", extra: "다음 경기 힌트 획득", expr: "default" },
+        { say: "오늘은 그냥 가볍게 던지자.", reply: "좋아. 어깨 풀리는 정도만 하자.", extra: "추가 변화 없음", expr: "smile" },
+      ];
+      const picked = view.talkChoice;
+      const opening = r.mateLine;
+      const narration = `${p.name}와 ${meet.place}. 공을 몇 번 주고받자 ${p.name}가 먼저 말을 꺼낸다.`;
+      const exprs = ASSETS.portrait[meet.id].exprs;
+      const expr = picked === null ? "default" : (exprs.includes(choices[picked].expr) ? choices[picked].expr : "default");
+      return `
+        ${stepsBar(3)}
+        <div class="stage">
+          ${bgSlot(meet.bg, { fill: true })}
+          <span class="place">${meet.place} · 일요일 오후</span>
+          ${portrait(meet.id, expr)}
+        </div>
+        <section class="scene-card">
+          <div class="speaker">
+            <h2 class="screen-title who" tabindex="-1" style="margin:0">${p.name}</h2>
+            <span class="muted">${p.stage}</span>
+          </div>
+          <p class="narration">${narration}</p>
+          <p class="line">“${opening}”</p>
+          ${picked === null ? `
+            <div class="cards one" role="group" aria-label="대답 고르기">${choices.map((c, i) => `
+              <button type="button" class="card" data-action="choose-talk" data-index="${i}"><span class="name">${c.say}</span></button>`).join("")}
+            </div>
+            <p class="muted gap-top">어떤 대답이든 캐치볼 효과(수비 +1, 친밀도 +3)는 같습니다.</p>` : `
+            <div aria-live="polite">
+              <p class="line me">“${choices[picked].say}”</p>
+              <p class="line">“${choices[picked].reply}”</p>
+              <div class="rel-change">
+                <span>수비 ▲1</span>
+                <span>친밀도 ▲3</span>
+                <span>체력 ▼8 · 스트레스 ▼5</span>
+                <span>${choices[picked].extra}</span>
+              </div>
+              <div class="actions"><button type="button" class="primary" data-go="monthEnd">주말 마치기</button></div>
+            </div>`}
+        </section>`;
+    },
+
+    monthEnd() {
+      return `
+        ${bgSlot("school_gate", { banner: true, caption: "4월" })}
+        <h2 class="screen-title" tabindex="-1">3월이 끝났습니다</h2>
+        <p class="lead">실제 게임에서는 이 화면 없이 “4월 1주차” 안내와 함께 다음 평일 활동으로 바로 넘어갑니다. 이달의 변화는 상태창의 ‘변화 → 이번 달’에서 언제든 볼 수 있습니다.</p>
+        <div class="stop">
+          <p><strong>첫 시제품은 여기까지입니다.</strong></p>
+          <p class="muted gap-top">다음 달 예고: 4월 — 5월 지역 예선을 앞둔 한 달입니다.</p>
+        </div>
+        <div class="actions">
+          <button type="button" class="primary" data-action="open-status" data-tab="change" data-range="month">상태창에서 3월 돌아보기</button>
+          <button type="button" disabled aria-describedby="next-reason">4월로</button>
+          <span class="reason" id="next-reason">시제품 범위가 3월까지라 진행할 수 없습니다.</span>
+        </div>`;
+    },
+
+    ending() {
+      const r = role(), e = r.ending;
+      return `
+        <div class="career-head">
+          ${portrait(r.hero, "default", "md")}
+          <div>
+            <p class="muted">3학년 2월 · 졸업식</p>
+            <h2 class="screen-title career" tabindex="-1">${e.career}</h2>
+            <p>${NAME} · ${r.label} · ${e.place}</p>
+          </div>
+        </div>
+        <section class="panel">
+          <h3>진로가 정해진 이유</h3>
+          <ul class="factors">${e.reasons.map((x) => `<li>${x}</li>`).join("")}</ul>
+        </section>
+        <section class="panel">
+          <h3>3년 통산 기록</h3>
+          <div class="stats-line">${e.record.map(([k, v]) => `<span>${k} <strong>${v}</strong></span>`).join("")}</div>
+        </section>
+        <section class="panel">
+          <h3>함께 쌓은 추억</h3>
+          <ul class="memories">
+            <li>${face("coach", "lg")}<span>감독 — “1학년 3월 연습경기 때부터 너는 도망가지 않았다.”</span></li>
+            <li>${face("rival", "lg")}<span>라이벌 — 마지막 여름, 같은 팀으로 결승 무대에 섰다.</span></li>
+            <li>${face("catcher", "lg")}<span>동료 포수 — “네 ${view.role === "pitcher" ? "공" : "스윙"}은 3년 내내 내가 제일 가까이서 봤어.”</span></li>
+          </ul>
+        </section>
+        <div class="actions"><button type="button" class="primary" data-go="start">새 회차 시작</button>
+          <span class="reason">기존 저장을 덮어쓰기 전에 확인합니다.</span></div>`;
+    },
+
+    assets() {
+      const total = Object.keys(ASSETS.bg).length
+        + Object.values(ASSETS.portrait).reduce((n, p) => n + p.exprs.length, 0);
+      const loaded = Object.keys(uploads).filter((k) => !k.startsWith("face:")).length;
+      const fileControls = (key) => `
+        <div class="row">
+          <label class="file-btn">이미지 넣어보기<input type="file" accept="image/*" class="visually-hidden" data-slot="${key}"></label>
+          ${uploads[key] ? `<button type="button" class="small" data-action="clear-slot" data-slot="${key}">지우기</button>` : ""}
+        </div>`;
+      return `
+        <h2 class="screen-title" tabindex="-1">에셋 슬롯</h2>
+        <p class="lead">첫 달에 필요한 그림 자리입니다. 이미지를 넣으면 이 창을 닫기 전까지 모든 화면의 해당 자리에 표시됩니다. 파일은 어디에도 올라가거나 저장되지 않습니다. <span class="count">채운 자리 ${loaded} / ${total}</span></p>
+        <section class="panel">
+          <h3>배경 · 16:9 · 권장 1600×900 이상, JPG/WebP</h3>
+          <p class="muted" style="margin-bottom:10px">화면 위 배너(16:5)로 쓸 때는 가운데 가로 띠만 보입니다. 중요한 요소는 세로 가운데 1/3 안에 두세요.</p>
+          <div class="asset-grid">${Object.entries(ASSETS.bg).map(([id, a]) => `
+            <div class="asset">
+              ${bgSlot(id)}
+              <span class="title">${a.name}</span>
+              <span class="meta">사용: ${a.used}</span>
+              ${fileControls(`bg:${id}`)}
+            </div>`).join("")}
+          </div>
+        </section>
+        <section class="panel">
+          <h3>포트레이트 · 3:4 · 권장 900×1200 이상, 투명 배경 PNG/WebP</h3>
+          <p class="muted" style="margin-bottom:10px">허리 위 구도, 발밑이 아닌 아래쪽 가장자리에 맞춰 그립니다. 얼굴 아이콘은 따로 없으면 ‘기본’ 표정의 위쪽을 잘라 씁니다.</p>
+          <div class="asset-grid portraits">${Object.entries(ASSETS.portrait).flatMap(([id, p]) => p.exprs.map((ex) => `
+            <div class="asset">
+              ${portrait(id, ex)}
+              <span class="title">${p.name} · ${EXPR[ex]}</span>
+              <span class="meta">사용: ${p.used}</span>
+              ${fileControls(`portrait:${id}:${ex}`)}
+            </div>`)).join("")}
+          </div>
+        </section>
+        <section class="panel">
+          <h3>얼굴 아이콘 · 1:1 · 선택 사항, 권장 256×256</h3>
+          <p class="muted" style="margin-bottom:10px">관계 목록, 관중석 응원, 만날 사람 고르기에 쓰입니다.</p>
+          <div class="asset-grid portraits">${PEOPLE.map((p) => `
+            <div class="asset">
+              <div style="display:flex; gap:10px; align-items:center">${face(p.id, "lg")}<span class="title">${p.name}</span></div>
+              ${fileControls(`face:${p.id}`)}
+            </div>`).join("")}
+          </div>
+        </section>`;
+    },
+  };
+
+  // ---------- 상태창 ----------
+  // 진행 상태를 바꾸지 않는 보조 화면. 주간·월말 결산 대신 여기서 변화를 확인한다.
+  function statusWindow() {
+    const r = role();
+    const tabs = [["ability", "능력"], ["change", "변화"], ["record", "기록"], ["people", "관계"], ["journal", "일지"]];
+    const bodies = {
+      ability: () => `
+        <div class="two">
+          <section class="panel">
+            <h3>${r.label} 능력</h3>
+            <div class="ability-list">${r.abilities.map(([n, , v]) => `
+              <div class="ability-row"><span>${n}</span><span class="grade">${grade(v)}</span><span class="bar"><span style="width:${v}%"></span></span><span class="num">${v}</span></div>`).join("")}
+            </div>
+          </section>
+          <section class="panel">
+            <h3>생활 상태</h3>
+            ${LIFE.map((l, i) => `<div class="meter"><span>${l.name}</span><span class="bar${i === 1 ? " bad" : ""}"><span style="width:${l.end}%"></span></span><span class="num">${l.end}</span></div>`).join("")}
+            <h3 style="margin-top:14px">특수능력</h3>
+            <p class="muted">아직 없음</p>
+            <p class="muted gap-top">다음 목표: ${r.skillHint}</p>
+          </section>
+        </div>`,
+      change: () => {
+        const week = view.changeRange === "week";
+        const rows = week
+          ? [...r.weekAbility.map(([n, d, c]) => ({ n, a: null, b: null, d, good: true, c })),
+             ...LIFE.map((l) => ({ n: l.name, a: l.now, b: l.end, d: l.end - l.now, good: l.good, c: l.week }))]
+          : [...r.abilities.map(([n, a, b]) => ({ n, a, b, d: b - a, good: true, c: `${grade(a)} → ${grade(b)}` })),
+             ...LIFE.map((l) => ({ n: l.name, a: l.start, b: l.end, d: l.end - l.start, good: l.good, c: "" }))];
+        return `
+          <div class="seg" role="group" aria-label="기간">
+            <button type="button" data-action="range" data-range="week" aria-pressed="${week}">이번 주</button>
+            <button type="button" data-action="range" data-range="month" aria-pressed="${!week}">이번 달</button>
+          </div>
+          <section class="panel">
+            <h3>${week ? "4주차 변화 (평일·사건·경기·주말)" : "3월 변화 (월초 → 지금)"}</h3>
+            <table class="compare">
+              <thead><tr><th scope="col">항목</th><th scope="col">${week ? "주 시작" : "월초"}</th><th scope="col">지금</th><th scope="col">변화</th></tr></thead>
+              <tbody>${rows.map((x) => `<tr><th scope="row">${x.n}${x.c ? `<br><span class="cause">${x.c}</span>` : ""}</th><td>${x.a ?? "—"}</td><td>${x.b ?? "—"}</td><td>${delta(x.d, x.good)}</td></tr>`).join("")}</tbody>
+            </table>
+          </section>`;
+      },
+      record: () => `
+        <section class="panel">
+          <h3>1학년 기록 · ${r.label}</h3>
+          <div class="stats-line">${r.season.map(([k, v]) => `<span>${k} <strong>${v}</strong></span>`).join("")}</div>
+        </section>
+        <section class="panel">
+          <h3>경기별</h3>
+          <table class="compare"><tbody>
+            <tr><th scope="row">3월 4주 토 · 연습경기</th><td class="text">${r.gameLine}</td></tr>
+          </tbody></table>
+          <p class="muted gap-top">감독 평가 ${r.coach}</p>
+        </section>`,
+      people: () => `
+        <div class="people-grid">${PEOPLE.map((p) => `
+          <section class="panel person">
+            ${portrait(p.id, "default")}
+            <div>
+              <h3 style="margin:0">${p.name}</h3>
+              <p class="muted">${relLine(p)}</p>
+              <p class="cause gap-top">최근: ${p.last}</p>
+            </div>
+          </section>`).join("")}
+        </div>
+        <p class="muted gap-top">▲는 이번 달에 가까워졌다는 뜻입니다.</p>`,
+      journal: () => `
+        <section class="panel">
+          <h3>3월</h3>
+          <table class="compare">
+            <thead><tr><th scope="col">주</th><th scope="col">평일</th><th scope="col">주말</th></tr></thead>
+            <tbody>${[...r.history, [r.weekday[0].name, "토 연습경기 · 일 동료 포수와 캐치볼"]].map(([wd, we], i) => `<tr><th scope="row">${i + 1}주</th><td class="text">${wd}</td><td class="text">${we}</td></tr>`).join("")}</tbody>
+          </table>
+        </section>
+        <section class="panel">
+          <h3>기억에 남는 선택</h3>
+          <p>4주 평일, 라이벌의 도발에 “같은 훈련으로 맞붙는다”를 골랐다.</p>
+        </section>`,
+    };
+    return `
+      <section class="status" role="dialog" aria-modal="true" aria-labelledby="status-title">
+        <div class="status-head">
+          <h2 id="status-title" tabindex="-1">상태창</h2>
+          <span class="muted">보기만 해도 진행은 바뀌지 않습니다</span>
+          <button type="button" class="small close" data-action="close-status">닫기 <span class="muted">(Esc)</span></button>
+        </div>
+        <div class="status-body">
+          <div class="profile">
+            ${portrait(r.hero, "default")}
+            <div>
+              <p class="name">${NAME}</p>
+              <dl>
+                <dt>역할</dt><dd>${r.label}</dd>
+                <dt>학년</dt><dd>1학년 3월 4주차</dd>
+                <dt>체력</dt><dd>${LIFE[0].end}</dd>
+                <dt>스트레스</dt><dd>${LIFE[1].end}</dd>
+              </dl>
+            </div>
+          </div>
+          <div style="min-width:0">
+            <div class="status-tabs" role="group" aria-label="상태창 항목">${tabs.map(([id, n]) => `<button type="button" data-action="status-tab" data-tab="${id}" aria-pressed="${view.statusTab === id}">${n}</button>`).join("")}</div>
+            ${bodies[view.statusTab]()}
+          </div>
+        </div>
+      </section>`;
+  }
+
+  // ---------- 그리기 ----------
+  const app = document.getElementById("app");
+  const overlay = document.getElementById("overlay");
+  function render(focusTitle = false) {
+    const meta = SCREENS.find((s) => s.id === view.screen);
+    app.dataset.layout = meta.layout;
+    app.dataset.mood = meta.mood ?? "";
+    app.dataset.wide = meta.wide ? "true" : "false";
+    const inGame = !["start", "create", "assets"].includes(view.screen);
+    document.getElementById("top-date").textContent = meta.date;
+    document.getElementById("top-who").textContent = inGame && view.screen !== "ending" ? `${role().label} · ${NAME}` : "";
+    document.getElementById("status-open").hidden = !inGame || view.screen === "ending";
+    document.getElementById("center").innerHTML = screens[view.screen]();
+    document.getElementById("side-left").innerHTML = sideLeft();
+    document.getElementById("side-right").innerHTML = sideRight();
+
+    document.querySelectorAll("#screen-nav button").forEach((b) => {
+      if (b.dataset.screen === view.screen) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
+    });
+    document.querySelectorAll("#role-nav button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.role === view.role)));
+
+    overlay.hidden = !view.statusOpen;
+    overlay.innerHTML = view.statusOpen ? statusWindow() : "";
+    document.body.classList.toggle("modal-open", view.statusOpen);
+
+    const input = document.getElementById("player-name");
+    if (input) input.addEventListener("input", (e) => {
+      view.createName = e.target.value;
+      const valid = view.createName.trim().length >= 1;
+      document.querySelector('[data-go="weekday"]').disabled = !valid;
+      document.getElementById("create-reason").textContent = valid ? "" : "이름을 1~8자로 입력해야 합니다.";
+    });
+    if (focusTitle) document.querySelector("#center .screen-title")?.focus();
+  }
+
+  function go(screen) {
+    view.screen = screen;
+    view.confirmNew = false;
+    view.statusOpen = false;
+    if (screen === "event") view.eventChoice = null;
+    if (screen === "talk") view.talkChoice = null;
+    render(true);
+  }
+  function openStatus(opener, tab, range) {
+    view.statusOpen = true;
+    view.statusOpener = opener;
+    if (tab) view.statusTab = tab;
+    if (range) view.changeRange = range;
+    render();
+    document.getElementById("status-title").focus();
+  }
+  function closeStatus() {
+    view.statusOpen = false;
+    const opener = view.statusOpener;
+    render();
+    // 다시 그려진 화면에서 같은 역할의 버튼으로 포커스를 돌려준다.
+    (opener && document.querySelector(opener) || document.getElementById("status-open")).focus();
+  }
+
+  // 시안 안내 도구
+  SCREENS.forEach((s) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = s.label; b.dataset.screen = s.id;
+    b.addEventListener("click", () => go(s.id));
+    document.getElementById("screen-nav").append(b);
+  });
+  Object.entries(ROLES).forEach(([id, r]) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = r.label; b.dataset.role = id;
+    b.addEventListener("click", () => {
+      view.role = id; view.createRole = id;
+      view.weekday = r.weekday[0].id;
+      render();
+    });
+    document.getElementById("role-nav").append(b);
+  });
+
+  // 게임 화면 안의 조작. 한 번 확정한 선택은 다시 처리하지 않는다.
+  function handleClick(e) {
+    const t = e.target.closest("button");
+    if (!t || t.disabled) return;
+    const a = t.dataset.action;
+    if (t.dataset.go) {
+      if (view.screen === "create") { view.role = view.createRole; view.weekday = ROLES[view.role].weekday[0].id; }
+      go(t.dataset.go);
+    } else if (a === "open-status") {
+      const opener = t.id ? `#${t.id}` : t.closest(".side") ? '.side [data-action="open-status"]' : '#center [data-action="open-status"]';
+      openStatus(opener, t.dataset.tab, t.dataset.range);
+    } else if (a === "close-status") {
+      closeStatus();
+    } else if (a === "status-tab") {
+      view.statusTab = t.dataset.tab; render();
+      overlay.querySelector(`[data-action="status-tab"][data-tab="${view.statusTab}"]`).focus();
+    } else if (a === "range") {
+      view.changeRange = t.dataset.range; render();
+      overlay.querySelector(`[data-action="range"][data-range="${view.changeRange}"]`).focus();
+    } else if (a === "new-game") {
+      view.confirmNew = true; render();
+      document.querySelector(".confirm-box .primary")?.focus();
+    } else if (a === "cancel-new") {
+      view.confirmNew = false; render();
+    } else if (a === "pick-role") {
+      view.createRole = t.dataset.role; render();
+    } else if (a === "pick-weekday") {
+      view.weekday = t.dataset.id; render();
+    } else if (a === "choose-event" && view.eventChoice === null) {
+      view.eventChoice = Number(t.dataset.index); render();
+    } else if (a === "pick-weekend") {
+      view.weekend = t.dataset.id; render();
+    } else if (a === "pick-meet") {
+      view.meet = t.dataset.id; render();
+    } else if (a === "choose-talk" && view.talkChoice === null) {
+      view.talkChoice = Number(t.dataset.index); render();
+    } else if (a === "clear-slot") {
+      URL.revokeObjectURL(uploads[t.dataset.slot]);
+      delete uploads[t.dataset.slot];
+      render();
+    }
+  }
+  app.addEventListener("click", handleClick);
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) closeStatus(); else handleClick(e);
+  });
+  document.addEventListener("keydown", (e) => {
+    if (!view.statusOpen) return;
+    if (e.key === "Escape") closeStatus();
+    // 상태창이 열려 있는 동안 Tab 포커스는 상태창 안에서만 돈다.
+    if (e.key === "Tab") {
+      const items = [...overlay.querySelectorAll("button, [tabindex='-1']")];
+      const first = items[0], last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      else if (!overlay.contains(document.activeElement)) { e.preventDefault(); first.focus(); }
+    }
+  });
+  // 이미지 미리보기: 이 창에서만 쓰는 임시 주소를 만든다. 저장하지 않는다.
+  app.addEventListener("change", (e) => {
+    const input = e.target.closest('input[type="file"][data-slot]');
+    if (!input || !input.files[0]) return;
+    const key = input.dataset.slot;
+    if (uploads[key]) URL.revokeObjectURL(uploads[key]);
+    uploads[key] = URL.createObjectURL(input.files[0]);
+    render();
+  });
+
+  render();
+</script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { createGame, transition, previewActivity } from './engine.ts';
+import { activities } from '../content/activities.ts';
+import type { GameState, Action, Role } from './types.ts';
+import { defaultSupports } from '../content/supports.ts';
+
+const act = (s: GameState, a: Omit<Action, 'revision'>) => transition(s, { ...a, revision: s.revision } as Action);
+const ready=(name:string,role:Role,seed:number)=>({...act(createGame(name,role,seed),{type:'lineup',supports:defaultSupports(role)}),placements:{}});
+export function finishMonth(role: Role, seed = 42, training = 'rest') {
+  let s = createGame('김여름', role, seed);
+  for (let i = 0; i < 350 && s.phase !== 'complete'; i++) {
+    if (s.phase === 'lineup') s=act(s,{type:'lineup',supports:defaultSupports(role)});
+    else if (s.phase === 'weekday') s = act(s, { type: 'activity', id: training });
+    else if (s.phase === 'weekend') s = act(s, { type: 'activity', id: 'catch' });
+    else if (['event','weekendEvent','supportEvent'].includes(s.phase)) s = act(s, { type: 'choice', index: 0 });
+    else if (s.phase === 'match') s = act(s, { type: 'tactic', id: role === 'batter' ? 'contact' : 'control' });
+    else s = act(s, { type: 'continue' });
+  }
+  return s;
+}
+test('roles get different meaningful stats and only role-appropriate training', () => {
+  for (const role of ['batter', 'pitcher'] as const) {
+    const s = createGame(' 새봄 ', role, 5);
+    assert.equal(s.name, '새봄');
+    assert.equal(s.week, 1);
+    assert.equal(activities(s).length, role === 'batter' ? 6 : 7);
+    assert.ok(s.stats[role === 'batter' ? 'contact' : 'control'] > 0);
+    assert.equal(transition(s, { type: 'activity', id: role === 'batter' ? 'velocity' : 'batting', revision: 0 }), s);
+  }
+});
+test('name validation rejects empty and more than eight characters', () => {
+  assert.throws(() => createGame('  ', 'batter', 1));
+  assert.throws(() => createGame('123456789', 'pitcher', 1));
+});
+test('normal-condition training applies the activity table and logs actual changes', () => {
+  const s = ready('여름', 'batter', 7);
+  const after = act(s, { type: 'activity', id: 'batting' });
+  assert.equal(after.stats.contact, s.stats.contact + 7);
+  assert.equal(after.stats.eye, s.stats.eye + 2);
+  assert.equal(after.energy, s.energy - 28);
+  assert.equal(after.stress, s.stress + 10);
+  assert.equal(after.phase, 'event');
+  assert.equal(after.log[0].changes.contact, 7);
+});
+test('stale input cannot consume a second action or duplicate an event reward', () => {
+  const s = ready('여름', 'pitcher', 9);
+  const action = { type: 'activity', id: 'control', revision: s.revision } as const;
+  const after = transition(s, action);
+  assert.equal(transition(after, action), after);
+  const choice = { type: 'choice', index: 0, revision: after.revision } as const;
+  const chosen = transition(after, choice);
+  assert.equal(transition(chosen, choice), chosen);
+});
+test('stress reduces growth, rest recovers and values stay in bounds', () => {
+  const s = ready('여름', 'pitcher', 8);
+  s.stress = 80;
+  const p = previewActivity(s, 'control');
+  assert.ok(p && p.gains.control! < 7 && p.warning);
+  const rested = act({ ...s, energy: 90, stress: 3 }, { type: 'activity', id: 'rest' });
+  assert.equal(rested.energy, 100);
+  assert.equal(rested.stress, 0);
+  assert.equal(rested.log[0].changes.energy, 10);
+});
+test('weekend practice rejects an unavailable target and consumes exactly one slot', () => {
+  let s = createGame('여름', 'pitcher', 8);
+  s.phase = 'weekend';
+  assert.equal(act(s, { type: 'activity', id: 'practice', target: 'power' }), s);
+  s = act(s, { type: 'activity', id: 'practice', target: 'control' });
+  assert.equal(s.week, 2);
+  assert.equal(s.phase, 'weekday');
+});
+test('both roles complete sixteen weekdays and weekends through the summer tournament', () => {
+  for (const role of ['batter', 'pitcher'] as const) {
+    const s = finishMonth(role);
+    assert.equal(s.phase, 'complete');
+    assert.equal(s.week, 4);
+    assert.equal(s.schedule.length, 16);
+    assert.ok(s.schedule.every(w => w.weekday && w.weekend));
+    assert.equal(s.completedEvents.length+s.records.length,16);
+    assert.ok(s.records.every(r=>r.match.over));
+    assert.ok(s.records.length>=4&&s.records.length<=6);
+    assert.ok(s.records.every(r=>r.match.highlights<=3));
+    assert.equal(act(s, { type: 'continue' }), s);
+  }
+});
+test('same seed and actions reproduce state without mutating previous state', () => {
+  assert.deepEqual(finishMonth('pitcher'), finishMonth('pitcher'));
+  const s = createGame('여름', 'pitcher', 12);
+  const before = JSON.stringify(s);
+  act(s, { type: 'activity', id: 'control' });
+  assert.equal(JSON.stringify(s), before);
+});

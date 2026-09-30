@@ -1,0 +1,188 @@
+{
+  "version": 3,
+  "name": "기록보존",
+  "role": "pitcher",
+  "month": 3,
+  "week": 1,
+  "phase": "weekend",
+  "revision": 4,
+  "rng": 71,
+  "stats": {
+    "contact": 0,
+    "power": 0,
+    "eye": 0,
+    "speed": 0,
+    "field": 35,
+    "mental": 40,
+    "velocity": 36,
+    "control": 51,
+    "breaking": 30,
+    "stamina": 40
+  },
+  "energy": 56,
+  "stress": 23,
+  "academics": 45,
+  "trust": 22,
+  "rival": 10,
+  "catcher": 25,
+  "completedEvents": [
+    1
+  ],
+  "log": [
+    {
+      "month": 3,
+      "week": 1,
+      "title": "제구 훈련 · 훈련 성공",
+      "text": "시작 체력 80 · 실패 확률 0%. 끝까지 연습을 마쳐 준비한 성장을 얻었다.",
+      "changes": {
+        "control": 10,
+        "energy": -24,
+        "stress": 8
+      },
+      "training": {
+        "outcome": "success",
+        "energyBefore": 80,
+        "failureChance": 0,
+        "points": 7
+      }
+    },
+    {
+      "month": 3,
+      "week": 1,
+      "title": "함께 쌓은 연습",
+      "text": "함께한 파트너: 박하람. 인연 보너스 · 제구 +1 포함 (박하람 인연 10).",
+      "changes": {
+        "catcher": 15,
+        "skillPoints": 7
+      }
+    },
+    {
+      "month": 3,
+      "week": 1,
+      "title": "그라운드의 첫 인사",
+      "text": "“좋아. 매일 쌓인 기본기가 위기에서 널 지켜 줄 거다.”",
+      "changes": {
+        "control": 1,
+        "trust": 2
+      }
+    }
+  ],
+  "schedule": [
+    {
+      "month": 3,
+      "week": 1,
+      "weekday": "제구 훈련",
+      "weekend": ""
+    }
+  ],
+  "initial": {
+    "contact": 0,
+    "power": 0,
+    "eye": 0,
+    "speed": 0,
+    "field": 35,
+    "mental": 40,
+    "velocity": 36,
+    "control": 40,
+    "breaking": 30,
+    "stamina": 40,
+    "energy": 80,
+    "stress": 15,
+    "academics": 45,
+    "trust": 20,
+    "rival": 10,
+    "catcher": 10,
+    "skillPoints": 8,
+    "bond_bat_senior": 10,
+    "bond_pitch_senior": 10,
+    "bond_manager": 10,
+    "bond_classmate": 10
+  },
+  "weekStart": {
+    "contact": 0,
+    "power": 0,
+    "eye": 0,
+    "speed": 0,
+    "field": 35,
+    "mental": 40,
+    "velocity": 36,
+    "control": 40,
+    "breaking": 30,
+    "stamina": 40,
+    "energy": 80,
+    "stress": 15,
+    "academics": 45,
+    "trust": 20,
+    "rival": 10,
+    "catcher": 10,
+    "skillPoints": 8,
+    "bond_bat_senior": 10,
+    "bond_pitch_senior": 10,
+    "bond_manager": 10,
+    "bond_classmate": 10
+  },
+  "monthStart": {
+    "contact": 0,
+    "power": 0,
+    "eye": 0,
+    "speed": 0,
+    "field": 35,
+    "mental": 40,
+    "velocity": 36,
+    "control": 40,
+    "breaking": 30,
+    "stamina": 40,
+    "energy": 80,
+    "stress": 15,
+    "academics": 45,
+    "trust": 20,
+    "rival": 10,
+    "catcher": 10,
+    "skillPoints": 8,
+    "bond_bat_senior": 10,
+    "bond_pitch_senior": 10,
+    "bond_manager": 10,
+    "bond_classmate": 10
+  },
+  "notice": "그라운드의 첫 인사 · 제구 +1 · 감독 신뢰 +2",
+  "eventReply": "“좋아. 매일 쌓인 기본기가 위기에서 널 지켜 줄 거다.”",
+  "match": null,
+  "matchRecorded": false,
+  "supports": [
+    "pitch_senior",
+    "catcher",
+    "manager"
+  ],
+  "bonds": {
+    "bat_senior": 10,
+    "pitch_senior": 10,
+    "manager": 10,
+    "classmate": 10
+  },
+  "placements": {
+    "pitch_senior": "velocity",
+    "catcher": "control",
+    "manager": "velocity"
+  },
+  "trainingSeed": 71,
+  "supportCompleted": [],
+  "activeSupport": null,
+  "skillPoints": 15,
+  "skills": [],
+  "hints": [],
+  "lineupHistory": [
+    {
+      "month": 3,
+      "supports": [
+        "pitch_senior",
+        "catcher",
+        "manager"
+      ]
+    }
+  ],
+  "records": [],
+  "evaluation": null,
+  "tournament": {
+    "rounds": []
+  }
+}

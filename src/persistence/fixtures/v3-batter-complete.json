@@ -1,0 +1,1839 @@
+{
+  "version": 3,
+  "name": "기록보존",
+  "role": "batter",
+  "month": 6,
+  "week": 4,
+  "phase": "complete",
+  "revision": 107,
+  "rng": 227398654,
+  "stats": {
+    "contact": 100,
+    "power": 34,
+    "eye": 67,
+    "speed": 38,
+    "field": 38,
+    "mental": 44,
+    "velocity": 0,
+    "control": 0,
+    "breaking": 0,
+    "stamina": 0
+  },
+  "energy": 88,
+  "stress": 0,
+  "academics": 45,
+  "trust": 75,
+  "rival": 20,
+  "catcher": 100,
+  "completedEvents": [
+    1,
+    2,
+    3,
+    5,
+    6,
+    7,
+    9,
+    10,
+    11,
+    13
+  ],
+  "log": [
+    {
+      "month": 3,
+      "week": 1,
+      "title": "타격 훈련 · 훈련 성공",
+      "text": "시작 체력 80 · 실패 확률 0%. 끝까지 연습을 마쳐 준비한 성장을 얻었다.",
+      "changes": {
+        "contact": 14,
+        "eye": 2,
+        "energy": -20,
+        "stress": 7
+      },
+      "training": {
+        "outcome": "success",
+        "energyBefore": 80,
+        "failureChance": 0,
+        "points": 9
+      }
+    },
+    {
+      "month": 3,
+      "week": 1,
+      "title": "함께 쌓은 연습",
+      "text": "함께한 파트너: 강민재, 박하람, 한서현. 인연 보너스 · 컨택 +3 포함 (강민재 인연 10, 박하람 인연 10, 한서현 인연 10).",
+      "changes": {
+        "catcher": 15,
+        "skillPoints": 9,
+        "bond_bat_senior": 15,
+        "bond_manager": 15
+      }
+    },
+    {
+      "month": 3,
+      "week": 1,
+      "title": "그라운드의 첫 인사",
+      "text": "“좋아. 매일 쌓인 기본기가 위기에서 널 지켜 줄 거다.”",
+      "changes": {
+        "contact": 1,
+        "trust": 2
+      }
+    },
+    {
+      "month": 3,
+      "week": 1,
+      "title": "집에서 푹 쉬기",
+      "text": "몸을 회복하고 다음 주를 준비합니다.",
+      "changes": {
+        "energy": 32,
+        "stress": -18
+      }
+    },
+    {
+      "month": 3,
+      "week": 2,
+      "title": "타격 훈련 · 훈련 성공",
+      "text": "시작 체력 92 · 실패 확률 0%. 끝까지 연습을 마쳐 준비한 성장을 얻었다.",
+      "changes": {
+        "contact": 11,
+        "eye": 2,
+        "energy": -28,
+        "stress": 10
+      },
+      "training": {
+        "outcome": "success",
+        "energyBefore": 92,
+        "failureChance": 0,
+        "points": 7
+      }
+    },
+    {
+      "month": 3,
+      "week": 2,
+      "title": "함께 쌓은 연습",
+      "text": "함께한 파트너: 강민재. 인연 보너스 · 컨택 +2 포함 (강민재 인연 25).",
+      "changes": {
+        "skillPoints": 7,
+        "bond_bat_senior": 15
+      }
+    },
+    {
+      "month": 3,
+      "week": 2,
+      "title": "한 번 더, 같은 스윙",
+      "text": "내 감각을 말로 정리하자 다음 연습의 목표가 또렷해졌다.",
+      "changes": {
+        "mental": 1,
+        "trust": 1
+      }
+    },
+    {
+      "month": 3,
+      "week": 2,
+      "title": "스킬 힌트",
+      "text": "강민재의 조언으로 스킬 비용이 4 Pt 줄었다.",
+      "changes": {
+        "bond_bat_senior": 10
+      }
+    },
+    {
+      "month": 3,
+      "week": 2,
+      "title": "같은 유니폼, 다른 목표",
+      "text": "이상하게 혼자 할 때보다 집중이 잘됐다. 서로 고칠 점을 하나씩 찾았다.",
+      "changes": {
+        "contact": 1,
+        "rival": 3
+      }
+    },
+    {
+      "month": 3,
+      "week": 2,
+      "title": "집에서 푹 쉬기",
+      "text": "몸을 회복하고 다음 주를 준비합니다.",
+      "changes": {
+        "energy": 32,
+        "stress": -14
+      }
+    },
+    {
+      "month": 3,
+      "week": 3,
+      "title": "타격 훈련 · 훈련 성공 · 합동 훈련",
+      "text": "시작 체력 96 · 실패 확률 0%. 끝까지 연습을 마쳐 준비한 성장을 얻었다.",
+      "changes": {
+        "contact": 14,
+        "eye": 2,
+        "energy": -28,
+        "stress": 10
+      },
+      "training": {
+        "outcome": "success",
+        "energyBefore": 96,
+        "failureChance": 0,
+        "points": 10
+      }
+    },
+    {
+      "month": 3,
+      "week": 3,
+      "title": "함께 쌓은 연습",
+      "text": "함께한 파트너: 강민재, 박하람. 인연 보너스 · 컨택 +4 포함 (강민재 인연 50, 박하람 인연 25).",
+      "changes": {
+        "catcher": 15,
+        "skillPoints": 10,
+        "bond_bat_senior": 15
+      }
+    },
+    {
+      "month": 3,
+      "week": 3,
+      "title": "말하지 않아도 통하는 신호",
+      "text": "내가 놓치던 습관을 동료가 기억하고 있었다. 짧은 신호 하나를 새로 정했다.",
+      "changes": {
+        "mental": 1,
+        "trust": 1
+      }
+    },
+    {
+      "month": 3,
+      "week": 3,
+      "title": "스킬 힌트",
+      "text": "박하람의 조언으로 스킬 비용이 4 Pt 줄었다.",
+      "changes": {
+        "catcher": 10
+      }
+    },
+    {
+      "month": 3,
+      "week": 3,
+      "title": "혼자서는 못 하는 야구",
+      "text": "짧은 눈빛만으로도 무엇을 할지 알아차렸다. 이제 그라운드가 조금 덜 낯설다.",
+      "changes": {
+        "field": 1,
+        "catcher": 3
+      }
+    },
+    {
+      "month": 3,
+      "week": 3,
+      "title": "집에서 푹 쉬기",
+      "text": "몸을 회복하고 다음 주를 준비합니다.",
+      "changes": {
+        "energy": 32,
+        "stress": -10
+      }
+    },
+    {
+      "month": 3,
+      "week": 4,
+      "title": "타격 훈련 · 훈련 성공 · 합동 훈련",
+      "text": "시작 체력 100 · 실패 확률 0%. 끝까지 연습을 마쳐 준비한 성장을 얻었다.",
+      "changes": {
+        "contact": 7,
+        "eye": 2,
+        "energy": -28,
+        "stress": 10
+      },
+      "training": {
+        "outcome": "success",
+        "energyBefore": 100,
+        "failureChance": 0,
+        "points": 9
+      }
+    },
+    {
+      "month": 3,
+      "week": 4,
+      "title": "함께 쌓은 연습",
+      "text": "함께한 파트너: 박하람. 인연 보너스 · 컨택 +1 포함 (박하람 인연 53).",
+      "changes": {
+        "catcher": 15,
+        "skillPoints": 9
+      }
+    },
+    {
+      "month": 3,
+      "week": 4,
+      "title": "첫 연습경기",
+      "text": "청람고 10 : 7 해솔고 · 승리. 감독: “연습한 것이 보이는구나. 오늘의 감각을 기억해.”",
+      "changes": {
+        "energy": -8,
+        "stress": -5,
+        "trust": 9
+      }
+    },
+    {
+      "month": 3,
+      "week": 4,
+      "title": "경기에서 배운 것",
+      "text": "승부를 돌아보며 스킬 포인트를 얻었다.",
+      "changes": {
+        "skillPoints": 8
+      }
+    },
+    {
+      "month": 3,
+      "week": 4,
+      "title": "집에서 푹 쉬기",
+      "text": "몸을 회복하고 다음 주를 준비합니다.",
+      "changes": {
+        "energy": 32,
+        "stress": -5
+      }
+    },
+    {
+      "month": 4,
+      "week": 1,
+      "title": "타격 훈련 · 훈련 성공",
+      "text": "시작 체력 96 · 실패 확률 0%. 끝까지 연습을 마쳐 준비한 성장을 얻었다.",
+      "changes": {
+        "contact": 3,
+        "eye": 2,
+        "energy": -28,
+        "stress": 10
+      },
+      "training": {
+        "outcome": "success",
+        "energyBefore": 96,
+        "failureChance": 0,
+        "points": 6
+      }
+    },
+    {
+      "month": 4,
+      "week": 1,
+      "title": "함께 쌓은 연습",
+      "text": "오늘의 경험이 스킬 포인트로 쌓였다.",
+      "changes": {
+        "skillPoints": 6
+      }
+    },
+    {
+      "month": 4,
+      "week": 1,
+      "title": "이름이 불릴 준비",
+      "text": "감독이 오늘의 연습 목표를 고개를 끄덕이며 확인했다.",
+      "changes": {
+        "contact": 1,
+        "trust": 3
+      }
+    },
+    {
+      "month": 4,
+      "week": 1,
+      "title": "집에서 푹 쉬기",
+      "text": "몸을 회복하고 다음 주를 준비합니다.",
+      "changes": {
+        "energy": 32,
+        "stress": -10
+      }
+    },
+    {
+      "month": 4,
+      "week": 2,
+      "title": "타격 훈련 · 훈련 성공",
+      "text": "시작 체력 100 · 실패 확률 0%. 끝까지 연습을 마쳐 준비한 성장을 얻었다.",
+      "changes": {
+        "contact": 1,
+        "eye": 2,
+        "energy": -28,
+        "stress": 10
+      },
+      "training": {
+        "outcome": "success",
+        "energyBefore": 100,
+        "failureChance": 0,
+        "points": 6
+      }
+    },
+    {
+      "month": 4,
+      "week": 2,
+      "title": "함께 쌓은 연습",
+      "text": "오늘의 경험이 스킬 포인트로 쌓였다.",
+      "changes": {
+        "skillPoints": 6
+      }
+    },
+    {
+      "month": 4,
+      "week": 2,
+      "title": "같은 자리를 바라보며",
+      "text": "상대를 돕는 일이 내 연습을 돌아보는 시간이 됐다.",
+      "changes": {
+        "contact": 1,
+        "rival": 4
+      }
+    },
+    {
+      "month": 4,
+      "week": 2,
+      "title": "집에서 푹 쉬기",
+      "text": "몸을 회복하고 다음 주를 준비합니다.",
+      "changes": {
+        "energy": 28,
+        "stress": -10
+      }
+    },
+    {
+      "month": 4,
+      "week": 3,
+      "title": "타격 훈련 · 훈련 성공 · 합동 훈련",
+      "text": "시작 체력 100 · 실패 확률 0%. 끝까지 연습을 마쳐 준비한 성장을 얻었다.",
+      "changes": {
+        "contact": 4,
+        "eye": 2,
+        "energy": -28,
+        "stress": 10
+      },
+      "training": {
+        "outcome": "success",
+        "energyBefore": 100,
+        "failureChance": 0,
+        "points": 9
+      }
+    },
+    {
+      "month": 4,
+      "week": 3,
+      "title": "함께 쌓은 연습",
+      "text": "함께한 파트너: 강민재. 인연 보너스 · 컨택 +1 포함 (강민재 인연 65).",
+      "changes": {
+        "skillPoints": 9,
+        "bond_bat_senior": 15
+      }
+    },
+    {
+      "month": 4,
+      "week": 3,
+      "title": "첫 공식전을 앞두고",
+      "text": "짧은 신호를 다시 맞췄다. 이제 우리에게는 함께 연습한 시간이 있다.",
+      "changes": {
+        "field": 2,
+        "catcher": 3
+      }
+    },
+    {
+      "month": 4,
+      "week": 3,
+      "title": "집에서 푹 쉬기",
+      "text": "몸을 회복하고 다음 주를 준비합니다.",
+      "changes": {
+        "energy": 28,
+        "stress": -10
+      }
+    },
+    {
+      "month": 4,
+      "week": 4,
+      "title": "타격 훈련 · 훈련 성공",
+      "text": "시작 체력 100 · 실패 확률 0%. 끝까지 연습을 마쳐 준비한 성장을 얻었다.",
+      "changes": {
+        "contact": 1,
+        "eye": 2,
+        "energy": -28,
+        "stress": 10
+      },
+      "training": {
+        "outcome": "success",
+        "energyBefore": 100,
+        "failureChance": 0,
+        "points": 6
+      }
+    },
+    {
+      "month": 4,
+      "week": 4,
+      "title": "함께 쌓은 연습",
+      "text": "오늘의 경험이 스킬 포인트로 쌓였다.",
+      "changes": {
+        "skillPoints": 6
+      }
+    },
+    {
+      "month": 4,
+      "week": 4,
+      "title": "4월 교류 리그 · 첫 공식전",
+      "text": "청람고 3 : 4 해솔고 · 패배. 감독: “연습한 것이 보이는구나. 오늘의 감각을 기억해.”",
+      "changes": {
+        "energy": -8,
+        "stress": 5,
+        "trust": 8
+      }
+    },
+    {
+      "month": 4,
+      "week": 4,
+      "title": "경기에서 배운 것",
+      "text": "승부를 돌아보며 스킬 포인트를 얻었다.",
+      "changes": {
+        "skillPoints": 8
+      }
+    },
+    {
+      "month": 4,
+      "week": 4,
+      "title": "집에서 푹 쉬기",
+      "text": "몸을 회복하고 다음 주를 준비합니다.",
+      "changes": {
+        "energy": 32,
+        "stress": -15
+      }
+    },
+    {
+      "month": 5,
+      "week": 1,
+      "title": "타격 훈련 · 훈련 성공",
+      "text": "시작 체력 96 · 실패 확률 0%. 끝까지 연습을 마쳐 준비한 성장을 얻었다.",
+      "changes": {
+        "contact": 1,
+        "eye": 2,
+        "energy": -28,
+        "stress": 10
+      },
+      "training": {
+        "outcome": "success",
+        "energyBefore": 96,
+        "failureChance": 0,
+        "points": 6
+      }
+    },
+    {
+      "month": 5,
+      "week": 1,
+      "title": "함께 쌓은 연습",
+      "text": "오늘의 경험이 스킬 포인트로 쌓였다.",
+      "changes": {
+        "skillPoints": 6
+      }
+    },
+    {
+      "month": 5,
+      "week": 1,
+      "title": "나만의 장점을 찾는 연습",
+      "text": "몸의 움직임을 하나씩 맞추며 힘을 전달하는 감각을 익혔다.",
+      "changes": {
+        "power": 2
+      }
+    },
+    {
+      "month": 5,
+      "week": 1,
+      "title": "집에서 푹 쉬기",
+      "text": "몸을 회복하고 다음 주를 준비합니다.",
+      "changes": {
+        "energy": 32,
+        "stress": -10
+      }
+    },
+    {
+      "month": 5,
+      "week": 2,
+      "title": "타격 훈련 · 훈련 성공",
+      "text": "시작 체력 100 · 실패 확률 0%. 끝까지 연습을 마쳐 준비한 성장을 얻었다.",
+      "changes": {
+        "eye": 2,
+        "energy": -28,
+        "stress": 10
+      },
+      "training": {
+        "outcome": "success",
+        "energyBefore": 100,
+        "failureChance": 0,
+        "points": 6
+      }
+    },
+    {
+      "month": 5,
+      "week": 2,
+      "title": "함께 쌓은 연습",
+      "text": "오늘의 경험이 스킬 포인트로 쌓였다.",
+      "changes": {
+        "skillPoints": 6
+      }
+    },
+    {
+      "month": 5,
+      "week": 2,
+      "title": "상대 팀을 읽는 시간",
+      "text": "상대가 편하게 하는 야구와 어려워하는 승부를 구분해 두었다.",
+      "changes": {
+        "eye": 3,
+        "trust": 2
+      }
+    },
+    {
+      "month": 5,
+      "week": 2,
+      "title": "집에서 푹 쉬기",
+      "text": "몸을 회복하고 다음 주를 준비합니다.",
+      "changes": {
+        "energy": 28,
+        "stress": -10
+      }
+    },
+    {
+      "month": 5,
+      "week": 3,
+      "title": "타격 훈련 · 훈련 성공 · 합동 훈련",
+      "text": "시작 체력 100 · 실패 확률 0%. 끝까지 연습을 마쳐 준비한 성장을 얻었다.",
+      "changes": {
+        "eye": 2,
+        "energy": -28,
+        "stress": 10
+      },
+      "training": {
+        "outcome": "success",
+        "energyBefore": 100,
+        "failureChance": 0,
+        "points": 9
+      }
+    },
+    {
+      "month": 5,
+      "week": 3,
+      "title": "함께 쌓은 연습",
+      "text": "함께한 파트너: 박하람. 인연 보너스 · 컨택 +0 포함 (박하람 인연 71).",
+      "changes": {
+        "catcher": 15,
+        "skillPoints": 9
+      }
+    },
+    {
+      "month": 5,
+      "week": 3,
+      "title": "실전에서 꺼낼 무기",
+      "text": "공 하나를 더 보고, 움직임 하나를 더 기억했다.",
+      "changes": {
+        "eye": 2,
+        "rival": 3
+      }
+    },
+    {
+      "month": 5,
+      "week": 3,
+      "title": "집에서 푹 쉬기",
+      "text": "몸을 회복하고 다음 주를 준비합니다.",
+      "changes": {
+        "energy": 28,
+        "stress": -10
+      }
+    },
+    {
+      "month": 5,
+      "week": 4,
+      "title": "타격 훈련 · 훈련 성공",
+      "text": "시작 체력 100 · 실패 확률 0%. 끝까지 연습을 마쳐 준비한 성장을 얻었다.",
+      "changes": {
+        "eye": 1,
+        "energy": -28,
+        "stress": 10
+      },
+      "training": {
+        "outcome": "success",
+        "energyBefore": 100,
+        "failureChance": 0,
+        "points": 6
+      }
+    },
+    {
+      "month": 5,
+      "week": 4,
+      "title": "함께 쌓은 연습",
+      "text": "오늘의 경험이 스킬 포인트로 쌓였다.",
+      "changes": {
+        "skillPoints": 6
+      }
+    },
+    {
+      "month": 5,
+      "week": 4,
+      "title": "5월 여름 대회 준비 경기",
+      "text": "청람고 4 : 6 바다고 · 패배. 감독: “연습한 것이 보이는구나. 오늘의 감각을 기억해.”",
+      "changes": {
+        "energy": -8,
+        "stress": 5,
+        "trust": 7
+      }
+    },
+    {
+      "month": 5,
+      "week": 4,
+      "title": "경기에서 배운 것",
+      "text": "승부를 돌아보며 스킬 포인트를 얻었다.",
+      "changes": {
+        "skillPoints": 8
+      }
+    },
+    {
+      "month": 5,
+      "week": 4,
+      "title": "집에서 푹 쉬기",
+      "text": "몸을 회복하고 다음 주를 준비합니다.",
+      "changes": {
+        "energy": 32,
+        "stress": -15
+      }
+    },
+    {
+      "month": 6,
+      "week": 1,
+      "title": "타격 훈련 · 훈련 성공",
+      "text": "시작 체력 96 · 실패 확률 0%. 끝까지 연습을 마쳐 준비한 성장을 얻었다.",
+      "changes": {
+        "eye": 1,
+        "energy": -28,
+        "stress": 10
+      },
+      "training": {
+        "outcome": "success",
+        "energyBefore": 96,
+        "failureChance": 0,
+        "points": 6
+      }
+    },
+    {
+      "month": 6,
+      "week": 1,
+      "title": "함께 쌓은 연습",
+      "text": "오늘의 경험이 스킬 포인트로 쌓였다.",
+      "changes": {
+        "skillPoints": 6
+      }
+    },
+    {
+      "month": 6,
+      "week": 1,
+      "title": "책상 위에 펼친 여름 대진표",
+      "text": "잘한 것과 부족한 것을 적었다. 다음 훈련의 목표가 생겼다.",
+      "changes": {
+        "mental": 2,
+        "trust": 2
+      }
+    },
+    {
+      "month": 6,
+      "week": 1,
+      "title": "집에서 푹 쉬기",
+      "text": "몸을 회복하고 다음 주를 준비합니다.",
+      "changes": {
+        "energy": 32,
+        "stress": -10
+      }
+    },
+    {
+      "month": 6,
+      "week": 2,
+      "title": "타격 훈련 · 훈련 성공 · 합동 훈련",
+      "text": "시작 체력 100 · 실패 확률 0%. 끝까지 연습을 마쳐 준비한 성장을 얻었다.",
+      "changes": {
+        "eye": 1,
+        "energy": -28,
+        "stress": 10
+      },
+      "training": {
+        "outcome": "success",
+        "energyBefore": 100,
+        "failureChance": 0,
+        "points": 12
+      }
+    },
+    {
+      "month": 6,
+      "week": 2,
+      "title": "함께 쌓은 연습",
+      "text": "함께한 파트너: 강민재, 박하람. 인연 보너스 · 컨택 +0 포함 (강민재 인연 80, 박하람 인연 86).",
+      "changes": {
+        "catcher": 14,
+        "skillPoints": 12,
+        "bond_bat_senior": 15
+      }
+    },
+    {
+      "month": 6,
+      "week": 2,
+      "title": "청람 지역 여름 대회 · 8강",
+      "text": "청람고 8 : 7 해솔고 · 승리. 감독: “연습한 것이 보이는구나. 오늘의 감각을 기억해.”",
+      "changes": {
+        "energy": -8,
+        "stress": -5,
+        "trust": 10
+      }
+    },
+    {
+      "month": 6,
+      "week": 2,
+      "title": "경기에서 배운 것",
+      "text": "승부를 돌아보며 스킬 포인트를 얻었다.",
+      "changes": {
+        "skillPoints": 8
+      }
+    },
+    {
+      "month": 6,
+      "week": 2,
+      "title": "집에서 푹 쉬기",
+      "text": "몸을 회복하고 다음 주를 준비합니다.",
+      "changes": {
+        "energy": 32,
+        "stress": -5
+      }
+    },
+    {
+      "month": 6,
+      "week": 3,
+      "title": "타격 훈련 · 훈련 성공",
+      "text": "시작 체력 96 · 실패 확률 0%. 끝까지 연습을 마쳐 준비한 성장을 얻었다.",
+      "changes": {
+        "eye": 1,
+        "energy": -28,
+        "stress": 10
+      },
+      "training": {
+        "outcome": "success",
+        "energyBefore": 96,
+        "failureChance": 0,
+        "points": 6
+      }
+    },
+    {
+      "month": 6,
+      "week": 3,
+      "title": "함께 쌓은 연습",
+      "text": "오늘의 경험이 스킬 포인트로 쌓였다.",
+      "changes": {
+        "skillPoints": 6
+      }
+    },
+    {
+      "month": 6,
+      "week": 3,
+      "title": "청람 지역 여름 대회 · 4강",
+      "text": "청람고 3 : 0 바다고 · 승리. 감독: “연습한 것이 보이는구나. 오늘의 감각을 기억해.”",
+      "changes": {
+        "energy": -8,
+        "stress": -5,
+        "trust": 6
+      }
+    },
+    {
+      "month": 6,
+      "week": 3,
+      "title": "경기에서 배운 것",
+      "text": "승부를 돌아보며 스킬 포인트를 얻었다.",
+      "changes": {
+        "skillPoints": 8
+      }
+    },
+    {
+      "month": 6,
+      "week": 3,
+      "title": "집에서 푹 쉬기",
+      "text": "몸을 회복하고 다음 주를 준비합니다.",
+      "changes": {
+        "energy": 32,
+        "stress": -5
+      }
+    },
+    {
+      "month": 6,
+      "week": 4,
+      "title": "타격 훈련 · 훈련 성공",
+      "text": "시작 체력 92 · 실패 확률 0%. 끝까지 연습을 마쳐 준비한 성장을 얻었다.",
+      "changes": {
+        "eye": 1,
+        "energy": -28,
+        "stress": 10
+      },
+      "training": {
+        "outcome": "success",
+        "energyBefore": 92,
+        "failureChance": 0,
+        "points": 6
+      }
+    },
+    {
+      "month": 6,
+      "week": 4,
+      "title": "함께 쌓은 연습",
+      "text": "오늘의 경험이 스킬 포인트로 쌓였다.",
+      "changes": {
+        "skillPoints": 6
+      }
+    },
+    {
+      "month": 6,
+      "week": 4,
+      "title": "청람 지역 여름 대회 · 결승",
+      "text": "청람고 5 : 2 산호고 · 승리. 감독: “오늘 찾은 과제를 다음 훈련에 가져가자.”",
+      "changes": {
+        "energy": -8,
+        "stress": -5,
+        "trust": 4
+      }
+    },
+    {
+      "month": 6,
+      "week": 4,
+      "title": "경기에서 배운 것",
+      "text": "승부를 돌아보며 스킬 포인트를 얻었다.",
+      "changes": {
+        "skillPoints": 8
+      }
+    },
+    {
+      "month": 6,
+      "week": 4,
+      "title": "집에서 푹 쉬기",
+      "text": "몸을 회복하고 다음 주를 준비합니다.",
+      "changes": {
+        "energy": 32,
+        "stress": -5
+      }
+    }
+  ],
+  "schedule": [
+    {
+      "month": 3,
+      "week": 1,
+      "weekday": "타격 훈련",
+      "weekend": "집에서 푹 쉬기"
+    },
+    {
+      "month": 3,
+      "week": 2,
+      "weekday": "타격 훈련",
+      "weekend": "집에서 푹 쉬기"
+    },
+    {
+      "month": 3,
+      "week": 3,
+      "weekday": "타격 훈련",
+      "weekend": "집에서 푹 쉬기"
+    },
+    {
+      "month": 3,
+      "week": 4,
+      "weekday": "타격 훈련",
+      "weekend": "집에서 푹 쉬기"
+    },
+    {
+      "month": 4,
+      "week": 1,
+      "weekday": "타격 훈련",
+      "weekend": "집에서 푹 쉬기"
+    },
+    {
+      "month": 4,
+      "week": 2,
+      "weekday": "타격 훈련",
+      "weekend": "집에서 푹 쉬기"
+    },
+    {
+      "month": 4,
+      "week": 3,
+      "weekday": "타격 훈련",
+      "weekend": "집에서 푹 쉬기"
+    },
+    {
+      "month": 4,
+      "week": 4,
+      "weekday": "타격 훈련",
+      "weekend": "집에서 푹 쉬기"
+    },
+    {
+      "month": 5,
+      "week": 1,
+      "weekday": "타격 훈련",
+      "weekend": "집에서 푹 쉬기"
+    },
+    {
+      "month": 5,
+      "week": 2,
+      "weekday": "타격 훈련",
+      "weekend": "집에서 푹 쉬기"
+    },
+    {
+      "month": 5,
+      "week": 3,
+      "weekday": "타격 훈련",
+      "weekend": "집에서 푹 쉬기"
+    },
+    {
+      "month": 5,
+      "week": 4,
+      "weekday": "타격 훈련",
+      "weekend": "집에서 푹 쉬기"
+    },
+    {
+      "month": 6,
+      "week": 1,
+      "weekday": "타격 훈련",
+      "weekend": "집에서 푹 쉬기"
+    },
+    {
+      "month": 6,
+      "week": 2,
+      "weekday": "타격 훈련",
+      "weekend": "집에서 푹 쉬기"
+    },
+    {
+      "month": 6,
+      "week": 3,
+      "weekday": "타격 훈련",
+      "weekend": "집에서 푹 쉬기"
+    },
+    {
+      "month": 6,
+      "week": 4,
+      "weekday": "타격 훈련",
+      "weekend": "집에서 푹 쉬기"
+    }
+  ],
+  "initial": {
+    "contact": 40,
+    "power": 32,
+    "eye": 35,
+    "speed": 38,
+    "field": 35,
+    "mental": 40,
+    "velocity": 0,
+    "control": 0,
+    "breaking": 0,
+    "stamina": 0,
+    "energy": 80,
+    "stress": 15,
+    "academics": 45,
+    "trust": 20,
+    "rival": 10,
+    "catcher": 10,
+    "skillPoints": 8,
+    "bond_bat_senior": 10,
+    "bond_pitch_senior": 10,
+    "bond_manager": 10,
+    "bond_classmate": 10
+  },
+  "weekStart": {
+    "contact": 100,
+    "power": 34,
+    "eye": 66,
+    "speed": 38,
+    "field": 38,
+    "mental": 44,
+    "velocity": 0,
+    "control": 0,
+    "breaking": 0,
+    "stamina": 0,
+    "energy": 92,
+    "stress": 0,
+    "academics": 45,
+    "trust": 71,
+    "rival": 20,
+    "catcher": 100,
+    "skillPoints": 161,
+    "bond_bat_senior": 95,
+    "bond_pitch_senior": 10,
+    "bond_manager": 25,
+    "bond_classmate": 10
+  },
+  "monthStart": {
+    "contact": 100,
+    "power": 34,
+    "eye": 63,
+    "speed": 38,
+    "field": 38,
+    "mental": 42,
+    "velocity": 0,
+    "control": 0,
+    "breaking": 0,
+    "stamina": 0,
+    "energy": 96,
+    "stress": 0,
+    "academics": 45,
+    "trust": 53,
+    "rival": 20,
+    "catcher": 86,
+    "skillPoints": 121,
+    "bond_bat_senior": 80,
+    "bond_pitch_senior": 10,
+    "bond_manager": 25,
+    "bond_classmate": 10
+  },
+  "notice": "집에서 푹 쉬기 · 체력 +32 · 스트레스 -5",
+  "eventReply": "잘한 것과 부족한 것을 적었다. 다음 훈련의 목표가 생겼다.",
+  "match": {
+    "appearance": "starter",
+    "inning": 9,
+    "half": 0,
+    "outs": 3,
+    "bases": [
+      null,
+      null,
+      null
+    ],
+    "score": [
+      2,
+      5
+    ],
+    "lines": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        4,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "order": [
+      43,
+      41
+    ],
+    "highlights": 3,
+    "faced": 0,
+    "load": 0,
+    "retired": false,
+    "awaiting": false,
+    "over": true,
+    "batting": {
+      "ab": 5,
+      "hits": 1,
+      "hr": 0,
+      "rbi": 0,
+      "walks": 0,
+      "k": 2
+    },
+    "pitching": {
+      "outs": 0,
+      "k": 0,
+      "walks": 0,
+      "hits": 0,
+      "runs": 0
+    },
+    "recent": [
+      "1회 말 · 나의 승부: 삼진",
+      "2회 말 · 우리 팀 홈런 · 4점",
+      "3회 말 · 나의 승부: 삼진",
+      "4회 말 · 나의 승부: 범타",
+      "4회 말 · 우리 팀 2루타 · 1점",
+      "6회 말 · 나의 타석 (요약) 안타",
+      "8회 말 · 나의 타석 (요약) 범타",
+      "9회 초 · 상대 팀 홈런 · 2점"
+    ],
+    "last": {
+      "title": "범타",
+      "text": "4회 말 · 정확하게 맞히기. 2아웃, 2명의 주자.",
+      "reasons": [
+        "체력 64 · 멘탈 44 · 산호고 · 직구 위주 · 공격적인 승부 · 출루 전망 60% · 상대 제구: 볼넷 -2%p",
+        "선택의 결과는 능력·컨디션·상대 특징과 난수로 결정됩니다."
+      ],
+      "runs": 0
+    },
+    "id": "summer-3",
+    "opponentId": "sanho"
+  },
+  "matchRecorded": true,
+  "supports": [
+    "bat_senior",
+    "catcher",
+    "manager"
+  ],
+  "bonds": {
+    "bat_senior": 95,
+    "pitch_senior": 10,
+    "manager": 25,
+    "classmate": 10
+  },
+  "placements": {
+    "bat_senior": "weights",
+    "catcher": "fielding",
+    "manager": "tactics"
+  },
+  "trainingSeed": 71,
+  "supportCompleted": [
+    "bat_senior",
+    "catcher"
+  ],
+  "activeSupport": null,
+  "skillPoints": 175,
+  "skills": [],
+  "hints": [
+    "contact_focus",
+    "calm"
+  ],
+  "lineupHistory": [
+    {
+      "month": 3,
+      "supports": [
+        "bat_senior",
+        "catcher",
+        "manager"
+      ]
+    },
+    {
+      "month": 4,
+      "supports": [
+        "bat_senior",
+        "catcher",
+        "manager"
+      ]
+    },
+    {
+      "month": 5,
+      "supports": [
+        "bat_senior",
+        "catcher",
+        "manager"
+      ]
+    },
+    {
+      "month": 6,
+      "supports": [
+        "bat_senior",
+        "catcher",
+        "manager"
+      ]
+    }
+  ],
+  "records": [
+    {
+      "month": 3,
+      "match": {
+        "appearance": "starter",
+        "inning": 9,
+        "half": 0,
+        "outs": 3,
+        "bases": [
+          null,
+          {
+            "owner": "opponent"
+          },
+          null
+        ],
+        "score": [
+          7,
+          10
+        ],
+        "lines": [
+          [
+            0,
+            0,
+            4,
+            0,
+            0,
+            3,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            6,
+            0,
+            4,
+            0,
+            0,
+            0
+          ]
+        ],
+        "order": [
+          45,
+          43
+        ],
+        "highlights": 3,
+        "faced": 0,
+        "load": 0,
+        "retired": false,
+        "awaiting": false,
+        "over": true,
+        "batting": {
+          "ab": 5,
+          "hits": 3,
+          "hr": 0,
+          "rbi": 1,
+          "walks": 0,
+          "k": 1
+        },
+        "pitching": {
+          "outs": 0,
+          "k": 0,
+          "walks": 0,
+          "hits": 0,
+          "runs": 0
+        },
+        "recent": [
+          "4회 말 · 우리 팀 안타 · 1점",
+          "4회 말 · 우리 팀 안타 · 1점",
+          "4회 말 · 우리 팀 볼넷 · 1점",
+          "4회 말 · 나의 승부: 범타",
+          "6회 초 · 상대 팀 안타 · 1점",
+          "6회 초 · 상대 팀 볼넷 · 1점",
+          "6회 초 · 상대 팀 안타 · 1점",
+          "6회 말 · 우리 팀 안타 · 1점",
+          "6회 말 · 우리 팀 2루타 · 1점",
+          "6회 말 · 나의 타석 (요약) 안타 · 1점",
+          "6회 말 · 우리 팀 안타 · 1점",
+          "8회 말 · 나의 타석 (요약) 안타"
+        ],
+        "last": {
+          "title": "범타",
+          "text": "4회 말 · 정확하게 맞히기. 3아웃, 3명의 주자.",
+          "reasons": [
+            "체력 72 · 멘탈 42 · 해솔고 · 직구 위주 · 공격적인 승부 · 출루 전망 58%",
+            "선택의 결과는 능력·컨디션·상대 특징과 난수로 결정됩니다."
+          ],
+          "runs": 0
+        },
+        "id": "m3-w4",
+        "opponentId": "haesol"
+      }
+    },
+    {
+      "month": 4,
+      "match": {
+        "appearance": "starter",
+        "inning": 9,
+        "half": 1,
+        "outs": 3,
+        "bases": [
+          {
+            "owner": "player"
+          },
+          {
+            "owner": "team"
+          },
+          null
+        ],
+        "score": [
+          4,
+          3
+        ],
+        "lines": [
+          [
+            0,
+            2,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "order": [
+          41,
+          42
+        ],
+        "highlights": 3,
+        "faced": 0,
+        "load": 0,
+        "retired": false,
+        "awaiting": false,
+        "over": true,
+        "batting": {
+          "ab": 5,
+          "hits": 3,
+          "hr": 1,
+          "rbi": 1,
+          "walks": 0,
+          "k": 1
+        },
+        "pitching": {
+          "outs": 0,
+          "k": 0,
+          "walks": 0,
+          "hits": 0,
+          "runs": 0
+        },
+        "recent": [
+          "2회 초 · 상대 팀 홈런 · 2점",
+          "2회 말 · 나의 승부: 홈런 (1점)",
+          "3회 말 · 우리 팀 2루타 · 2점",
+          "3회 말 · 나의 승부: 안타",
+          "4회 초 · 상대 팀 2루타 · 1점",
+          "5회 말 · 나의 승부: 삼진",
+          "7회 말 · 나의 타석 (요약) 범타",
+          "8회 초 · 상대 팀 안타 · 1점",
+          "9회 말 · 나의 타석 (요약) 안타"
+        ],
+        "last": {
+          "title": "삼진",
+          "text": "5회 말 · 정확하게 맞히기. 2아웃, 1명의 주자.",
+          "reasons": [
+            "체력 72 · 멘탈 42 · 해솔고 · 직구 위주 · 공격적인 승부 · 출루 전망 62%",
+            "선택의 결과는 능력·컨디션·상대 특징과 난수로 결정됩니다."
+          ],
+          "runs": 0
+        },
+        "id": "m4-w4",
+        "opponentId": "haesol"
+      }
+    },
+    {
+      "month": 5,
+      "match": {
+        "appearance": "starter",
+        "inning": 9,
+        "half": 1,
+        "outs": 3,
+        "bases": [
+          null,
+          null,
+          null
+        ],
+        "score": [
+          6,
+          4
+        ],
+        "lines": [
+          [
+            3,
+            0,
+            0,
+            3,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0,
+            0,
+            0,
+            3,
+            0,
+            0,
+            0
+          ]
+        ],
+        "order": [
+          47,
+          40
+        ],
+        "highlights": 3,
+        "faced": 0,
+        "load": 0,
+        "retired": false,
+        "awaiting": false,
+        "over": true,
+        "batting": {
+          "ab": 4,
+          "hits": 3,
+          "hr": 0,
+          "rbi": 0,
+          "walks": 0,
+          "k": 1
+        },
+        "pitching": {
+          "outs": 0,
+          "k": 0,
+          "walks": 0,
+          "hits": 0,
+          "runs": 0
+        },
+        "recent": [
+          "1회 초 · 상대 팀 안타 · 1점",
+          "1회 초 · 상대 팀 볼넷 · 1점",
+          "1회 초 · 상대 팀 볼넷 · 1점",
+          "2회 말 · 나의 승부: 안타",
+          "2회 말 · 우리 팀 안타 · 1점",
+          "3회 말 · 나의 승부: 삼진",
+          "4회 초 · 상대 팀 홈런 · 3점",
+          "6회 말 · 나의 승부: 안타",
+          "6회 말 · 우리 팀 2루타 · 2점",
+          "6회 말 · 우리 팀 안타 · 1점",
+          "7회 말 · 나의 타석 (요약) 안타"
+        ],
+        "last": {
+          "title": "안타",
+          "text": "6회 말 · 정확하게 맞히기. 1아웃, 1명의 주자.",
+          "reasons": [
+            "체력 72 · 멘탈 42 · 바다고 · 직구 위주 · 공격적인 승부 · 출루 전망 60% · 상대 제구: 볼넷 -2%p",
+            "선택의 결과는 능력·컨디션·상대 특징과 난수로 결정됩니다."
+          ],
+          "runs": 0
+        },
+        "id": "m5-w4",
+        "opponentId": "bada"
+      }
+    },
+    {
+      "month": 6,
+      "match": {
+        "appearance": "starter",
+        "inning": 9,
+        "half": 1,
+        "outs": 2,
+        "bases": [
+          {
+            "owner": "team"
+          },
+          {
+            "owner": "team"
+          },
+          {
+            "owner": "team"
+          }
+        ],
+        "score": [
+          7,
+          8
+        ],
+        "lines": [
+          [
+            3,
+            0,
+            0,
+            0,
+            0,
+            4,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0,
+            0,
+            6,
+            0,
+            0,
+            0,
+            1
+          ]
+        ],
+        "order": [
+          44,
+          46
+        ],
+        "highlights": 3,
+        "faced": 0,
+        "load": 0,
+        "retired": false,
+        "awaiting": false,
+        "over": true,
+        "batting": {
+          "ab": 4,
+          "hits": 4,
+          "hr": 0,
+          "rbi": 1,
+          "walks": 1,
+          "k": 0
+        },
+        "pitching": {
+          "outs": 0,
+          "k": 0,
+          "walks": 0,
+          "hits": 0,
+          "runs": 0
+        },
+        "recent": [
+          "2회 말 · 나의 승부: 볼넷",
+          "2회 말 · 우리 팀 2루타 · 1점",
+          "4회 말 · 나의 승부: 안타",
+          "5회 말 · 우리 팀 홈런 · 1점",
+          "5회 말 · 나의 승부: 안타 (1점)",
+          "5회 말 · 우리 팀 홈런 · 4점",
+          "6회 초 · 상대 팀 2루타 · 2점",
+          "6회 초 · 상대 팀 안타 · 1점",
+          "6회 초 · 상대 팀 2루타 · 1점",
+          "7회 말 · 나의 타석 (요약) 안타",
+          "9회 말 · 나의 타석 (요약) 안타",
+          "9회 말 · 우리 팀 볼넷 · 1점"
+        ],
+        "last": {
+          "title": "안타",
+          "text": "5회 말 · 정확하게 맞히기. 1점 득점. 0아웃, 3명의 주자.",
+          "reasons": [
+            "체력 72 · 멘탈 44 · 해솔고 · 직구 위주 · 공격적인 승부 · 출루 전망 62%",
+            "선택의 결과는 능력·컨디션·상대 특징과 난수로 결정됩니다."
+          ],
+          "runs": 1
+        },
+        "id": "summer-1",
+        "opponentId": "haesol"
+      }
+    },
+    {
+      "month": 6,
+      "match": {
+        "appearance": "starter",
+        "inning": 9,
+        "half": 0,
+        "outs": 3,
+        "bases": [
+          {
+            "owner": "opponent"
+          },
+          {
+            "owner": "opponent"
+          },
+          {
+            "owner": "opponent"
+          }
+        ],
+        "score": [
+          0,
+          3
+        ],
+        "lines": [
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0
+          ]
+        ],
+        "order": [
+          39,
+          34
+        ],
+        "highlights": 3,
+        "faced": 0,
+        "load": 0,
+        "retired": false,
+        "awaiting": false,
+        "over": true,
+        "batting": {
+          "ab": 3,
+          "hits": 2,
+          "hr": 0,
+          "rbi": 0,
+          "walks": 1,
+          "k": 0
+        },
+        "pitching": {
+          "outs": 0,
+          "k": 0,
+          "walks": 0,
+          "hits": 0,
+          "runs": 0
+        },
+        "recent": [
+          "1회 말 · 우리 팀 홈런 · 1점",
+          "2회 말 · 나의 승부: 안타",
+          "2회 말 · 우리 팀 2루타 · 1점",
+          "4회 말 · 나의 승부: 볼넷",
+          "6회 말 · 나의 승부: 범타",
+          "8회 말 · 우리 팀 홈런 · 1점",
+          "8회 말 · 나의 타석 (요약) 안타"
+        ],
+        "last": {
+          "title": "범타",
+          "text": "6회 말 · 정확하게 맞히기. 1아웃, 1명의 주자.",
+          "reasons": [
+            "체력 68 · 멘탈 44 · 바다고 · 직구 위주 · 공격적인 승부 · 출루 전망 60% · 상대 제구: 볼넷 -2%p",
+            "선택의 결과는 능력·컨디션·상대 특징과 난수로 결정됩니다."
+          ],
+          "runs": 0
+        },
+        "id": "summer-2",
+        "opponentId": "bada"
+      }
+    },
+    {
+      "month": 6,
+      "match": {
+        "appearance": "starter",
+        "inning": 9,
+        "half": 0,
+        "outs": 3,
+        "bases": [
+          null,
+          null,
+          null
+        ],
+        "score": [
+          2,
+          5
+        ],
+        "lines": [
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2
+          ],
+          [
+            0,
+            4,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "order": [
+          43,
+          41
+        ],
+        "highlights": 3,
+        "faced": 0,
+        "load": 0,
+        "retired": false,
+        "awaiting": false,
+        "over": true,
+        "batting": {
+          "ab": 5,
+          "hits": 1,
+          "hr": 0,
+          "rbi": 0,
+          "walks": 0,
+          "k": 2
+        },
+        "pitching": {
+          "outs": 0,
+          "k": 0,
+          "walks": 0,
+          "hits": 0,
+          "runs": 0
+        },
+        "recent": [
+          "1회 말 · 나의 승부: 삼진",
+          "2회 말 · 우리 팀 홈런 · 4점",
+          "3회 말 · 나의 승부: 삼진",
+          "4회 말 · 나의 승부: 범타",
+          "4회 말 · 우리 팀 2루타 · 1점",
+          "6회 말 · 나의 타석 (요약) 안타",
+          "8회 말 · 나의 타석 (요약) 범타",
+          "9회 초 · 상대 팀 홈런 · 2점"
+        ],
+        "last": {
+          "title": "범타",
+          "text": "4회 말 · 정확하게 맞히기. 2아웃, 2명의 주자.",
+          "reasons": [
+            "체력 64 · 멘탈 44 · 산호고 · 직구 위주 · 공격적인 승부 · 출루 전망 60% · 상대 제구: 볼넷 -2%p",
+            "선택의 결과는 능력·컨디션·상대 특징과 난수로 결정됩니다."
+          ],
+          "runs": 0
+        },
+        "id": "summer-3",
+        "opponentId": "sanho"
+      }
+    }
+  ],
+  "evaluation": {
+    "ability": 80,
+    "performance": 11,
+    "trust": 14,
+    "total": 105,
+    "rank": "starter"
+  },
+  "tournament": {
+    "rounds": [
+      {
+        "round": 1,
+        "games": [
+          {
+            "home": "cheongram",
+            "away": "haesol",
+            "homeScore": 8,
+            "awayScore": 7
+          },
+          {
+            "home": "bada",
+            "away": "hanbit",
+            "homeScore": 3,
+            "awayScore": 2
+          },
+          {
+            "home": "taeyang",
+            "away": "sanho",
+            "homeScore": 1,
+            "awayScore": 2
+          },
+          {
+            "home": "mirim",
+            "away": "gangsan",
+            "homeScore": 2,
+            "awayScore": 6
+          }
+        ]
+      },
+      {
+        "round": 2,
+        "games": [
+          {
+            "home": "cheongram",
+            "away": "bada",
+            "homeScore": 3,
+            "awayScore": 0
+          },
+          {
+            "home": "sanho",
+            "away": "gangsan",
+            "homeScore": 6,
+            "awayScore": 3
+          }
+        ]
+      },
+      {
+        "round": 3,
+        "games": [
+          {
+            "home": "cheongram",
+            "away": "sanho",
+            "homeScore": 5,
+            "awayScore": 2
+          }
+        ]
+      }
+    ]
+  }
+}

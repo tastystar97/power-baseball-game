@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>야구장 시안</title>
+<style>
+  :root {
+    color-scheme: light;
+    --navy: #1f2d4d;
+    --navy-soft: #4a5775;
+    --cream: #f7f1e1;
+    --paper: #fffaf0;
+    --grass: #4f8f4a;
+    --grass-infield: #5a9b53;
+    --dirt: #c79a63;
+    --dirt-dark: #b3864f;
+    --line: #fffdf5;
+    --board: #1c2a22;
+    --board-text: #f3ecd2;
+    --board-accent: #f2c14e;
+    --focus: #e0761b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--cream);
+    color: var(--navy);
+    font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+    line-height: 1.5;
+  }
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px 16px 40px;
+  }
+  h1 { font-size: 1.25rem; margin: 0 0 4px; }
+  .note { margin: 0 0 20px; color: var(--navy-soft); font-size: 0.9rem; }
+
+  /* 전광판 */
+  .scoreboard {
+    background: var(--board);
+    color: var(--board-text);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-variant-numeric: tabular-nums;
+  }
+  .line-score { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+  .line-score th, .line-score td { padding: 2px 4px; text-align: center; }
+  .line-score thead th { color: #b9b39c; font-weight: 500; font-size: 0.8rem; }
+  .line-score tbody th { text-align: left; font-weight: 600; white-space: nowrap; }
+  .line-score .runs { color: var(--board-accent); font-weight: 700; }
+  .line-score .current { outline: 1px solid var(--board-accent); outline-offset: -1px; }
+  .situation {
+    display: flex; flex-wrap: wrap; gap: 6px 18px;
+    margin-top: 10px; padding-top: 10px;
+    border-top: 1px solid #34453a;
+    font-size: 0.95rem;
+  }
+  .situation strong { color: var(--board-accent); }
+  .lamps { display: inline-flex; gap: 4px; vertical-align: -1px; margin-left: 4px; }
+  .lamp { width: 12px; height: 12px; border-radius: 50%; border: 1px solid #6c7a70; }
+  .lamp.on { background: #e5534b; border-color: #e5534b; }
+
+  /* 야구장 */
+  .field-wrap {
+    margin-top: 12px;
+    background: var(--paper);
+    border: 1px solid #e4dcc6;
+    border-radius: 10px;
+    padding: 8px;
+  }
+  .field { display: block; width: 100%; height: auto; }
+  .runner-text { margin: 6px 4px 0; font-size: 0.95rem; }
+
+  /* 미리보기 조작 */
+  .controls { margin-top: 20px; }
+  .controls h2 { font-size: 1rem; margin: 0 0 8px; }
+  .controls .row { display: flex; flex-wrap: wrap; gap: 8px; }
+  button {
+    font: inherit;
+    min-height: 44px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 2px solid var(--navy);
+    background: var(--paper);
+    color: var(--navy);
+    cursor: pointer;
+  }
+  button[aria-pressed="true"] { background: var(--navy); color: var(--paper); }
+  button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>야구장 시안</h1>
+  <p class="note">선택형 경기 화면에 쓸 전광판과 SVG 야구장 시안입니다. 게임 규칙과 연결되지 않은 독립 미리보기입니다.</p>
+
+  <section class="scoreboard" aria-label="전광판">
+    <table class="line-score">
+      <thead><tr id="inning-head"></tr></thead>
+      <tbody id="inning-body"></tbody>
+    </table>
+    <div class="situation" id="situation"></div>
+  </section>
+
+  <figure class="field-wrap" style="margin-inline:0">
+    <svg class="field" viewBox="10 70 420 296" role="img" aria-labelledby="field-title field-desc">
+      <title id="field-title">야구장</title>
+      <desc id="field-desc"></desc>
+
+      <!-- 외야 잔디: 홈에서 반지름 270의 부채꼴 -->
+      <path d="M220 350 L29 159 A270 270 0 0 1 411 159 Z" fill="var(--grass)"/>
+      <!-- 외야 펜스 -->
+      <path d="M29 159 A270 270 0 0 1 411 159" fill="none" stroke="var(--navy)" stroke-width="5" stroke-linecap="round"/>
+
+      <!-- 내야 흙 -->
+      <path d="M220 350 L110 240 A155 155 0 0 1 330 240 Z" fill="var(--dirt)"/>
+      <!-- 내야 잔디 -->
+      <polygon points="220,334 282,272 220,210 158,272" fill="var(--grass-infield)"/>
+      <!-- 홈 주변, 마운드 -->
+      <circle cx="220" cy="346" r="20" fill="var(--dirt)"/>
+      <circle cx="220" cy="277" r="11" fill="var(--dirt-dark)"/>
+      <rect x="215" y="275" width="10" height="3" fill="var(--line)"/>
+
+      <!-- 파울 라인 -->
+      <g stroke="var(--line)" stroke-width="2">
+        <line x1="220" y1="350" x2="29" y2="159"/>
+        <line x1="220" y1="350" x2="411" y2="159"/>
+      </g>
+      <!-- 파울 폴 -->
+      <g stroke="var(--board-accent)" stroke-width="3" stroke-linecap="round">
+        <line x1="29" y1="159" x2="29" y2="141"/>
+        <line x1="411" y1="159" x2="411" y2="141"/>
+      </g>
+
+      <!-- 타석 -->
+      <g fill="none" stroke="var(--line)" stroke-width="1.5">
+        <rect x="199" y="338" width="10" height="18"/>
+        <rect x="231" y="338" width="10" height="18"/>
+      </g>
+      <!-- 홈 플레이트 -->
+      <path d="M214 344 H226 V349 L220 354 L214 349 Z" fill="var(--line)"/>
+
+      <!-- 베이스와 주자: 스크립트가 상태를 반영 -->
+      <g id="bases"></g>
+
+      <!-- 타자 표시 -->
+      <g id="batter" aria-hidden="true">
+        <circle cx="206" cy="336" r="7" fill="var(--board-accent)" stroke="var(--navy)" stroke-width="2"/>
+      </g>
+    </svg>
+    <p class="runner-text" id="runner-text"></p>
+  </figure>
+
+  <section class="controls" aria-labelledby="controls-title">
+    <h2 id="controls-title">미리보기 조작</h2>
+    <div class="row" id="base-buttons"></div>
+    <div class="row" style="margin-top:8px">
+      <button type="button" id="out-button">아웃 추가</button>
+      <button type="button" id="score-button">우리 팀 1점</button>
+      <button type="button" id="reset-button">초기화</button>
+    </div>
+  </section>
+</main>
+
+<script>
+  // 화면에 그릴 경기 상황. 실제 게임에서는 game 영역의 판정 결과가 이 형태로 전달된다.
+  const BASES = [
+    { name: "1루", x: 282, y: 272 },
+    { name: "2루", x: 220, y: 210 },
+    { name: "3루", x: 158, y: 272 },
+  ];
+  const INNINGS = 9;
+
+  function createInitialState() {
+    return {
+      teams: { away: "상대 고교", home: "우리 고교" },
+      inning: 7,
+      half: "bottom",
+      balls: 2,
+      strikes: 1,
+      outs: 1,
+      runners: [true, false, true],
+      lineScore: {
+        away: [0, 1, 0, 0, 2, 0, 0],
+        home: [0, 0, 1, 0, 0, 1, 0],
+      },
+    };
+  }
+
+  let state = createInitialState();
+
+  function total(runs) {
+    return runs.reduce((sum, r) => sum + r, 0);
+  }
+
+  function describeRunners(runners) {
+    const occupied = BASES.filter((_, i) => runners[i]).map((b) => b.name);
+    if (occupied.length === 0) return "주자 없음";
+    if (occupied.length === 3) return "만루";
+    return occupied.join(", ") + " 주자";
+  }
+
+  function renderScoreboard(s) {
+    const head = document.getElementById("inning-head");
+    const body = document.getElementById("inning-body");
+    const cols = Array.from({ length: INNINGS }, (_, i) => i + 1);
+    head.innerHTML =
+      '<th scope="col"><span class="visually-hidden">팀</span></th>' +
+      cols.map((n) => `<th scope="col">${n}</th>`).join("") +
+      '<th scope="col">득점</th>';
+
+    const row = (key) => {
+      const runs = s.lineScore[key];
+      const isBatting = (key === "away") === (s.half === "top");
+      const cells = cols.map((n) => {
+        const current = n === s.inning && isBatting ? ' class="current"' : "";
+        const value = runs[n - 1] ?? "";
+        return `<td${current}>${value}</td>`;
+      });
+      return `<tr><th scope="row">${s.teams[key]}</th>${cells.join("")}<td class="runs">${total(runs)}</td></tr>`;
+    };
+    body.innerHTML = row("away") + row("home");
+
+    const lamps = (count, max) =>
+      '<span class="lamps" aria-hidden="true">' +
+      Array.from({ length: max }, (_, i) => `<span class="lamp${i < count ? " on" : ""}"></span>`).join("") +
+      "</span>";
+
+    document.getElementById("situation").innerHTML = `
+      <span><strong>${s.inning}회${s.half === "top" ? "초" : "말"}</strong></span>
+      <span>볼 ${s.balls}${lamps(s.balls, 3)}</span>
+      <span>스트라이크 ${s.strikes}${lamps(s.strikes, 2)}</span>
+      <span>${s.outs === 0 ? "무사" : s.outs + "사"}${lamps(s.outs, 2)}</span>
+      <span>${describeRunners(s.runners)}</span>`;
+  }
+
+  function renderField(s) {
+    const svgNs = "http://www.w3.org/2000/svg";
+    const group = document.getElementById("bases");
+    group.replaceChildren();
+    BASES.forEach((base, i) => {
+      const bag = document.createElementNS(svgNs, "rect");
+      bag.setAttribute("x", base.x - 6);
+      bag.setAttribute("y", base.y - 6);
+      bag.setAttribute("width", 12);
+      bag.setAttribute("height", 12);
+      bag.setAttribute("transform", `rotate(45 ${base.x} ${base.y})`);
+      bag.setAttribute("fill", "var(--line)");
+      bag.setAttribute("stroke", "var(--navy)");
+      bag.setAttribute("stroke-width", "1");
+      group.append(bag);
+
+      if (s.runners[i]) {
+        const runner = document.createElementNS(svgNs, "circle");
+        runner.setAttribute("cx", base.x);
+        runner.setAttribute("cy", base.y - 16);
+        runner.setAttribute("r", 8);
+        runner.setAttribute("fill", "var(--navy)");
+        runner.setAttribute("stroke", "var(--line)");
+        runner.setAttribute("stroke-width", "2");
+        group.append(runner);
+
+        const label = document.createElementNS(svgNs, "text");
+        label.setAttribute("x", base.x);
+        label.setAttribute("y", base.y - 30);
+        label.setAttribute("text-anchor", "middle");
+        label.setAttribute("font-size", "11");
+        label.setAttribute("font-weight", "700");
+        label.setAttribute("fill", "var(--navy)");
+        label.setAttribute("paint-order", "stroke");
+        label.setAttribute("stroke", "var(--paper)");
+        label.setAttribute("stroke-width", "3");
+        label.textContent = base.name;
+        group.append(label);
+      }
+    });
+
+    const summary = `${describeRunners(s.runners)}, ${s.outs === 0 ? "무사" : s.outs + "사"}`;
+    document.getElementById("field-desc").textContent = `현재 ${summary}. 홈 타석에 타자가 있습니다.`;
+    document.getElementById("runner-text").textContent = `주자 상황: ${summary}`;
+  }
+
+  function render() {
+    renderScoreboard(state);
+    renderField(state);
+    renderControls(state);
+  }
+
+  // 아래는 시안 확인용 조작이다. 실제 경기 진행 규칙이 아니다.
+  function renderControls(s) {
+    const box = document.getElementById("base-buttons");
+    if (box.childElementCount === 0) {
+      BASES.forEach((base, i) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.addEventListener("click", () => {
+          state.runners[i] = !state.runners[i];
+          render();
+        });
+        box.append(btn);
+      });
+    }
+    [...box.children].forEach((btn, i) => {
+      btn.textContent = `${BASES[i].name} 주자 ${s.runners[i] ? "있음" : "없음"}`;
+      btn.setAttribute("aria-pressed", String(s.runners[i]));
+    });
+  }
+
+  document.getElementById("out-button").addEventListener("click", () => {
+    state.outs = (state.outs + 1) % 3;
+    render();
+  });
+  document.getElementById("score-button").addEventListener("click", () => {
+    const runs = state.lineScore.home;
+    while (runs.length < state.inning) runs.push(0);
+    runs[state.inning - 1] += 1;
+    render();
+  });
+  document.getElementById("reset-button").addEventListener("click", () => {
+    state = createInitialState();
+    render();
+  });
+
+  render();
+</script>
+<style>
+  .visually-hidden {
+    position: absolute; width: 1px; height: 1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap;
+  }
+</style>
+</body>
+</html>

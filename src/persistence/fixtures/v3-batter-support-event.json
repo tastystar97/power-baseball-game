@@ -1,0 +1,235 @@
+{
+  "version": 3,
+  "name": "기록보존",
+  "role": "batter",
+  "month": 3,
+  "week": 2,
+  "phase": "supportEvent",
+  "revision": 6,
+  "rng": 71,
+  "stats": {
+    "contact": 66,
+    "power": 32,
+    "eye": 39,
+    "speed": 38,
+    "field": 35,
+    "mental": 40,
+    "velocity": 0,
+    "control": 0,
+    "breaking": 0,
+    "stamina": 0
+  },
+  "energy": 64,
+  "stress": 14,
+  "academics": 45,
+  "trust": 22,
+  "rival": 10,
+  "catcher": 25,
+  "completedEvents": [
+    1
+  ],
+  "log": [
+    {
+      "month": 3,
+      "week": 1,
+      "title": "타격 훈련 · 훈련 성공",
+      "text": "시작 체력 80 · 실패 확률 0%. 끝까지 연습을 마쳐 준비한 성장을 얻었다.",
+      "changes": {
+        "contact": 14,
+        "eye": 2,
+        "energy": -20,
+        "stress": 7
+      },
+      "training": {
+        "outcome": "success",
+        "energyBefore": 80,
+        "failureChance": 0,
+        "points": 9
+      }
+    },
+    {
+      "month": 3,
+      "week": 1,
+      "title": "함께 쌓은 연습",
+      "text": "함께한 파트너: 강민재, 박하람, 한서현. 인연 보너스 · 컨택 +3 포함 (강민재 인연 10, 박하람 인연 10, 한서현 인연 10).",
+      "changes": {
+        "catcher": 15,
+        "skillPoints": 9,
+        "bond_bat_senior": 15,
+        "bond_manager": 15
+      }
+    },
+    {
+      "month": 3,
+      "week": 1,
+      "title": "그라운드의 첫 인사",
+      "text": "“좋아. 매일 쌓인 기본기가 위기에서 널 지켜 줄 거다.”",
+      "changes": {
+        "contact": 1,
+        "trust": 2
+      }
+    },
+    {
+      "month": 3,
+      "week": 1,
+      "title": "집에서 푹 쉬기",
+      "text": "몸을 회복하고 다음 주를 준비합니다.",
+      "changes": {
+        "energy": 32,
+        "stress": -18
+      }
+    },
+    {
+      "month": 3,
+      "week": 2,
+      "title": "타격 훈련 · 훈련 성공",
+      "text": "시작 체력 92 · 실패 확률 0%. 끝까지 연습을 마쳐 준비한 성장을 얻었다.",
+      "changes": {
+        "contact": 11,
+        "eye": 2,
+        "energy": -28,
+        "stress": 10
+      },
+      "training": {
+        "outcome": "success",
+        "energyBefore": 92,
+        "failureChance": 0,
+        "points": 7
+      }
+    },
+    {
+      "month": 3,
+      "week": 2,
+      "title": "함께 쌓은 연습",
+      "text": "함께한 파트너: 강민재. 인연 보너스 · 컨택 +2 포함 (강민재 인연 25).",
+      "changes": {
+        "skillPoints": 7,
+        "bond_bat_senior": 15
+      }
+    }
+  ],
+  "schedule": [
+    {
+      "month": 3,
+      "week": 1,
+      "weekday": "타격 훈련",
+      "weekend": "집에서 푹 쉬기"
+    },
+    {
+      "month": 3,
+      "week": 2,
+      "weekday": "타격 훈련",
+      "weekend": ""
+    }
+  ],
+  "initial": {
+    "contact": 40,
+    "power": 32,
+    "eye": 35,
+    "speed": 38,
+    "field": 35,
+    "mental": 40,
+    "velocity": 0,
+    "control": 0,
+    "breaking": 0,
+    "stamina": 0,
+    "energy": 80,
+    "stress": 15,
+    "academics": 45,
+    "trust": 20,
+    "rival": 10,
+    "catcher": 10,
+    "skillPoints": 8,
+    "bond_bat_senior": 10,
+    "bond_pitch_senior": 10,
+    "bond_manager": 10,
+    "bond_classmate": 10
+  },
+  "weekStart": {
+    "contact": 55,
+    "power": 32,
+    "eye": 37,
+    "speed": 38,
+    "field": 35,
+    "mental": 40,
+    "velocity": 0,
+    "control": 0,
+    "breaking": 0,
+    "stamina": 0,
+    "energy": 92,
+    "stress": 4,
+    "academics": 45,
+    "trust": 22,
+    "rival": 10,
+    "catcher": 25,
+    "skillPoints": 17,
+    "bond_bat_senior": 25,
+    "bond_pitch_senior": 10,
+    "bond_manager": 25,
+    "bond_classmate": 10
+  },
+  "monthStart": {
+    "contact": 40,
+    "power": 32,
+    "eye": 35,
+    "speed": 38,
+    "field": 35,
+    "mental": 40,
+    "velocity": 0,
+    "control": 0,
+    "breaking": 0,
+    "stamina": 0,
+    "energy": 80,
+    "stress": 15,
+    "academics": 45,
+    "trust": 20,
+    "rival": 10,
+    "catcher": 10,
+    "skillPoints": 8,
+    "bond_bat_senior": 10,
+    "bond_pitch_senior": 10,
+    "bond_manager": 10,
+    "bond_classmate": 10
+  },
+  "notice": "타격 훈련 · 훈련 성공 · 컨택 +11 · 선구안 +2 · 체력 -28 · 스트레스 +10 · 스킬 Pt +7 · 타격 선배 인연 +15",
+  "eventReply": "“좋아. 매일 쌓인 기본기가 위기에서 널 지켜 줄 거다.”",
+  "match": null,
+  "matchRecorded": false,
+  "supports": [
+    "bat_senior",
+    "catcher",
+    "manager"
+  ],
+  "bonds": {
+    "bat_senior": 40,
+    "pitch_senior": 10,
+    "manager": 25,
+    "classmate": 10
+  },
+  "placements": {
+    "bat_senior": "batting",
+    "catcher": "fielding",
+    "manager": "tactics"
+  },
+  "trainingSeed": 71,
+  "supportCompleted": [],
+  "activeSupport": "bat_senior",
+  "skillPoints": 24,
+  "skills": [],
+  "hints": [],
+  "lineupHistory": [
+    {
+      "month": 3,
+      "supports": [
+        "bat_senior",
+        "catcher",
+        "manager"
+      ]
+    }
+  ],
+  "records": [],
+  "evaluation": null,
+  "tournament": {
+    "rounds": []
+  }
+}

@@ -1,0 +1,284 @@
+{
+  "version": 3,
+  "name": "기록보존",
+  "role": "pitcher",
+  "month": 3,
+  "week": 3,
+  "phase": "supportEvent",
+  "revision": 10,
+  "rng": 71,
+  "stats": {
+    "contact": 0,
+    "power": 0,
+    "eye": 0,
+    "speed": 0,
+    "field": 35,
+    "mental": 40,
+    "velocity": 36,
+    "control": 70,
+    "breaking": 30,
+    "stamina": 40
+  },
+  "energy": 72,
+  "stress": 8,
+  "academics": 45,
+  "trust": 22,
+  "rival": 13,
+  "catcher": 40,
+  "completedEvents": [
+    1,
+    2
+  ],
+  "log": [
+    {
+      "month": 3,
+      "week": 1,
+      "title": "제구 훈련 · 훈련 성공",
+      "text": "시작 체력 80 · 실패 확률 0%. 끝까지 연습을 마쳐 준비한 성장을 얻었다.",
+      "changes": {
+        "control": 10,
+        "energy": -24,
+        "stress": 8
+      },
+      "training": {
+        "outcome": "success",
+        "energyBefore": 80,
+        "failureChance": 0,
+        "points": 7
+      }
+    },
+    {
+      "month": 3,
+      "week": 1,
+      "title": "함께 쌓은 연습",
+      "text": "함께한 파트너: 박하람. 인연 보너스 · 제구 +1 포함 (박하람 인연 10).",
+      "changes": {
+        "catcher": 15,
+        "skillPoints": 7
+      }
+    },
+    {
+      "month": 3,
+      "week": 1,
+      "title": "그라운드의 첫 인사",
+      "text": "“좋아. 매일 쌓인 기본기가 위기에서 널 지켜 줄 거다.”",
+      "changes": {
+        "control": 1,
+        "trust": 2
+      }
+    },
+    {
+      "month": 3,
+      "week": 1,
+      "title": "집에서 푹 쉬기",
+      "text": "몸을 회복하고 다음 주를 준비합니다.",
+      "changes": {
+        "energy": 32,
+        "stress": -18
+      }
+    },
+    {
+      "month": 3,
+      "week": 2,
+      "title": "제구 훈련 · 훈련 성공",
+      "text": "시작 체력 88 · 실패 확률 0%. 끝까지 연습을 마쳐 준비한 성장을 얻었다.",
+      "changes": {
+        "control": 7,
+        "energy": -24,
+        "stress": 8
+      },
+      "training": {
+        "outcome": "success",
+        "energyBefore": 88,
+        "failureChance": 0,
+        "points": 6
+      }
+    },
+    {
+      "month": 3,
+      "week": 2,
+      "title": "함께 쌓은 연습",
+      "text": "오늘의 경험이 스킬 포인트로 쌓였다.",
+      "changes": {
+        "skillPoints": 6
+      }
+    },
+    {
+      "month": 3,
+      "week": 2,
+      "title": "같은 유니폼, 다른 목표",
+      "text": "이상하게 혼자 할 때보다 집중이 잘됐다. 서로 고칠 점을 하나씩 찾았다.",
+      "changes": {
+        "control": 1,
+        "rival": 3
+      }
+    },
+    {
+      "month": 3,
+      "week": 2,
+      "title": "집에서 푹 쉬기",
+      "text": "몸을 회복하고 다음 주를 준비합니다.",
+      "changes": {
+        "energy": 32,
+        "stress": -13
+      }
+    },
+    {
+      "month": 3,
+      "week": 3,
+      "title": "제구 훈련 · 훈련 성공",
+      "text": "시작 체력 96 · 실패 확률 0%. 끝까지 연습을 마쳐 준비한 성장을 얻었다.",
+      "changes": {
+        "control": 11,
+        "energy": -24,
+        "stress": 8
+      },
+      "training": {
+        "outcome": "success",
+        "energyBefore": 96,
+        "failureChance": 0,
+        "points": 7
+      }
+    },
+    {
+      "month": 3,
+      "week": 3,
+      "title": "함께 쌓은 연습",
+      "text": "함께한 파트너: 박하람. 인연 보너스 · 제구 +2 포함 (박하람 인연 25).",
+      "changes": {
+        "catcher": 15,
+        "skillPoints": 7
+      }
+    }
+  ],
+  "schedule": [
+    {
+      "month": 3,
+      "week": 1,
+      "weekday": "제구 훈련",
+      "weekend": "집에서 푹 쉬기"
+    },
+    {
+      "month": 3,
+      "week": 2,
+      "weekday": "제구 훈련",
+      "weekend": "집에서 푹 쉬기"
+    },
+    {
+      "month": 3,
+      "week": 3,
+      "weekday": "제구 훈련",
+      "weekend": ""
+    }
+  ],
+  "initial": {
+    "contact": 0,
+    "power": 0,
+    "eye": 0,
+    "speed": 0,
+    "field": 35,
+    "mental": 40,
+    "velocity": 36,
+    "control": 40,
+    "breaking": 30,
+    "stamina": 40,
+    "energy": 80,
+    "stress": 15,
+    "academics": 45,
+    "trust": 20,
+    "rival": 10,
+    "catcher": 10,
+    "skillPoints": 8,
+    "bond_bat_senior": 10,
+    "bond_pitch_senior": 10,
+    "bond_manager": 10,
+    "bond_classmate": 10
+  },
+  "weekStart": {
+    "contact": 0,
+    "power": 0,
+    "eye": 0,
+    "speed": 0,
+    "field": 35,
+    "mental": 40,
+    "velocity": 36,
+    "control": 59,
+    "breaking": 30,
+    "stamina": 40,
+    "energy": 96,
+    "stress": 0,
+    "academics": 45,
+    "trust": 22,
+    "rival": 13,
+    "catcher": 25,
+    "skillPoints": 21,
+    "bond_bat_senior": 10,
+    "bond_pitch_senior": 10,
+    "bond_manager": 10,
+    "bond_classmate": 10
+  },
+  "monthStart": {
+    "contact": 0,
+    "power": 0,
+    "eye": 0,
+    "speed": 0,
+    "field": 35,
+    "mental": 40,
+    "velocity": 36,
+    "control": 40,
+    "breaking": 30,
+    "stamina": 40,
+    "energy": 80,
+    "stress": 15,
+    "academics": 45,
+    "trust": 20,
+    "rival": 10,
+    "catcher": 10,
+    "skillPoints": 8,
+    "bond_bat_senior": 10,
+    "bond_pitch_senior": 10,
+    "bond_manager": 10,
+    "bond_classmate": 10
+  },
+  "notice": "제구 훈련 · 훈련 성공 · 제구 +11 · 체력 -24 · 스트레스 +8 · 동료 친밀도 +15 · 스킬 Pt +7",
+  "eventReply": "이상하게 혼자 할 때보다 집중이 잘됐다. 서로 고칠 점을 하나씩 찾았다.",
+  "match": null,
+  "matchRecorded": false,
+  "supports": [
+    "pitch_senior",
+    "catcher",
+    "manager"
+  ],
+  "bonds": {
+    "bat_senior": 10,
+    "pitch_senior": 10,
+    "manager": 10,
+    "classmate": 10
+  },
+  "placements": {
+    "pitch_senior": "velocity",
+    "catcher": "control",
+    "manager": "rest"
+  },
+  "trainingSeed": 71,
+  "supportCompleted": [],
+  "activeSupport": "catcher",
+  "skillPoints": 28,
+  "skills": [],
+  "hints": [],
+  "lineupHistory": [
+    {
+      "month": 3,
+      "supports": [
+        "pitch_senior",
+        "catcher",
+        "manager"
+      ]
+    }
+  ],
+  "records": [],
+  "evaluation": null,
+  "tournament": {
+    "rounds": []
+  }
+}
