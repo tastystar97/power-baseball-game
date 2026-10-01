@@ -1,4 +1,4 @@
-import {useEffect,useMemo,useRef} from 'react';
+import {useMemo} from 'react';
 import {SkillChecks} from './SkillChecks.tsx';
 import {DuelRecords} from './RivalryPanel.tsx';
 import type {Action,GameState} from '../game/types.ts';
@@ -18,11 +18,11 @@ import {PlaybackControls} from './match/PlaybackControls.tsx';
 import {DiceReveal} from './match/DiceReveal.tsx';
 import {getSkills} from '../content/skills.ts';
 import {pendingRoleEvent} from '../game/career-role.ts';
+import {ChoicePopup} from './ChoicePopup.tsx';
+import {diceFaces} from '../content/match-presentation.ts';
 export function MatchScreen({s,send}:{s:GameState;send:(a:Omit<Action,'revision'>)=>void}){
  const m=s.match!,playback=usePlayback(s,send),view=useMemo(()=>presentationAt(m,playback.index,playback.rolling),[m,playback.index,playback.rolling]);
  const choices=useMemo(()=>playback.ready?tactics(s):[],[s,playback.ready]);
- const focus=useRef<HTMLHeadingElement>(null);
- useEffect(()=>{if(playback.ready)focus.current?.focus({preventScroll:true});},[playback.ready]);
  const roleLabel=s.role==='batter'?`${m.battingOrder}번 · 2루수`:pitchingRoleNames[m.pitchingRole];
  const visiblePitching=view.pitcher?.id==='player'||playback.index>=m.feed.length&&m.entered&&!m.retired;
  const canIntervene=!playback.finished&&!playback.ready&&m.playerBoundary&&m.appearance!=='reserve'&&(s.role==='batter'||visiblePitching);
@@ -37,7 +37,11 @@ export function MatchScreen({s,send}:{s:GameState;send:(a:Omit<Action,'revision'
   <Commentary event={captionEvent} ready={playback.ready} ended={end}/>
   {!end&&<PlaybackControls speed={playback.speed} setSpeed={playback.setSpeed} paused={playback.paused} togglePause={()=>playback.setPaused(v=>!v)} intervene={()=>send({type:'intervene'})} canIntervene={canIntervene} reason={reason} closer={s.role==='pitcher'&&m.pitchingRole==='closer'&&view.score.inning<9} fastUntil={playback.fastUntil} fastToEntry={()=>{playback.setFastUntil(true);playback.setPaused(false);}} reserve={m.appearance==='reserve'}/>}
   {!end&&<MatchupCard view={view} s={s}/>}
-  {playback.ready&&<section className="decision-panel"><div className="decision-heading"><h2 ref={focus} tabIndex={-1}>이번 승부, 어떻게 할까?</h2><button onClick={()=>send({type:'delegate'})}>맡기기</button></div><p className="reason">{view.score.outs}아웃 · {view.score.bases.map((r,i)=>r?`${i+1}루 ${r.name}`:'').filter(Boolean).join(' · ')||'주자 없음'}</p><div className="live-tactics">{choices.map(t=><button className="card" key={t.id} disabled={t.disabled} onClick={()=>playback.choose(t.id,t.outlook)}><span className="top"><strong>{t.title}</strong><span className={`outlook ${t.outlook==='유리'?'good':'mid'}`}>{t.outlook}</span></span><span className="desc">{t.description}</span>{t.disabled&&<span className="reason">진루할 주자가 있고 2아웃 미만이어야 합니다.</span>}</button>)}</div></section>}
+  {playback.ready&&<ChoicePopup label="내 차례 · 작전 선택" title={`${view.score.inning}회${view.score.half===0?'초':'말'} · ${view.score.outs}아웃 · ${view.score.bases.map((r,i)=>r?`${i+1}루`:'').filter(Boolean).join('·')||'주자 없음'}`} subtitle={<>청람고 {view.score.score[1]} : {view.score.score[0]} {teamName(m.opponentId)} · {s.role==='batter'?'나의 타석':'나의 승부'}</>}
+   footer={<><span className="reason">★가 많을수록 해볼 만한 승부입니다. 확률은 숫자로 보여 주지 않습니다.</span><button onClick={()=>send({type:'delegate'})}>맡기기</button></>}>
+   <MatchupCard view={view} s={s}/>
+   <div className="live-tactics popup-tactics">{choices.map(t=><button className="card" key={t.id} disabled={t.disabled} onClick={()=>playback.choose(t.id,t.outlook)}><span className="top"><strong>{t.title}</strong><span className={`outlook ${t.outlook==='유리'?'good':t.outlook==='불리'?'bad':'mid'}`}>{t.outlook}</span></span><span className="desc">{t.description}</span><span className="dice-pips" aria-label={`주사위 여섯 면 중 좋은 면 ${diceFaces(t.outlook).filter(f=>f==='★').length}개`}>{diceFaces(t.outlook).map((f,i)=><i key={i} className={f==='★'?'g':f==='●'?'m':'b'}>{f}</i>)}</span>{t.disabled&&<span className="reason">진루할 주자가 있고 2아웃 미만이어야 합니다.</span>}</button>)}</div>
+  </ChoicePopup>}
   {end&&<section className="match-final"><p className="eyebrow">FINAL SCORE</p><h2>{m.score[1]>m.score[0]?'함께 만든 승리':'다음 승부를 향해'}</h2><p className="final-score">청람고 <b>{m.score[1]} : {m.score[0]}</b> {teamName(m.opponentId)}</p><Records s={s}/><div className="actions"><button className="primary" onClick={()=>send({type:'continue'})}>{pendingRoleEvent(s)?'감독 면담으로':'일요일 주말 활동으로'}</button></div></section>}
   <details className="match-history"><summary>지나간 중계 · {Math.min(playback.index+(playback.rolling?0:1),m.feed.length)}개 장면</summary><ol>{m.feed.slice(0,playback.index+(playback.rolling?0:1)).map((e,i)=><li key={i}>{caption(e)}</li>)}</ol></details>
   {end&&<details className="match-history"><summary>라이벌 대결과 발동 스킬</summary><DuelRecords role={s.role} match={m}/><SkillChecks match={m} s={s}/></details>}
