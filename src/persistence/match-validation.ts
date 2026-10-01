@@ -27,6 +27,11 @@ function checkMovement(e:PlayEvent){
 }
 export function validateMatch(m:Match,role:GameState['role']){
  if(!m.rosters||m.rosters[0].teamId!==(m.opponentId??'haesol')||m.rosters[1].teamId!=='cheongram')fail('경기 선수단이 없습니다.');
+ for(const change of m.substitutions){
+  const next=m.rosters![change.team].batters[change.slot],first=m.feed[change.feedIndex];
+  if(m.summary||role!=='batter'||m.appearance!=='substitute'||change.team!==1||change.previous.id!=='junseo'||change.nextId!=='player'||next.id!==change.nextId||change.slot!==m.battingOrder-1||change.feedIndex>m.feed.length||(first?.inning??m.inning)<7||m.feed.slice(0,change.feedIndex).some(e=>e.batter.id==='player'))fail('타자 교체 시점과 선수단이 맞지 않습니다.');
+ }
+ if(!m.summary&&role==='batter'&&m.appearance==='substitute'&&m.entered!==Boolean(m.substitutions.length))fail('타자 교체 이력이 없습니다.');
  if(m.lines.some(line=>line.length!==m.inning)||m.lines.some((line,i)=>line.reduce((a,b)=>a+b,0)!==m.score[i]))fail('이닝 점수가 일치하지 않습니다.');
  for(const team of [0,1] as const){
   const r=m.rosters![team];

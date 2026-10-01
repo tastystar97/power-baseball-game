@@ -24,6 +24,7 @@ export const matchSchema=z.object({
  batting:battingSchema,pitching:pitchingSchema,batterLines:z.record(z.string(),battingSchema),pitcherLines:z.record(z.string(),pitchingSchema.extend({team:half,started:z.boolean(),entryLead:z.number().int(),saveOpportunity:z.boolean(),exited:z.boolean(),load:z.number().nonnegative(),faced:count})),
  totals:z.tuple([z.object({hits:count,errors:count}),z.object({hits:count,errors:count})]),
  rosters:z.tuple([roster,roster]).nullable(),pitcherIds:z.tuple([z.string(),z.string()]),usedPitchers:z.tuple([z.array(z.string()),z.array(z.string())]),
+ substitutions:z.array(z.object({team:half,slot:count.max(8),previous:player,nextId:z.string(),feedIndex:count.max(4000)}).strict()).max(1),
  battingOrder:z.union([z.literal(1),z.literal(3),z.literal(4),z.literal(6),z.literal(8)]),pitchingRole:z.enum(['starter','middle','closer']),
  feed:z.array(playSchema).max(4000),playbackIndex:count.max(4000),summary:z.boolean(),
  skillChecks:z.array(z.object({half,order:count,inning:count.min(1).max(99),tactic:z.string(),source:z.enum(['manual','auto']),intelligence:rating,eligible:z.array(z.string()).max(32),active:z.array(z.string()).max(32)})).max(1000),
