@@ -47,11 +47,12 @@ export type SupportId=string;
 export const supportIdSchema=idSchema;
 export const skillIds=['contact_focus','power_drive','patient_eye','fastball_edge','precision','breaking_read','calm','steady','contact_master','slugger','power_finish','efficient_pitch'] as const;
 export type SkillId=string;
-export const phases = ['lineup','weekday','supportEvent','supportResult','weekend','selection','match','matchResult','matchEnd','complete'] as const;
+export const phases = ['lineup','weekday','supportEvent','supportResult','weekend','selection','match','matchResult','matchEnd','roleEvent','complete'] as const;
 const changesSchema = z.record(z.string(), z.number().int().min(-1000).max(1000));
 const trainingResultSchema=z.object({outcome:z.enum(['success','failure']),energyBefore:value,failureChance:count.max(95),points:count.max(100)});
 export const evaluationSchema=z.object({ability:z.number(),performance:z.number(),trust:z.number(),total:z.number(),rank:z.enum(['starter','substitute','reserve']),basis:z.literal('rival'),competition:competitionSchema.nullable()});
 export const stateSchema = z.object({
+  career:z.object({battingOrder:z.union([z.literal(1),z.literal(3),z.literal(4),z.literal(6),z.literal(8)]),battingPath:z.enum(['undecided','leadoff','middle']),pitchingRole:z.enum(['starter','middle','closer']),completed:z.array(z.enum(['bat_six','bat_path','bat_cleanup','pitch_role'])).max(3),pending:z.enum(['bat_six','bat_path','bat_cleanup','pitch_role']).nullable(),history:z.array(z.object({matchId:z.string(),eventId:z.enum(['bat_six','bat_path','bat_cleanup','pitch_role']),choice:z.enum(['six','leadoff','center','cleanup','starter','closer','stay'])})).max(6)}).strict(),
   version:z.literal(7),content:contentSchema,weekdayPart:z.union([z.literal(1),z.literal(2)]),activeEncounter:z.string().nullable(),encounterHistory:z.array(z.object({key:z.number().int().min(1).max(16),part:z.union([z.literal(1),z.literal(2)]),eventId:z.string().nullable(),support:supportIdSchema.nullable(),choice:z.number().int().min(0).max(1).nullable()})).max(32), name:z.string().trim().min(1).refine(s => [...s].length <= 8), role:z.enum(['batter','pitcher']),month:monthSchema,
   week:z.number().int().min(1).max(4), phase:z.enum(phases), revision:count,
   rng:z.number().int().min(1).max(4294967295), attributes:z.object({power:value,endurance:value,mental:value,intelligence:value,sense:value}).strict(), proficiency:z.partialRecord(z.enum(statKeys),value),

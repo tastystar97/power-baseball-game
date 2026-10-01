@@ -1,3 +1,5 @@
+import {initialCareer,pendingRoleEvent,applyRoleChoice,roleChoices} from './career-role.ts';
+import {careerEvents} from '../content/career-events.ts';
 import {builtinPack} from '../cards/builtin.ts';
 import {catalogFromPacks,catalogForDeck,DECK_SIZE} from '../cards/catalog.ts';
 import type {CardContent} from '../cards/schema.ts';
@@ -29,7 +31,7 @@ export function createGame(rawName:string,role:Role,seed=42,content:CardContent=
   const name=rawName.trim();
   if(!name||[...name].length>8||!['batter','pitcher'].includes(role))throw new Error('이름은 1~8자로 입력하고 타자 또는 투수를 선택해 주세요.');
   const frozen=deck?catalogForDeck(content,deck):structuredClone(content);
-  const state:GameState={version:7,content:frozen,weekdayPart:1,activeEncounter:null,encounterHistory:[],competitor:createCompetitor(role),selectionHistory:[],name,role,month:3,week:1,phase:deck?'weekday':'lineup',revision:0,rng:(seed>>>0)||1,attributes:initialAttributes(),proficiency:initialProficiency(role),
+  const state:GameState={version:7,career:initialCareer(),content:frozen,weekdayPart:1,activeEncounter:null,encounterHistory:[],competitor:createCompetitor(role),selectionHistory:[],name,role,month:3,week:1,phase:deck?'weekday':'lineup',revision:0,rng:(seed>>>0)||1,attributes:initialAttributes(),proficiency:initialProficiency(role),
     energy:80,stress:15,trust:20,rival:10,catcher:10,
     log:[],schedule:[{month:3,week:1,weekday:'',weekday2:'',weekend:''}],initial:{},weekStart:{},monthStart:{},
     notice:'함께 성장할 연습 파트너를 골라 보자.',eventReply:'',match:null,matchRecorded:false,
@@ -125,7 +127,7 @@ function recordMatch(s:GameState){
 }
 function startMatch(s:GameState){
   const plan=matchPlan(s)!;
-  s.match={...createMatch(s.month===3?'starter':s.evaluation!.rank),id:plan.id,opponentId:plan.opponentId,duels:[]};
+  s.match={...createMatch(s.month===3?'starter':s.evaluation!.rank),id:plan.id,opponentId:plan.opponentId,duels:[],battingOrder:s.career.battingOrder,pitchingRole:s.career.pitchingRole};
   advanceMatch(s);s.phase=s.match.over?'matchEnd':'match';if(s.match.over)recordMatch(s);
 }
 function finishWeekday(s:GameState){
@@ -171,6 +173,10 @@ export function transition(previous:GameState,action:Action):GameState {
       if(s.weekdayPart===1){drawEncounter(s);if(!s.activeEncounter)beginSecond(s);}
       else {s.competitor=growCompetitor(s.competitor,s.role,weekKey(s.month,s.week),sharedTraining(s,scheduleIndex(s),1),'v6',sharedTraining(s,scheduleIndex(s),2));drawEncounter(s);if(!s.activeEncounter)finishWeekday(s);}
     }else nextWeek(s);
+  }else if(action.type==='choice'&&s.phase==='roleEvent'){
+    const id=s.career.pending!,before=snapshot(s),choice=action.id??roleChoices(s)[action.index??-1]?.id;
+    if(!choice||!applyRoleChoice(s,choice))return previous;
+    logChange(s,before,careerEvents[id].title,'감독과 다음 경기에서 맡을 자리를 정했다.');s.phase='weekend';
   }else if(action.type==='choice'&&s.phase==='supportEvent'){
     const ev=currentEvent(s),choice=ev.choices[action.index??-1];if(!choice)return previous;
     if(!s.activeSupport)return previous;
@@ -204,7 +210,7 @@ export function transition(previous:GameState,action:Action):GameState {
     if(s.phase==='supportResult'){if(s.weekdayPart===1)beginSecond(s);else{s.activeEncounter=null;s.activeSupport=null;finishWeekday(s);}}
     else if(s.phase==='selection')startMatch(s);
     else if(s.phase==='matchResult'||s.phase==='match'&&!s.match!.awaiting){advanceMatch(s);s.phase=s.match!.over?'matchEnd':'match';if(s.match!.over)recordMatch(s);}
-    else if(s.phase==='matchEnd')s.phase='weekend';
+    else if(s.phase==='matchEnd'){s.career.pending=pendingRoleEvent(s);s.phase=s.career.pending?'roleEvent':'weekend';}
     else return previous;
   }else return previous;
   s.revision++;return s;

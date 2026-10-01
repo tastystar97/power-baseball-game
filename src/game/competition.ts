@@ -1,3 +1,4 @@
+import {pitchingRoleNames} from '../content/career-events.ts';
 import {derivedStats} from './abilities.ts';
 import {matchPlan} from './season.ts';
 import type { GameState } from './types.ts';
@@ -8,8 +9,8 @@ export function evaluateSelection(s:GameState) {
  const rank=competition.starter==='player'?'starter':p.total>=52?'substitute':'reserve';
  return {ability:p.ability,performance:p.readiness,trust:p.trust,total:p.total,rank,basis:'rival',competition} as const;
 }
-export function appearanceName(s:Pick<GameState,'role'>,rank:'starter'|'substitute'|'reserve') {
-  return rank==='starter'?(s.role==='pitcher'?'선발 투수':'선발 타자'):rank==='substitute'?(s.role==='pitcher'?'구원 투수':'대타'):'출전 대기';
+export function appearanceName(s:Pick<GameState,'role'>&Partial<Pick<GameState,'career'>>,rank:'starter'|'substitute'|'reserve') {
+  return rank==='starter'?(s.role==='pitcher'?`${pitchingRoleNames[s.career?.pitchingRole??'middle']} 투수`:'선발 타자'):rank==='substitute'?(s.role==='pitcher'?'구원 투수':'대타'):'출전 대기';
 }
 export const matchTitle=(month:number)=>month===3?'첫 연습경기':'4월 교류 리그 · 첫 공식전';
 
