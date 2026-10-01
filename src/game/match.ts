@@ -1,3 +1,4 @@
+import {matchRules} from '../content/match-rules.ts';
 import {teamName} from '../content/teams.ts';
 import {derivedStats} from './abilities.ts';
 import {eligibleSkills,rollSkills,skillActivationChance} from './skill-activation.ts';
@@ -15,7 +16,7 @@ export function createMatch(appearance:Match['appearance']='starter'):Match {
  return {...createScoreState(),appearance,skillChecks:[],duels:[],highlights:0,entered:false,retired:appearance==='reserve',awaiting:false,playerBoundary:false,intervene:false,
   rosters:null,pitcherIds:['',''],usedPitchers:[[],[]],battingOrder:8,pitchingRole:'middle',feed:[],playbackIndex:0,summary:false,recent:[],last:null};
 }
-export const loadLimit=(s:GameState)=>78+derivedStats(s).stamina*.6;
+export const loadLimit=(s:GameState)=>matchRules.starterLoadBase+derivedStats(s).stamina*matchRules.starterStaminaWeight;
 export function initializeMatch(s:GameState){
  const m=s.match!;if(m.rosters)return;
  m.rosters=[rosterFor(m.opponentId??'haesol',s),rosterFor('cheongram',s,{appearance:m.appearance,battingOrder:m.battingOrder,pitchingRole:m.pitchingRole})];
@@ -48,7 +49,7 @@ function updateLineup(s:GameState){
   const roleId=m.appearance==='starter'?'player':'junseo';
   const roleActive=current.id===roleId||current.id==='player';
   const inningLimit=current.id==='player'&&m.appearance==='substitute'?9:roleActive&&m.pitchingRole==='closer'?11:8;
-  const limit=roleActive&&m.pitchingRole==='middle'?36+current.ratings.stamina*.15:roleActive&&m.pitchingRole==='closer'?999:78+current.ratings.stamina*.6;
+  const limit=roleActive&&m.pitchingRole==='middle'?matchRules.middleLoadBase+current.ratings.stamina*matchRules.middleStaminaWeight:roleActive&&m.pitchingRole==='closer'?999:roleActive?matchRules.starterLoadBase+current.ratings.stamina*matchRules.starterStaminaWeight:78+current.ratings.stamina*.6;
   if(line.load>=limit||m.inning>=inningLimit){
    const next=arms.find(p=>!used.includes(p.id)&&!(p.id===roleId&&m.pitchingRole==='closer'&&m.inning<9));
    if(next)changePitcher(s,team,next);

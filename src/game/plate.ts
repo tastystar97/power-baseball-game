@@ -1,5 +1,6 @@
 import type {MatchPlayer} from './roster.ts';
 import type {SkillEffect} from '../cards/schema.ts';
+import {matchRules as rules} from '../content/match-rules.ts';
 export const outcomes=['strikeout','walk','hitByPitch','groundOut','flyOut','lineOut','doublePlay','sacrificeFly','sacrificeBunt','infieldSingle','single','double','triple','homer','error'] as const;
 export type PlateOutcome=typeof outcomes[number];
 export type Ball='ground'|'line'|'fly';
@@ -37,7 +38,7 @@ export function plateDistribution(ctx:PlateContext,tactic:string):Distribution {
  const wear=Math.max(0,ctx.load-(70+p.stamina*.55))*.0015;
  const mental=(b.mental-p.mental)*.0003;
  let k=clamp(.205+(p.velocity-b.contact)*.0015+(p.breaking-b.eye)*.0006-mental-wear+(ctx.playerBatter?fatigue:-fatigue),.06,.43);
- let walk=clamp(.065+(b.eye-p.control)*.0011+wear+(ctx.playerPitcher?fatigue:0),.02,.20);
+ let walk=clamp(rules.walkBase+(b.eye-p.control)*.0011+wear+(ctx.playerPitcher?fatigue:0),.02,.20);
  const hbp=clamp(.006+(50-p.control)*.00008,.002,.012);
  let ground=.46+(b.contact-b.power)*.001, line=.20+(b.contact-50)*.0005;
  let hitBonus=(b.contact-p.control)*.0007+mental+wear+(ctx.playerPitcher?fatigue:ctx.playerBatter?-fatigue:0);
@@ -66,8 +67,8 @@ export function plateDistribution(ctx:PlateContext,tactic:string):Distribution {
    const dirWeight=direction==='center'?.36:direction===(ctx.batter.bats==='R'?'left':'right')?.36:.28;
    const weight=(1-k-walk-hbp)*ballWeight*dirWeight;
    const error=clamp(.020-defense*.3,.004,.04);
-   const hit=clamp((ball==='ground'?.24:ball==='line'?.62:.105)+hitBonus-defense,.03,.82);
-   const hr=ball==='fly'?clamp(.045+homerBonus,.008,.2):0;
+   const hit=clamp((ball==='ground'?rules.groundHit:ball==='line'?rules.lineHit:rules.flyHit)+hitBonus-defense,.03,.82);
+   const hr=ball==='fly'?clamp(rules.flyHomer+homerBonus,.008,.2):0;
    const double=hit*(ball==='ground'?.05:ball==='line'?.28:.55);
    const triple=ball==='ground'?0:hit*clamp(.025+(b.speed-50)*.0007,.005,.07);
    const infield=ball==='ground'?hit*clamp(.1+(b.speed-40)*.005,.03,.4):0;
@@ -138,10 +139,11 @@ export function createPlay(ctx:PlateContext,tactic:string,path:Omit<PlatePath,'p
   for(let i=2;i>=0;i--){const r=ctx.bases[i];if(!r)continue;let to=Math.min(4,i+1+step) as 1|2|3|4;
    if(o==='single'&&i===1){const attempt=rng()<.45+r.speed*.004;if(attempt){if(rng()<.09){move(r,2,'out');continue;}to=4;}}
    if(o==='single'&&i===0&&!after.bases[2]&&rng()<.1+r.speed*.003)to=3;
+   if(o==='double'&&i===0&&rng()<rules.doubleHomeBase+r.speed*rules.doubleHomeSpeed)to=4;
    move(r,(i+1) as 1|2|3,to);
   }
   move(runner,0,step as 1|2|3|4);
- }else {move(runner,0,'out');}
+ }else {move(runner,0,'out');if(o==='groundOut'&&after.outs<3&&rng()<rules.groundAdvance){if(ctx.bases[2])move(ctx.bases[2],3,4);if(ctx.bases[1])move(ctx.bases[1],2,3);}}
  const runs=after.score[ctx.half]-before.score[ctx.half];
  return {outcome:path.outcome,ball:path.ball,direction:path.direction,fielder:path.fielder,kind:'plate',inning:ctx.inning,half:ctx.half,order:ctx.order,batter:{id:ctx.batter.id,name:ctx.batter.name},pitcher:{id:ctx.pitcher.id,name:ctx.pitcher.name},playerBatter:ctx.playerBatter,playerPitcher:ctx.playerPitcher,tactic,source:ctx.source,burden,moves,outs:after.outs-before.outs,runs,rbi:o==='error'||o==='doublePlay'?0:runs,before,after};
 }
