@@ -6,6 +6,8 @@ import {parseSave} from './save.ts';
 import type {LoadResult} from './save.ts';
 import type {CardPack} from '../cards/schema.ts';
 import type {GameState} from '../game/types.ts';
+import {parseCreation} from '../game/creation.ts';
+import type {CreationDraft} from '../game/creation.ts';
 
 export function createDatabase(factory:IDBFactory|undefined,name='last-summer-v7') {
   let opened:Promise<IDBDatabase>|undefined;
@@ -56,6 +58,16 @@ export function createDatabase(factory:IDBFactory|undefined,name='last-summer-v7
     },
     async removePack(id:string){if(id==='core')throw Error('기본 팩은 삭제할 수 없습니다.');await write('packs',id,null,true);},
     async saveSession(state:GameState){const valid=parseSave(JSON.stringify(state));await write('session','current',valid);},
+    async readCreation():Promise<CreationDraft|undefined>{const raw=await read<string|undefined>('draft','character');return raw===undefined?undefined:parseCreation(raw);},
+    async writeCreation(draft:CreationDraft){const valid=parseCreation(JSON.stringify(draft));await write('draft','character',JSON.stringify(valid));},
+    async admitPlayer(state:GameState){
+      const valid=parseSave(JSON.stringify(state)),db=await open();
+      return new Promise<void>((resolve,reject)=>{
+        const tx=db.transaction(['session','draft'],'readwrite');
+        tx.objectStore('session').put(valid,'current');tx.objectStore('draft').delete('character');
+        tx.oncomplete=()=>resolve();tx.onabort=()=>reject(tx.error||Error('입학 정보를 저장하지 못했습니다.'));
+      });
+    },
     async loadSession(legacyRaw?:string|null):Promise<LoadResult>{
       let saved:unknown;try{saved=await read('session','current');}catch{return {kind:'unavailable',message:'저장소를 읽을 수 없습니다. 지금 플레이는 저장되지 않을 수 있습니다.'};}
       if(saved===undefined&&legacyRaw==null)return {kind:'empty'};

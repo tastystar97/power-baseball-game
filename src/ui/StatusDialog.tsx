@@ -1,3 +1,4 @@
+import {CharacterProfile} from './creation/CharacterProfile.tsx';
 import {journalSpeaker} from './logView.ts';
 import {visibleJournal} from '../game/journal.ts';
 import {PRIMARY_MAX} from '../content/development-rules.ts';
@@ -34,7 +35,7 @@ export function StatusDialog({s,onClose,send,initialTab="능력"}:{s:GameState;o
     <div className="status-head"><h2 id="status-title">선수 상태창</h2><span className="muted">1학년 {s.month}월 {s.week}주차</span><button className="close" onClick={onClose} autoFocus>닫기</button></div>
     <div className="status-body"><aside className="profile"><Portrait id={s.role}/><p className="name">{s.name}</p><p className="muted">청람고 · 1학년 {roleName(s)}</p><Meter label="체력" value={s.energy}/><Meter label="스트레스" value={s.stress} bad/></aside>
     <div className="status-content"><div className="status-tabs" role="group" aria-label="상태창 항목">{['능력','스킬','변화','기록','시즌','관계','일지'].map(t=><button key={t} aria-pressed={tab===t} onClick={()=>setTab(t)}>{t}</button>)}</div>
-    {tab==='능력'&&<><DevelopmentPanel s={s} detail/><AbilityPanel s={s}/><section className="panel"><h3>경기 이해력과 신뢰</h3><Meter label="지능" value={s.attributes.intelligence} max={PRIMARY_MAX}/><p className="reason">지능이 높을수록 조건을 만족한 스킬 발동에 유리합니다.</p><Meter label="감독 신뢰" value={s.trust}/></section><CompetitionPanel s={s} detail/></>}
+    {tab==='능력'&&<><CharacterProfile s={s}/><DevelopmentPanel s={s} detail/><AbilityPanel s={s}/><section className="panel"><h3>경기 이해력과 신뢰</h3><Meter label="지능" value={s.attributes.intelligence} max={PRIMARY_MAX}/><p className="reason">지능이 높을수록 조건을 만족한 스킬 발동에 유리합니다.</p><Meter label="감독 신뢰" value={s.trust}/></section><CompetitionPanel s={s} detail/></>}
     {tab==='스킬'&&<SkillsPanel s={s} send={send}/>}
     {tab==='변화'&&<><div className="seg" role="group" aria-label="변화 기간"><button aria-pressed={range==='week'} onClick={()=>setRange('week')}>이번 주</button><button aria-pressed={range==='month'} onClick={()=>setRange('month')}>이번 달</button><button aria-pressed={range==='all'} onClick={()=>setRange('all')}>입학 이후</button></div><table className="comparison"><thead><tr><th>항목</th><th>시작 → 현재</th><th>변화</th></tr></thead><tbody>{Object.keys(current).filter(k=>!k.startsWith('proficiency_')).map(k=><tr key={k}><td>{changeLabel(s,k,labels[k])}</td><td>{start[k]} → {current[k]}</td><td>{current[k]-start[k]>0?'+':''}{current[k]-start[k]}<div className="cause">{logs.filter(l=>l.changes[k]).map(l=>`${l.title} ${l.changes[k]>0?'+':''}${l.changes[k]}`).join(' · ')||'변화 없음'}</div></td></tr>)}</tbody></table></>}
     {tab==='시즌'&&<><SchoolRivalryPanel s={s}/><SeasonPanel s={s}/><TournamentBoard s={s}/><SeasonRecords s={s}/></>}

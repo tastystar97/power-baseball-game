@@ -16,6 +16,10 @@ export function catalogFromPacks(packs:CardPack[]):CardContent {
 }
 export function catalogForDeck(content:CardContent,ids:string[]):CardContent {
   if(ids.length!==DECK_SIZE||new Set(ids).size!==DECK_SIZE||ids.some(id=>!content.cards.some(c=>c.id===id)))throw Error('서로 다른 서포트 카드 6장을 선택해 주세요.');
+  return catalogForCards(content,ids);
+}
+export function catalogForCards(content:CardContent,ids:string[]):CardContent {
+  if(new Set(ids).size!==ids.length||ids.some(id=>!content.cards.some(c=>c.id===id)))throw Error('보유 카드가 라이브러리와 다릅니다.');
   const cards=content.cards.filter(c=>ids.includes(c.id)),events=content.events.filter(e=>ids.includes(e.owner)),needed=new Set(coreBasics.filter(id=>content.skills.some(s=>s.id===id)));
   for(const c of cards)for(const id of [...Object.values(c.hints),...Object.values(c.ultimates)])if(id)needed.add(id);
   for(const e of events)for(const c of e.choices)for(const id of [...c.hints,...c.unlocks])needed.add(id);

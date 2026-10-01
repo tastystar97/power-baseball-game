@@ -1,0 +1,11 @@
+import {z} from 'zod';
+import {contentSchema,idSchema} from '../cards/schema.ts';
+const choiceId=z.string().max(40).nullable();
+export const backgroundSchema=z.object({origin:choiceId,body:choiceId,personality:choiceId,specialties:z.array(z.string().max(40)).max(5),weaknesses:z.array(z.string().max(40)).max(2),sportFocus:z.enum(['power','endurance']).nullable()}).strict();
+const rolled=z.number().int().min(190).max(310);
+export const talentRollSchema=z.object({dice:z.array(z.number().int().min(1).max(6)).length(10),sum:z.number().int().min(10).max(60),grade:z.enum(['D','C','B','A','S']),attributes:z.object({power:rolled,endurance:rolled,mental:rolled,intelligence:rolled,sense:rolled}).strict()}).strict();
+export const fateRollSchema=z.object({die:z.number().int().min(1).max(20),hidden:z.enum(['batting_sense','iron_heart','rubber_arm']).nullable()}).strict();
+export const seedSchema=z.number().int().min(1).max(4294967295);
+export const characterRecordSchema=z.object({seed:seedSchema,background:backgroundSchema,talentIndex:z.number().int().min(0).max(5),talent:talentRollSchema,fate:fateRollSchema,rerollsRemaining:z.number().int().min(0).max(5),poolIds:z.array(idSchema).min(6).max(12),pool:contentSchema}).strict();
+export type CharacterRecord=z.infer<typeof characterRecordSchema>;
+export const creationDraftSchema=z.object({version:z.literal(1),seed:seedSchema,revision:z.number().int().nonnegative(),step:z.number().int().min(0).max(6),name:z.string().max(64),role:z.enum(['batter','pitcher']),roleLocked:z.boolean(),background:backgroundSchema,talentIndex:z.number().int().min(0).max(5).nullable(),talent:talentRollSchema.nullable(),fate:fateRollSchema.nullable(),content:contentSchema,poolIds:z.array(idSchema).max(12).nullable(),revealed:z.array(idSchema).max(12),deck:z.array(idSchema).max(6)}).strict();
