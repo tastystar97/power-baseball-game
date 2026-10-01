@@ -1,9 +1,12 @@
 import {ActivityRollSequence,ActivityRollResults} from './ui/ActivityRollSequence.tsx';
+import {CharacterMaker} from './ui/creation/CharacterMaker.tsx';
+import {newCreation} from './game/creation.ts';
+import type {CreationDraft} from './game/creation.ts';
 import {JournalAnnouncer} from './ui/JournalAnnouncer.tsx';
 import {activityRolls} from './game/journal.ts';
 import {useReducedMotion} from './ui/RollDice.tsx';
 import {RoleEventScreen} from './ui/RoleEventScreen.tsx';
-import {DeckBuilder,recommendedDeck,CardAvatar} from './ui/DeckBuilder.tsx';
+import {CardAvatar} from './ui/DeckBuilder.tsx';
 import {CardLibrary} from './ui/CardLibrary.tsx';
 import {database} from './persistence/database.ts';
 import {SAVE_KEY} from './persistence/save.ts';
@@ -22,10 +25,10 @@ import {competitorTrainingFeedback} from './game/rivalry.ts';
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import { activities } from './content/activities.ts';
 import { currentEvent } from './content/events.ts';
-import { createGame, effectChips, previewActivity, transition } from './game/engine.ts';
-import { labels, practiceStats, roleStats } from './game/types.ts';
-import type { Action, GameState, Role, TrainingTarget, SupportId } from './game/types.ts';
-import { Background, Meter, Portrait, roleName } from './ui/common.tsx';
+import { effectChips, previewActivity, transition } from './game/engine.ts';
+import { labels } from './game/types.ts';
+import type { Action, GameState, TrainingTarget, SupportId } from './game/types.ts';
+import { Background, Meter, roleName } from './ui/common.tsx';
 import { MatchScreen } from './ui/MatchScreen.tsx';
 import { StatusDialog } from './ui/StatusDialog.tsx';
 import {CompetitionPanel,SelectionScreen,SupportLineup,SupportPanel} from './ui/GrowthPanels.tsx';
@@ -142,13 +145,12 @@ export default function App() {
   const [booting,setBooting]=useState(true);
   const [packs,setPacks]=useState<CardPack[]>([]);
   const content=useMemo(()=>catalogFromPacks([builtinPack,...packs]),[packs]);
-  const [deck,setDeck]=useState(recommendedDeck('batter'));
+  const [creation,setCreation]=useState<CreationDraft|null>(null),[creationProblem,setCreationProblem]=useState('');
   const [game,setGame]=useState<GameState|null>(null);
   const gameRef=useRef(game);
   const [rollAction,setRollAction]=useState<number|null>(null),rollLock=useRef(false),reducedMotion=useReducedMotion();
   const finishRoll=useCallback(()=>{rollLock.current=false;setRollAction(null);},[]);
   const [mode,setMode]=useState<'menu'|'create'|'play'|'library'>('menu');
-  const [role,setRole]=useState<Role>('batter'),[name,setName]=useState('');
   const [statusOpen,setStatusOpen]=useState(false),[statusTab,setStatusTab]=useState('능력'),[confirmNew,setConfirmNew]=useState(false);
   const [saveOk,setSaveOk]=useState(true),[saving,setSaving]=useState(false);
   const [calendarOpen,setCalendarOpen]=useState(false),[logSince,setLogSince]=useState(Number.MAX_SAFE_INTEGER);
@@ -160,7 +162,9 @@ export default function App() {
     let legacy:string|null=null;try{legacy=localStorage.getItem(SAVE_KEY);}catch{}
     const saved=await database().loadSession(legacy);let library:CardPack[]=[];
     try{library=await database().listPacks();catalogFromPacks([builtinPack,...library]);}catch(e){library=[];if(!cancelled)setError(errorText(e));}
+    let draft:CreationDraft|undefined;try{draft=await database().readCreation();}catch{if(!cancelled)setCreationProblem('만들던 선수 정보를 읽을 수 없습니다. 새 입학 지원서를 확정하기 전까지 원본을 보존합니다.');}
     if(cancelled)return;
+    setCreation(draft??null);
     setPacks(library);setLoaded(saved);setSaveOk(saved.kind!=='unavailable');if(saved.kind==='ok'){gameRef.current=saved.state;setGame(saved.state);}setBooting(false);
   })();return ()=>{cancelled=true;};},[]);
   useEffect(()=>{const warn=(e:BeforeUnloadEvent)=>{e.preventDefault();};if(saving||!saveOk)window.addEventListener('beforeunload',warn);return()=>window.removeEventListener('beforeunload',warn);},[saving,saveOk]);
@@ -175,17 +179,16 @@ export default function App() {
     if(a.type==='activity'&&!reducedMotion&&activityRolls(next,next.revision).length){rollLock.current=true;setRollAction(next.revision);}
     gameRef.current=next;setGame(next);persist(next);
   };
-  function start() {
-    try {
-      const seed=crypto.getRandomValues(new Uint32Array(1))[0];
-      const next=createGame(name,role,seed,content,deck);
-      gameRef.current=next;setGame(next);persist(next);setError('');setMode('play');
-    } catch(e) { setError(e instanceof Error?e.message:'선수를 만들지 못했습니다.'); }
+  async function start(next:GameState) {
+    await saveQueue.current.catch(()=>{});setSaving(true);
+    try{await database().admitPlayer(next);setSaveOk(true);}catch{setSaveOk(false);}finally{setSaving(false);}
+    gameRef.current=next;setGame(next);setLoaded({kind:'ok',state:next});setCreation(null);setCreationProblem('');setError('');setMode('play');
   }
+  function beginNew(){setCreation(newCreation(content,crypto.getRandomValues(new Uint32Array(1))[0]));setConfirmNew(false);setCreationProblem('');setMode('create');}
   function requestNew() {
     setError('');
-    if(game||loaded.kind==='invalid')setConfirmNew(true);
-    else {setDeck(recommendedDeck(role));setMode('create');setName('');}
+    if(creation||creationProblem)setConfirmNew(true);
+    else beginNew();
   }
   const playing=mode==='play'&&game!==null;
   const trainingEntry=playing?latestTrainingEntry(game):null;
@@ -206,13 +209,13 @@ export default function App() {
     {playing&&layout==='three'&&<aside className="side game-side"><PlayerCard s={game} onStatus={()=>{setStatusTab('능력');setStatusOpen(true);}}/><CompetitionPanel s={game}/><SupportPanel s={game}/></aside>}
     <main className="center" ref={main}>
     {playing&&rollAction===null&&<><ActivityRollResults s={game}/><TrainingFeedback s={game}/></>}
-    {mode==='menu'&&<><div className="hero"><Background id="gate"/><div className="title-block"><h1 className="logo" tabIndex={-1}>마지막 여름</h1><p className="tag">교문에서 시작된, 나만의 야구 이야기</p></div></div><p className="lead">스윙 한 번, 공 하나. 오늘의 선택이 내일의 선수를 만듭니다.</p><section className="panel"><p>청람고 야구부의 신입생이 되어 3월부터 6월 여름 대회까지 뛰어보세요. 훈련과 스킬로 나만의 스타일을 만들고, 동료와 함께 대회에 도전합니다.</p><div className="actions">{booting&&<p role="status">저장과 카드 라이브러리를 읽고 있습니다…</p>}{game&&<button className="primary" onClick={()=>{setConfirmNew(false);setMode('play');}}>이어서 하기</button>}<button className={game?'':'primary'} disabled={booting} onClick={requestNew}>새 선수 만들기</button><button disabled={booting} onClick={()=>setMode('library')}>카드 라이브러리</button></div>{game&&<p className="muted gap-top">{game.name} · {roleName(game)} · {game.month}월 {game.week}주차 {game.phase==='complete'?'여름 시즌 완료':''}</p>}{loaded.kind==='invalid'&&!game&&<p className="notice warning" role="alert">{loaded.message}</p>}</section><p className="muted gap-top">3~6월 · 첫 여름 대회 버전 · 이 브라우저에 자동 저장됩니다.</p></>}
+    {mode==='menu'&&<><div className="hero"><Background id="gate"/><div className="title-block"><h1 className="logo" tabIndex={-1}>마지막 여름</h1><p className="tag">교문에서 시작된, 나만의 야구 이야기</p></div></div><p className="lead">스윙 한 번, 공 하나. 오늘의 선택이 내일의 선수를 만듭니다.</p><section className="panel"><p>청람고 야구부의 신입생이 되어 3월부터 6월 여름 대회까지 뛰어보세요. 훈련과 스킬로 나만의 스타일을 만들고, 동료와 함께 대회에 도전합니다.</p><div className="actions">{booting&&<p role="status">저장과 카드 라이브러리를 읽고 있습니다…</p>}{game&&<button className="primary" onClick={()=>{setConfirmNew(false);setMode('play');}}>이어서 하기</button>}{creation&&<button disabled={booting} onClick={()=>{setConfirmNew(false);setMode('create');}}>만들던 선수 계속</button>}<button className={game?'':'primary'} disabled={booting} onClick={requestNew}>새 선수 만들기</button><button disabled={booting} onClick={()=>setMode('library')}>카드 라이브러리</button></div>{game&&<p className="muted gap-top">{game.name} · {roleName(game)} · {game.month}월 {game.week}주차 {game.phase==='complete'?'여름 시즌 완료':''}</p>}{loaded.kind==='invalid'&&!game&&<p className="notice warning" role="alert">{loaded.message}</p>}</section><p className="muted gap-top">3~6월 · 첫 여름 대회 버전 · 이 브라우저에 자동 저장됩니다.</p></>}
     {mode==='library'&&<CardLibrary packs={packs} onChange={setPacks} onClose={()=>setMode('menu')}/>}
-    {mode==='menu'&&error&&<p className="notice warning" role="alert">{error}</p>}
-    {mode==='create'&&<><h1 className="screen-title" tabIndex={-1}>새 유니폼의 주인공</h1><p className="lead">어떤 선수로 첫걸음을 내딛을까요?</p><form onSubmit={e=>{e.preventDefault();start();}}><label className="field-label" htmlFor="player-name">선수 이름</label><input id="player-name" type="text" value={name} onChange={e=>setName(e.target.value)} autoComplete="off" placeholder="이름을 입력하세요" aria-describedby="name-hint"/><p className="muted gap-top" id="name-hint">이름은 1~8자. 역할은 입학 후에 바꿀 수 없습니다.</p><p className="field-label section-label">나의 포지션</p><div className="roles" role="group" aria-label="선수 역할">{(['batter','pitcher'] as const).map(r=><button type="button" className="card role-card" aria-pressed={role===r} key={r} onClick={()=>{setRole(r);setDeck(recommendedDeck(r));}}><Portrait id={r} size="sm"/><span><strong>{r==='batter'?'타자':'투수'}</strong><span className="role-description">{r==='batter'?'팀의 흐름을 바꾸는 한 번의 스윙':'마운드 위에서 만드는 나만의 승부'}</span><span className="desc">{roleStats(r).map(k=>labels[k]).join(' · ')}</span></span></button>)}</div><DeckBuilder content={content} role={role} selected={deck} onChange={setDeck}/>{error&&<p className="notice warning" role="alert">{error}</p>}<div className="actions"><button className="primary" type="submit" disabled={!name.trim()||[...name.trim()].length>8||deck.length!==6}>입학하기</button><button type="button" onClick={()=>setMode('menu')}>돌아가기</button></div></form></>}
+    {mode==='menu'&&creationProblem&&<p className="notice warning" role="alert">{creationProblem}</p>}{mode==='menu'&&error&&<p className="notice warning" role="alert">{error}</p>}
+    {mode==='create'&&creation&&<CharacterMaker initial={creation} onDraft={setCreation} onAdmit={start} onClose={()=>setMode('menu')} hasSave={!!game||loaded.kind==='invalid'||loaded.kind==='unavailable'}/> }
     {playing&&!completed&&<>{!match&&(!trainingEntry||!game.notice.startsWith(trainingEntry.title))&&<p className="recap">{game.notice}</p>}{game.phase==='weekday'&&<div className="mobile-goal"><SeasonPanel s={game}/><CompetitionPanel s={game}/></div>}{game.phase==='lineup'?<SupportLineup key={game.month} s={game} send={send}/>:game.phase==='roleEvent'?<RoleEventScreen s={game} send={send}/>:game.phase==='selection'?<SelectionScreen s={game} send={send}/>:game.phase==='weekday'||game.phase==='weekend'?<ActivityScreen key={`${game.month}-${game.week}-${game.phase}-${game.weekdayPart}`} s={game} send={send}/>:match?(rollAction===null?<MatchScreen key={game.match!.id} s={game} send={send}/>:null):<EventScreen s={game} send={send}/>}</>}
     {completed&&<><Background id="ground" banner caption="1학년 6월의 끝 · 함께 만든 첫 여름"/><h1 className="screen-title" tabIndex={-1}>나의 첫 여름 · {tournamentResult(game)}</h1><p className="lead">{game.name}의 첫 시즌, 훈련으로 만든 야구가 기록으로 남았습니다.</p><DevelopmentPanel s={game} detail/><TournamentBoard s={game}/><SeasonRecords s={game}/><SchoolRivalryPanel s={game}/><section className="panel"><p>3월의 첫 연습부터 6월의 마지막 주말까지 마쳤습니다. 함께한 파트너와 배운 스킬, 경기 기록을 돌아보세요.</p><p className="muted gap-top">현재 버전은 첫 여름 대회까지입니다. 7월 이후의 이야기는 앞으로 이어집니다.</p><div className="actions"><button className="primary" onClick={()=>{setStatusTab('기록');setStatusOpen(true);}}>시즌 기록 돌아보기</button><button onClick={requestNew}>다른 선수로 시작</button></div></section></>}
-    {confirmNew&&<section className="confirm-box" role="alert" aria-label="새 선수 확인"><strong>새 선수로 시작할까요?</strong><p>새 선수의 ‘입학하기’를 누르면 기존 저장을 덮어씁니다. 그전까지는 돌아갈 수 있습니다.</p><div className="actions"><button onClick={()=>{setConfirmNew(false);setName('');setDeck(recommendedDeck(role));setMode('create');}}>새 선수 만들러 가기</button><button onClick={()=>setConfirmNew(false)}>취소</button></div></section>}
+    {confirmNew&&<section className="confirm-box" role="alert" aria-label="새 입학 지원서 확인"><strong>만들던 선수 대신 새로 시작할까요?</strong><p>입학 전 배경·재능·동료 선택을 새로 시작합니다. 기존 입학 선수의 저장은 새 선수가 입학할 때까지 보존합니다.</p><div className="actions"><button onClick={beginNew}>새 입학 지원서 만들기</button><button onClick={()=>setConfirmNew(false)}>취소</button></div></section>}
     </main>
     {playing&&game.phase!=='lineup'&&<LogPanel s={game} since={logSince}/>}
     </div>

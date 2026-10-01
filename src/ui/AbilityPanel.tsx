@@ -2,6 +2,7 @@ import {derivedStats,effectiveMental,secondaryKeys,overall} from '../game/abilit
 import {primaryMax,primaryGrade,strengthTags} from './abilityDisplay.ts';
 import {grade,labels,primaryKeys,primaryLabels} from '../game/types.ts';
 import {YEAR_CAPS} from '../content/development-rules.ts';
+import {talentRules} from '../content/backgrounds.ts';
 import type {GameState} from '../game/types.ts';
 import type {previewActivity} from '../game/engine.ts';
 const convertedMental=(s:GameState)=>effectiveMental(s.attributes.mental,0);
@@ -11,7 +12,7 @@ export function AbilityPanel({s}:{s:GameState}){
  const order=[...secondaryKeys(s.role)].sort((a,b)=>stats[b]-stats[a]);
  return <><section className="panel"><h3>1차 능력 · 몸과 머리</h3>
  {primaryKeys.map(k=><div className="attr-row" key={k}><span>{primaryLabels[k]}</span><span className={`attr-bar ${k}`}><i style={{width:`${Math.min(100,s.attributes[k]/primaryMax*100)}%`}}/></span><b>{s.attributes[k]}</b><span className={`attr-grade g-${primaryGrade(s.attributes[k])}`}>{primaryGrade(s.attributes[k])}</span></div>)}
- <p className="reason">1학년 성장 상한은 각 1차 능력 {YEAR_CAPS[0]}입니다.</p>
+ <p className="reason">1학년 성장 상한은 각 1차 능력 {YEAR_CAPS[0]+(s.character?talentRules[s.character.talent.grade].cap:0)}입니다.</p>
  {mental<convertedMental(s)&&<p className="reason">스트레스가 높아 멘탈이 제 힘을 내지 못하고 있습니다. 쉬면 회복됩니다.</p>}
  </section><section className="panel"><h3>야구 능력 · 종합 {ovr.toFixed(1)} ({grade(ovr)})</h3>
  <div className="tag-row">{strengthTags(s).map(t=><span key={t.label} className={`tag ${t.kind}`}>{t.label}</span>)}</div>
