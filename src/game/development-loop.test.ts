@@ -15,7 +15,7 @@ export function playStep(s:GameState):GameState {
 }
 test('intelligence replaces academics and every week has two distinct weekday activities',()=>{
  let s=createGame('새로운 봄','batter',7);
- assert.equal(s.version,10);assert.equal(s.attributes.intelligence,290);assert.equal('academics' in s,false);
+ assert.equal(s.version,11);assert.equal(s.attributes.intelligence,290);assert.equal('academics' in s,false);
  s=playStep(s);s=playStep(s);
  while(s.phase==='supportEvent'||s.phase==='supportResult')s=playStep(s);
  assert.equal(s.phase,'weekday');assert.equal(s.weekdayPart,2);assert.equal(s.week,1);

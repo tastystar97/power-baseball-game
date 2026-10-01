@@ -4,12 +4,13 @@ import {random,clamp} from '../game/random.ts';
 import {resolveGrowth} from '../game/abilities.ts';
 import {weekKey} from '../game/season.ts';
 import {builtinPack} from '../cards/builtin.ts';
+import {recoveryStress} from '../game/character.ts';
 export const encounterIds=builtinPack.events.map(e=>e.id);
 export const encounterOwner=(id:string,s?:GameState)=>(s?.content.events||builtinPack.events).find(e=>e.id===id)!.owner;
 export function encounterContent(s:GameState,id:string){
  const e=s.content.events.find(e=>e.id===id);if(!e)throw Error('알 수 없는 카드 사건입니다.');
  const p=supportById(e.owner,s);
- return {...e,speaker:`${p.name} · ${p.role}`,choices:e.choices.map(c=>({...c,energy:clamp(s.energy+c.energy)-s.energy,stress:clamp(s.stress+c.stress)-s.stress,trust:clamp(s.trust+c.trust)-s.trust,bond:Math.min(c.bond,100-bond(s,e.owner)),points:Math.min(c.points,1000-s.skillPoints),...resolveGrowth(s,c.gains),hint:[`인연 +${Math.min(c.bond,100-bond(s,e.owner))}`,c.hints.some(id=>s.content.skills.some(k=>k.id===id&&(k.role==='both'||k.role===s.role)))?'일반 스킬 힌트':'',c.unlocks.some(id=>s.content.skills.some(k=>k.id===id&&(k.role==='both'||k.role===s.role)))?'상위 스킬 개방':''].filter(Boolean).join(' · ')}))};
+ return {...e,speaker:`${p.name} · ${p.role}`,choices:e.choices.map(c=>({...c,energy:clamp(s.energy+c.energy)-s.energy,stress:clamp(s.stress+recoveryStress(s,c.stress))-s.stress,trust:clamp(s.trust+c.trust)-s.trust,bond:Math.min(c.bond,100-bond(s,e.owner)),points:Math.min(c.points,1000-s.skillPoints),...resolveGrowth(s,c.gains),hint:[`인연 +${Math.min(c.bond,100-bond(s,e.owner))}`,c.hints.some(id=>s.content.skills.some(k=>k.id===id&&(k.role==='both'||k.role===s.role)))?'일반 스킬 힌트':'',c.unlocks.some(id=>s.content.skills.some(k=>k.id===id&&(k.role==='both'||k.role===s.role)))?'상위 스킬 개방':''].filter(Boolean).join(' · ')}))};
 }
 export function drawEncounter(s:GameState):void {
  const key=weekKey(s.month,s.week),part=s.weekdayPart;

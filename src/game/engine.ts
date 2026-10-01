@@ -23,6 +23,7 @@ import {createCompetitor,growCompetitor} from './rivalry.ts';
 import {teamName} from '../content/teams.ts';
 import {SUPPORT_BONUS,APPEARANCE_SENSE} from '../content/development-rules.ts';
 import {trainingScene} from '../content/training-scenes.ts';
+import {backgroundEffects,recoveryStress} from './character.ts';
 
 export function snapshot(s:Pick<GameState,'attributes'|'proficiency'|'energy'|'stress'|'trust'|'rival'|'catcher'|'skillPoints'|'bonds'>):Record<string,number> {
   return {...growthChanges(s.attributes,s.proficiency),energy:s.energy,stress:s.stress,trust:s.trust,rival:s.rival,catcher:s.catcher,
@@ -34,7 +35,7 @@ export function createGame(rawName:string,role:Role,seed=42,content:CardContent=
   const name=rawName.trim();
   if(!name||[...name].length>8||!['batter','pitcher'].includes(role))throw new Error('이름은 1~8자로 입력하고 타자 또는 투수를 선택해 주세요.');
   const frozen=deck?catalogForDeck(content,deck):structuredClone(content);
-  const state:GameState={version:10,career:initialCareer(),content:frozen,weekdayPart:1,activeEncounter:null,encounterHistory:[],competitor:createCompetitor(role),selectionHistory:[],name,role,month:3,week:1,phase:deck?'weekday':'lineup',revision:0,rng:(seed>>>0)||1,attributes:initialAttributes(),proficiency:initialProficiency(role),
+  const state:GameState={version:11,character:null,career:initialCareer(),content:frozen,weekdayPart:1,activeEncounter:null,encounterHistory:[],competitor:createCompetitor(role),selectionHistory:[],name,role,month:3,week:1,phase:deck?'weekday':'lineup',revision:0,rng:(seed>>>0)||1,attributes:initialAttributes(),proficiency:initialProficiency(role),
     energy:80,stress:15,trust:20,rival:10,catcher:10,
     logSequence:0,log:[],schedule:[{month:3,week:1,weekday:'',weekday2:'',weekend:''}],initial:{},weekStart:{},monthStart:{},
     notice:'함께 성장할 연습 파트너를 골라 보자.',eventReply:'',match:null,matchRecorded:false,
@@ -67,9 +68,11 @@ export function previewActivity(s:GameState,id:string,target?:TrainingTarget,par
     }
     if(!resting)points+=1+(joint.includes(p)?2:0);
   }
-  const withoutBond=resolveGrowth(s,gains,a.proficiency);
+  stress=recoveryStress(s,stress);
+  const growthActivity=target==='primary_intelligence'?'train_intelligence':id;
+  const withoutBond=resolveGrowth(s,gains,a.proficiency,growthActivity);
   for(const p of bondPartners)gains[p.stat]=(gains[p.stat]||0)+p.amount;
-  const resolved=resolveGrowth(s,gains,a.proficiency);
+  const resolved=resolveGrowth(s,gains,a.proficiency,growthActivity);
   const bondBonuses=primaryKeys.flatMap(stat=>{
     const partners=bondPartners.filter(p=>p.stat===stat);if(!partners.length)return [];
     return [{stat:`primary_${stat}`,partners,potential:partners.reduce((sum,p)=>sum+p.amount,0),amount:(resolved.gains[stat]||0)-(withoutBond.gains[stat]||0)}];
@@ -122,9 +125,10 @@ function recordMatch(s:GameState){
   if(s.matchRecorded||!s.match?.over)return;
   const m=s.match,won=m.score[1]>m.score[0],played=s.role==='pitcher'?m.faced>0:m.skillChecks.length>0;
   const achievement=s.role==='batter'?m.batting.hits*2+m.batting.rbi:m.pitching.k+Math.max(0,3-m.pitching.runs);
-  apply(s,{...resolveGrowth(s,played?{sense:APPEARANCE_SENSE[m.appearance]}:{}),energy:played?(s.role==='pitcher'?-Math.ceil(m.load/4):-8):0,stress:won?-5:5,trust:played?clamp(2+achievement-(won?0:1),1,10):1},matchPlan(s)!.title,
+  const background=s.character?backgroundEffects(s.character.background,s.role):null,reward=background?.matchReward??1;
+  apply(s,{...resolveGrowth(s,played?{sense:APPEARANCE_SENSE[m.appearance]*reward}:{}),energy:played?(s.role==='pitcher'?-Math.ceil(m.load/4):-8):0,stress:recoveryStress(s,won?-5:5+(background?.lossStress??0)),trust:Math.round((played?clamp(2+achievement-(won?0:1),1,10):1)*reward)},matchPlan(s)!.title,
     `청람고 ${m.score[1]} : ${m.score[0]} ${teamName(m.opponentId)} · ${won?'승리':'패배'}. 감독: “${!played?'오늘은 동료들의 승부를 배워 두자. 다음 기회를 향해 준비해.':achievement>=4?'연습한 것이 보이는구나. 오늘의 감각을 기억해.':'오늘 찾은 과제를 다음 훈련에 가져가자.'}”`);
-  const before=snapshot(s);s.skillPoints=Math.min(1000,s.skillPoints+(played?8:2));
+  const before=snapshot(s);s.skillPoints=Math.min(1000,s.skillPoints+Math.round((played?8:2)*reward));
   logChange(s,before,'경기에서 배운 것',played?'승부를 돌아보며 스킬 포인트를 얻었다.':'동료의 플레이를 관찰하며 스킬 포인트를 얻었다.','reward');
   s.matchRecorded=true;s.records.push({month:s.month,match:summarizeMatch(m)});finishRound(s);
 }

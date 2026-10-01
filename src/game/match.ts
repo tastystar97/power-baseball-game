@@ -12,12 +12,14 @@ import type {PlateContext,PlayEvent} from './plate.ts';
 import {createScoreState,applyPlay,advanceHalf,enterPitcher,leavePitcher,stealPlay} from './scoring.ts';
 import {random} from './random.ts';
 import {previewExpectation} from './tactic-preview.ts';
+import {backgroundEffects} from './character.ts';
+import {appendJournal} from './journal.ts';
 export const outcomeNames={...plateNames,stolenBase:'도루 성공',caughtStealing:'도루 실패'};
 export function createMatch(appearance:Match['appearance']='starter'):Match {
  return {...createScoreState(),appearance,skillChecks:[],duels:[],highlights:0,entered:false,retired:appearance==='reserve',awaiting:false,playerBoundary:false,intervene:false,
   rosters:null,substitutions:[],pitcherIds:['',''],usedPitchers:[[],[]],battingOrder:8,pitchingRole:'middle',feed:[],playbackIndex:0,summary:false,recent:[],last:null};
 }
-export const loadLimit=(s:GameState)=>matchRules.starterLoadBase+derivedStats(s).stamina*matchRules.starterStaminaWeight;
+export const loadLimit=(s:GameState)=>(matchRules.starterLoadBase+derivedStats(s).stamina*matchRules.starterStaminaWeight)*(s.character?.fate.hidden==='rubber_arm'?1.1:1);
 export function initializeMatch(s:GameState){
  const m=s.match!;if(m.rosters)return;
  m.rosters=[rosterFor(m.opponentId??'haesol',s),rosterFor('cheongram',s,{appearance:m.appearance,battingOrder:m.battingOrder,pitchingRole:m.pitchingRole})];
@@ -52,7 +54,7 @@ function updateLineup(s:GameState){
   const roleActive=current.id===roleId||current.id==='player';
   const inningLimit=current.id==='player'&&m.appearance==='substitute'?9:roleActive&&m.pitchingRole==='closer'?11:8;
   const limit=roleActive&&m.pitchingRole==='middle'?matchRules.middleLoadBase+current.ratings.stamina*matchRules.middleStaminaWeight:roleActive&&m.pitchingRole==='closer'?999:roleActive?matchRules.starterLoadBase+current.ratings.stamina*matchRules.starterStaminaWeight:78+current.ratings.stamina*.6;
-  if(line.load>=limit||m.inning>=inningLimit){
+  if(line.load>=limit*(current.id==='player'&&s.character?.fate.hidden==='rubber_arm'?1.1:1)||m.inning>=inningLimit){
    const next=arms.find(p=>!used.includes(p.id)&&!(p.id===roleId&&m.pitchingRole==='closer'&&m.inning<9));
    if(next)changePitcher(s,team,next);
   }
@@ -121,7 +123,14 @@ export function advanceMatch(s:GameState){
   advanceHalf(m);if(m.over)return;updateLineup(s);
   const ctx=plateContext(s,'auto');
   if(ctx.bases[0]&&!ctx.bases[1]&&ctx.bases[0].speed>=55&&random(s)<.045){const e=stealPlay(ctx,random(s)<.6+ctx.bases[0].speed*.002);applyPlay(m,e);m.feed.push(e);advanceHalf(m);if(m.over)return;if(e.outs&&e.after.outs===3)continue;}
-  if(playerTurn(s)){m.playerBoundary=true;m.awaiting=isDecisionPoint(s);return;}
+  if(playerTurn(s)){
+   const pressure=s.month>3&&s.character?backgroundEffects(s.character.background,s.role).stageStress:0;
+   if(pressure&&!s.log.some(e=>e.title==='첫 승부의 긴장'&&e.matchRef?.id===m.id)){
+    const added=Math.min(100-s.stress,pressure);s.stress+=added;
+    appendJournal(s,{title:'첫 승부의 긴장',text:'관중 앞에 서자 심장이 빠르게 뛰었다. 호흡을 가다듬고 승부에 집중한다.',changes:{stress:added},category:'match',kind:'loss',slot:'match',speaker:null,matchRef:{id:m.id!,index:m.feed.length}});
+   }
+   m.playerBoundary=true;m.awaiting=isDecisionPoint(s);return;
+  }
   playOne(s,'contact','auto');
  }
  throw Error('경기 진행이 정상적으로 끝나지 않았습니다.');

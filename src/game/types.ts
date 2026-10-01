@@ -2,6 +2,7 @@ import { z } from 'zod';
 import {matchSchema,runnerSchema} from './match-schema.ts';
 export {matchSchema} from './match-schema.ts';
 import {contentSchema,idSchema,roleAbilityNames} from '../cards/schema.ts';
+import {characterRecordSchema} from './character-schema.ts';
 
 export const statKeys = ['contact', 'power', 'eye', 'speed', 'field', 'mental', 'velocity', 'control', 'breaking', 'stamina'] as const;
 export type StatKey = typeof statKeys[number];
@@ -65,8 +66,9 @@ export const journalSchema=z.object({
 export type JournalEntry=z.infer<typeof journalSchema>;
 export const evaluationSchema=z.object({ability:z.number(),performance:z.number(),trust:z.number(),total:z.number(),rank:z.enum(['starter','substitute','reserve']),basis:z.literal('rival'),competition:competitionSchema.nullable()});
 export const stateSchema = z.object({
+  character:characterRecordSchema.nullable(),
   career:z.object({battingOrder:z.union([z.literal(1),z.literal(3),z.literal(4),z.literal(6),z.literal(8)]),battingPath:z.enum(['undecided','leadoff','middle']),pitchingRole:z.enum(['starter','middle','closer']),completed:z.array(z.enum(['bat_six','bat_path','bat_cleanup','pitch_role'])).max(3),pending:z.enum(['bat_six','bat_path','bat_cleanup','pitch_role']).nullable(),history:z.array(z.object({matchId:z.string(),eventId:z.enum(['bat_six','bat_path','bat_cleanup','pitch_role']),choice:z.enum(['six','leadoff','center','cleanup','starter','closer','stay'])})).max(6)}).strict(),
-  version:z.literal(10),content:contentSchema,weekdayPart:z.union([z.literal(1),z.literal(2)]),activeEncounter:z.string().nullable(),encounterHistory:z.array(z.object({key:z.number().int().min(1).max(16),part:z.union([z.literal(1),z.literal(2)]),eventId:z.string().nullable(),support:supportIdSchema.nullable(),choice:z.number().int().min(0).max(1).nullable()})).max(32), name:z.string().trim().min(1).refine(s => [...s].length <= 8), role:z.enum(['batter','pitcher']),month:monthSchema,
+  version:z.literal(11),content:contentSchema,weekdayPart:z.union([z.literal(1),z.literal(2)]),activeEncounter:z.string().nullable(),encounterHistory:z.array(z.object({key:z.number().int().min(1).max(16),part:z.union([z.literal(1),z.literal(2)]),eventId:z.string().nullable(),support:supportIdSchema.nullable(),choice:z.number().int().min(0).max(1).nullable()})).max(32), name:z.string().trim().min(1).refine(s => [...s].length <= 8), role:z.enum(['batter','pitcher']),month:monthSchema,
   week:z.number().int().min(1).max(4), phase:z.enum(phases), revision:count,
   rng:z.number().int().min(1).max(4294967295), attributes:z.object({power:count.max(1500),endurance:count.max(1500),mental:count.max(1500),intelligence:count.max(1500),sense:count.max(1500)}).strict(), proficiency:z.partialRecord(z.enum(statKeys),count.max(1000)),
   energy:value, stress:value, trust:value, rival:value, catcher:value,
