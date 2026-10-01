@@ -127,6 +127,8 @@ export function advanceMatch(s:GameState){
    const pressure=s.month>3&&s.character?backgroundEffects(s.character.background,s.role).stageStress:0;
    if(pressure&&!s.log.some(e=>e.title==='첫 승부의 긴장'&&e.matchRef?.id===m.id)){
     const added=Math.min(100-s.stress,pressure);s.stress+=added;
+    // The roster is fixed before first appearance; refresh the player's pressure-adjusted ratings.
+    for(const player of [...m.rosters![1].batters,...m.rosters![1].pitchers])if(player.id==='player')player.ratings=derivedStats(s);
     appendJournal(s,{title:'첫 승부의 긴장',text:'관중 앞에 서자 심장이 빠르게 뛰었다. 호흡을 가다듬고 승부에 집중한다.',changes:{stress:added},category:'match',kind:'loss',slot:'match',speaker:null,matchRef:{id:m.id!,index:m.feed.length}});
    }
    m.playerBoundary=true;m.awaiting=isDecisionPoint(s);return;

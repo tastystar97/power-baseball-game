@@ -10,7 +10,7 @@ import {resolveGrowth,derivedStats} from './abilities.ts';
 import {previewActivity,transition} from './engine.ts';
 import {parseSave} from '../persistence/save.ts';
 import {loadLimit} from './match.ts';
-import {createMatch,advanceMatch,chooseTactic} from './match.ts';
+import {createMatch,advanceMatch,chooseTactic,plateContext} from './match.ts';
 import {recoveryStress} from './character.ts';
 
 const content=catalogFromPacks([builtinPack]);
@@ -74,5 +74,39 @@ test('무대 공포는 공식전의 실제 첫 출전에서 한 번만 적용되
   advanceMatch(s);assert.equal(s.stress,20);const before=s.stress;
   if(s.match.awaiting)chooseTactic(s,role==='batter'?'contact':'control');advanceMatch(s);assert.equal(s.stress,before);
   for(const [month,appearance] of [[3,'starter'],[4,'reserve']] as const){const excluded=make();excluded.month=month;excluded.match={...createMatch(appearance),id:'excluded',opponentId:'haesol'};advanceMatch(excluded);assert.equal(excluded.stress,15);}
+ }
+});
+
+test('무대 공포는 선발·교체 출전의 실제 경기 능력에 반영되며 재개 후 중복되지 않는다',()=>{
+ for(const role of ['batter','pitcher'] as const)for(const appearance of ['starter','substitute'] as const){
+  let s=createPlayer(finished(55,role,{...basic,weaknesses:['stage_fright']}));s.stress=60;
+  s.month=4;s.match={...createMatch(appearance),id:'april',opponentId:'haesol',pitchingRole:'starter'};s.phase='match';
+  for(let n=0;n<250&&s.stress===60&&!s.match.over;n++){if(s.match.awaiting)chooseTactic(s,role==='batter'?'contact':'control');else advanceMatch(s);}
+  assert.equal(s.stress,65);
+  const ctx=plateContext(s),player=role==='batter'?ctx.batter:ctx.pitcher;
+  assert.equal(player.id,'player');assert.deepEqual(player.ratings,derivedStats(s));
+  // Keep the entry marker and roster through serialization; season tests cover full save validation.
+  s=JSON.parse(JSON.stringify(s));
+  if(s.match!.awaiting)chooseTactic(s,role==='batter'?'contact':'control');advanceMatch(s);
+  assert.equal(s.stress,65);assert.equal(s.log.filter(e=>e.title==='첫 승부의 긴장').length,1);
+ }
+});
+
+test('생성한 두 역할의 훈련·균형·학업 육성은 6월까지 매 전이 저장·재개하며 완료한다',()=>{
+ for(const role of ['batter','pitcher'] as const)for(const policy of ['training','balanced','study']){
+  let s=createPlayer(finished(55,role,{...basic,weaknesses:['stage_fright']})),count=0,slot=0;
+  while(s.phase!=='complete'&&count++<500){
+   const rotation=['power','sense','endurance','mental','intelligence'];
+   const action=s.phase==='weekday'?{type:'activity' as const,id:s.energy<45?'rest':policy==='study'?'train_intelligence':`train_${rotation[slot++%rotation.length]}`}:
+    s.phase==='weekend'?{type:'activity' as const,id:s.energy<50?'weekend_rest':policy==='study'?'selfstudy':policy==='training'?'catch':'weekend_rest'}:
+    s.phase==='supportEvent'?{type:'choice' as const,index:0}:
+    s.phase==='roleEvent'?{type:'choice' as const,id:'stay'}:
+    s.phase==='match'&&s.match!.awaiting?{type:'delegate' as const}:{type:'continue' as const};
+   const next=transition(s,{...action,revision:s.revision});assert.notEqual(next,s,`${role}/${policy}/${s.phase}`);
+   s=parseSave(JSON.stringify(next));
+  }
+  assert.equal(s.phase,'complete');assert.equal(s.month,6);assert.equal(s.week,4);
+  assert.equal(s.character!.talent.grade,rollTalent(55,0).grade);
+  assert.equal(s.supports.length,6);assert.equal(s.character!.poolIds.length,10);
  }
 });

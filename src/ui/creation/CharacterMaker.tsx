@@ -18,9 +18,9 @@ import {BackgroundStep} from './BackgroundStep.tsx';
 import './creation.css';
 
 const steps=['이름·역할','배경','재능 판정','운명 주사위','스카우트','덱 구성','스카우트 리포트'];
-export function CharacterMaker({initial,onDraft,onAdmit,onClose,hasSave}:{initial:CreationDraft;onDraft:(d:CreationDraft)=>void;onAdmit:(s:GameState)=>Promise<void>;onClose:()=>void;hasSave:boolean}){
+export function CharacterMaker({initial,onDraft,onAdmit,onClose,hasSave,warning,onWarning}:{initial:CreationDraft;onDraft:(d:CreationDraft)=>void;onAdmit:(s:GameState)=>Promise<void>;onClose:()=>void;hasSave:boolean;warning:string;onWarning:(message:string)=>void}){
  const [draft,setDraft]=useState(initial),current=useRef(initial),locked=useRef(false);
- const [busy,setBusy]=useState(false),[warning,setWarning]=useState(''),[error,setError]=useState('');
+ const [busy,setBusy]=useState(false),[error,setError]=useState('');
  const [name,setName]=useState(initial.name),[role,setRole]=useState<Role>(initial.role);
  const [pendingBackground,setPendingBackground]=useState<BackgroundChoice|null>(null),[confirm,setConfirm]=useState<'restart'|'admit'|null>(null);
  const [animation,setAnimation]=useState<'talent'|'fate'|null>(null),reduced=useReducedMotion();
@@ -29,7 +29,7 @@ export function CharacterMaker({initial,onDraft,onAdmit,onClose,hasSave}:{initia
  useEffect(()=>{if(!animation)return;const id=window.setTimeout(finishAnimation,reduced?0:900);return()=>clearTimeout(id);},[animation,reduced,finishAnimation]);
  useEffect(()=>{const warn=(e:BeforeUnloadEvent)=>{e.preventDefault();};if(busy||warning)window.addEventListener('beforeunload',warn);return()=>window.removeEventListener('beforeunload',warn);},[busy,warning]);
  const save=async(next:CreationDraft)=>{
-  try{await database().writeCreation(next);setWarning('');}catch{setWarning('지금 진행을 저장하지 못했습니다. 이 창에서는 계속할 수 있지만 새로고침하면 결과를 잃을 수 있습니다.');}
+  try{await database().writeCreation(next);onWarning('');}catch{onWarning('지금 진행을 저장하지 못했습니다. 이 창에서는 계속할 수 있지만 새로고침하면 결과를 잃을 수 있습니다.');}
   current.current=next;setDraft(next);onDraft(next);
  };
  async function send(a:Omit<CreationAction,'revision'>,advanceIdentity=false){
