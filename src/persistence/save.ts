@@ -1,3 +1,5 @@
+import {validateMatch,validateCareer} from './match-validation.ts';
+import {summarizeMatch,isDecisionPoint} from '../game/match.ts';
 import {validateContent} from '../cards/pack.ts';
 import {catalogForDeck} from '../cards/catalog.ts';
 import {secondaryKeys} from '../game/abilities.ts';
@@ -16,16 +18,9 @@ export const SAVE_KEY='last-summer.save.v1';
 export type LoadResult={kind:'ok';state:GameState;migrated?:boolean}|{kind:'empty'}|{kind:'invalid';message:string}|{kind:'unavailable';message:string};
 const unique=(items:unknown[])=>new Set(items).size===items.length;
 const same=equalData;
-function checkMatch(m:Match){
-  if(m.lines[0].length!==m.inning||m.lines[1].length!==m.inning)throw Error('이닝 기록이 올바르지 않습니다.');
-  for(const team of [0,1])if(m.lines[team].reduce((a,b)=>a+b,0)!==m.score[team])throw Error('점수가 일치하지 않습니다.');
-  if(m.batting.hits>m.batting.ab||m.batting.hr>m.batting.hits||m.batting.k>m.batting.ab)throw Error('타격 기록이 올바르지 않습니다.');
-  if(m.pitching.k>m.pitching.outs)throw Error('투구 기록이 올바르지 않습니다.');
-  if(m.appearance==='reserve'&&(Object.values(m.batting).some(Boolean)||Object.values(m.pitching).some(Boolean)||m.highlights||m.load||!m.retired))throw Error('대기 선수의 출전 기록이 있습니다.');
-}
 export function parseSave(raw:string):GameState {
   const json=JSON.parse(raw);
-  if(json?.version!==7)throw Error('이전 버전 저장은 지원하지 않습니다. 새 게임을 시작해 주세요.');
+  if(json?.version!==8)throw Error('이전 버전 저장은 지원하지 않습니다. 새 게임을 시작해 주세요.');
   const s=stateSchema.parse(json);
   validateContent(s.content);
   if(s.phase!=='lineup'&&!same(s.content,catalogForDeck(s.content,s.supports)))throw Error('육성 덱과 콘텐츠가 다릅니다.');
@@ -55,9 +50,9 @@ export function parseSave(raw:string):GameState {
   if(!same(s.placements,expectedPlacements))throw Error('주간 훈련 배치가 맞지 않습니다.');
   for(const id of s.skills){const skill=s.content.skills.find(k=>k.id===id)!;if(skill.tier==='advanced'&&(!s.unlockedSkills.includes(id)||!s.skills.includes(skill.prerequisite!)))throw Error('상위 스킬 습득 이력이 없습니다.');}
   if(s.hints.some(id=>s.content.skills.find(k=>k.id===id)!.tier!=='normal'))throw Error('일반 스킬만 힌트를 받을 수 있습니다.');
-  const matchPhases=['match','matchResult','matchEnd','weekend','complete'];
+  const matchPhases=['match','matchResult','matchEnd','roleEvent','weekend','complete'];
   const matchExists=Boolean(plan)&&matchPhases.includes(s.phase);
-  const recorded=matchExists&&['matchEnd','weekend','complete'].includes(s.phase);
+  const recorded=matchExists&&['matchEnd','roleEvent','weekend','complete'].includes(s.phase);
   if(Boolean(s.match)!==matchExists||s.matchRecorded!==recorded)throw Error('경기 이력과 진행 단계가 맞지 않습니다.');
   if(s.phase==='selection'&&(!plan||s.month===3))throw Error('출전 평가 시점이 아닙니다.');
   const evaluated=s.month>=4&&(s.phase==='selection'||matchExists);
@@ -65,21 +60,21 @@ export function parseSave(raw:string):GameState {
   // Before the match, no later trust award has changed the selection inputs.
   if(s.phase==='selection'&&s.evaluation?.basis==='rival'&&!same(s.evaluation,evaluateSelection(s)))throw Error('출전 평가 점수가 맞지 않습니다.');
   if(s.match){
-    const m=s.match;checkMatch(m);validateSkillChecks(s,m);
+    const m=s.match;validateMatch(m,s.role);validateSkillChecks(s,m);
     if(m.id!==plan?.id||m.opponentId!==plan?.opponentId)throw Error('경기 상대와 일정이 다릅니다.');
-    if(m.awaiting!==(s.phase==='match')||(recorded&&!m.over))throw Error('경기 처리 위치가 올바르지 않습니다.');
+    if(m.awaiting&&s.phase!=='match'||(recorded&&!m.over))throw Error('경기 처리 위치가 올바르지 않습니다.');
     if(m.appearance!==(s.month===3?'starter':s.evaluation!.rank))throw Error('출전 역할이 맞지 않습니다.');
-    if(s.phase==='match'&&(m.over||m.outs>=3||m.highlights>=3||m.appearance==='reserve'||(s.role==='pitcher'?(m.retired||m.half!==0||m.faced!==m.highlights*3):(m.half!==1||(m.appearance==='starter'&&m.order[1]%9!==4)))))throw Error('선수가 선택할 수 없는 경기 상태입니다.');
-    if(s.phase==='match'&&m.appearance==='substitute'&&(m.inning<7||(s.role==='batter'&&m.highlights!==0)))throw Error('교체 출전 시점이 아닙니다.');
+    if(s.phase==='match'&&(m.over||m.outs>=3||!m.playerBoundary||m.appearance==='reserve'||(s.role==='pitcher'?(m.retired||m.half!==0):(m.half!==1))||m.awaiting!==isDecisionPoint(s)))throw Error('선수가 선택할 수 없는 경기 상태입니다.');
+    if(s.phase==='match'&&m.appearance==='substitute'&&m.inning<7)throw Error('교체 출전 시점이 아닙니다.');
     if(s.phase==='matchResult'&&(!m.last||m.awaiting))throw Error('승부 결과가 없습니다.');
   }
   const expectedMatches=s.schedule.filter(w=>weekKey(w.month,w.week)<count).map(w=>matchPlan({...s,month:w.month,week:w.week})).filter(p=>p!==null);
   if(recorded)expectedMatches.push(plan!);
   if(s.records.length!==expectedMatches.length)throw Error('누적 경기 기록이 맞지 않습니다.');
   for(const [i,r] of s.records.entries()){
-    const expected=expectedMatches[i];checkMatch(r.match);validateSkillChecks(s,r.match);
+    const expected=expectedMatches[i];validateMatch(r.match,s.role);validateSkillChecks(s,r.match);
     if(r.month!==expected.month||r.match.id!==expected.id||r.match.opponentId!==expected.opponentId||!r.match.over||r.match.awaiting||r.match.score[0]===r.match.score[1])throw Error('완료 경기 이력이 올바르지 않습니다.');
-    if(r.match.id===plan?.id&&!same(r.match,s.match))throw Error('현재 경기와 누적 기록이 다릅니다.');
+    if(r.match.id===plan?.id&&!same(r.match,summarizeMatch(s.match!)))throw Error('현재 경기와 누적 기록이 다릅니다.');
   }
   const roundDone=plan?recorded:!['lineup','weekday','supportEvent','supportResult'].includes(s.phase);
   const expectedRounds=s.month===6?Math.max(0,s.week-2)+(s.week>=2&&roundDone?1:0):0;
@@ -98,7 +93,7 @@ export function parseSave(raw:string):GameState {
   }
   const keys=Object.keys(snapshot(s));
   for(const base of [s.initial,s.weekStart,s.monthStart])for(const k of keys)if(!(k in base)||base[k]>(k==='skillPoints'?1000:100))throw Error('성장 비교 기준이 없습니다.');
-  validateRivalryState(s);
+  validateRivalryState(s);validateCareer(s);
   return s;
 }
 export function loadGame(storage:Pick<Storage,'getItem'>):LoadResult {
@@ -106,8 +101,8 @@ export function loadGame(storage:Pick<Storage,'getItem'>):LoadResult {
   try {raw=storage.getItem(SAVE_KEY);}catch{return {kind:'unavailable',message:'브라우저 저장소를 사용할 수 없습니다. 이번 플레이는 저장되지 않습니다.'};}
   if(raw===null)return {kind:'empty'};
   try{return {kind:'ok',state:parseSave(raw)};}catch{
-    let old=false;try{old=[1,2,3,4,5,6].includes(JSON.parse(raw)?.version);}catch{}
-    return {kind:'invalid',message:old?'이전 테스트 버전의 저장입니다. 덱 육성 버전은 새 선수로 시작해 주세요. 기존 저장은 새 게임을 확정하기 전까지 보관됩니다.':'저장 데이터가 손상되었거나 지원하지 않는 형식입니다. 기존 데이터는 그대로 보존했습니다.'};
+    let old=false;try{old=[1,2,3,4,5,6,7].includes(JSON.parse(raw)?.version);}catch{}
+    return {kind:'invalid',message:old?'이전 테스트 버전의 저장입니다. 경기 개편 버전은 새 선수로 시작해 주세요. 기존 저장은 새 게임을 확정하기 전까지 보관됩니다.':'저장 데이터가 손상되었거나 지원하지 않는 형식입니다. 기존 데이터는 그대로 보존했습니다.'};
   }
 }
 export function saveGame(state:GameState,storage:Pick<Storage,'setItem'>&Partial<Pick<Storage,'getItem'>>) {

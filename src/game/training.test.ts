@@ -86,7 +86,7 @@ test('last March weekend practice can fail and preserves its result into April a
   let s=ready('batter');
   for(let step=0;step<100&&!(s.week===4&&s.phase==='weekend');step++){
     const a:Omit<Action,'revision'>=s.phase==='weekday'?{type:'activity',id:'rest'}:s.phase==='weekend'?{type:'activity',id:'weekend_rest'}
-      :['event','supportEvent'].includes(s.phase)?{type:'choice',index:0}:s.phase==='match'?{type:'tactic',id:'contact'}:{type:'continue'};
+      :['event','supportEvent'].includes(s.phase)?{type:'choice',index:0}:s.phase==='roleEvent'?{type:'choice',id:'stay'}:s.phase==='match'&&s.match!.awaiting?{type:'tactic',id:'contact'}:{type:'continue'};
     s=act(s,a);
   }
   assert.equal(s.phase,'weekend');s.energy=20;s.rng=1;

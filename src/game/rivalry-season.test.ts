@@ -13,7 +13,7 @@ function step(s:GameState,style='training'):GameState {
  :s.phase==='weekday'?{type:'activity',id:style==='study'?'study':s.energy<(style==='training'?65:80)?'rest':s.role==='batter'?'batting':'control'}
  :s.phase==='weekend'?{type:'activity',id:style==='study'?'selfstudy':style==='balanced'&&s.energy>65?'catch':'weekend_rest'}
  :['supportEvent','event','weekendEvent'].includes(s.phase)?{type:'choice',index:0}
- :s.phase==='match'?{type:'tactic',id:s.role==='batter'?'contact':'control'}:{type:'continue'};
+ :s.phase==='roleEvent'?{type:'choice',id:'stay'}:s.phase==='match'&&s.match!.awaiting?{type:'tactic',id:s.role==='batter'?'contact':'control'}:{type:'continue'};
  return transition(s,{...a,revision:s.revision});
 }
 test('weekend practice never repeats weekday competitor growth in training feedback',()=>{

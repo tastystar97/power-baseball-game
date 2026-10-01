@@ -14,7 +14,8 @@ export function finishMonth(role: Role, seed = 42, training = 'rest') {
     else if (s.phase === 'weekday') s = act(s, { type: 'activity', id: training });
     else if (s.phase === 'weekend') s = act(s, { type: 'activity', id: 'catch' });
     else if (['event','weekendEvent','supportEvent'].includes(s.phase)) s = act(s, { type: 'choice', index: 0 });
-    else if (s.phase === 'match') s = act(s, { type: 'tactic', id: role === 'batter' ? 'contact' : 'control' });
+    else if(s.phase==='roleEvent')s=act(s,{type:'choice',id:'stay'});
+    else if (s.phase === 'match'&&s.match!.awaiting) s = act(s, { type: 'tactic', id: role === 'batter' ? 'contact' : 'control' });
     else s = act(s, { type: 'continue' });
   }
   return s;
@@ -80,7 +81,7 @@ test('both roles complete thirty-two weekday slots and sixteen weekends through 
     assert.equal(s.encounterHistory.length,32);
     assert.ok(s.records.every(r=>r.match.over));
     assert.ok(s.records.length>=4&&s.records.length<=6);
-    assert.ok(s.records.every(r=>r.match.highlights<=3));
+    assert.ok(s.records.every(r=>r.match.highlights===r.match.skillChecks.filter(e=>e.source==='manual').length));
     assert.equal(act(s, { type: 'continue' }), s);
   }
 });

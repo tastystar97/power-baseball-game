@@ -41,10 +41,10 @@ export function validateSkillChecks(s:GameState,m:Match){
   if(e.half!==(s.role==='batter'?1:0)||e.order<=order||e.order>=m.order[e.half]||e.inning<inning||e.inning>m.inning)fail('스킬 판정 타석 순서가 올바르지 않습니다.');
   if(!actions.includes(e.tactic)||(e.source==='auto'&&e.tactic!==(s.role==='batter'?'contact':'control')))fail('스킬 판정 작전이 올바르지 않습니다.');
   if(!unique(e.eligible)||!unique(e.active)||e.eligible.some(id=>!valid.includes(id as SkillId)||!s.skills.includes(id as SkillId))||e.active.some(id=>!e.eligible.includes(id)))fail('스킬 발동 이력이 올바르지 않습니다.');
-  if(m.appearance==='reserve'||m.appearance==='substitute'&&e.inning<7||s.role==='batter'&&m.appearance==='starter'&&e.order%9!==4)fail('출전하지 않은 타석의 스킬 판정입니다.');
+  if(m.appearance==='reserve'||m.appearance==='substitute'&&e.inning<7||s.role==='batter'&&m.appearance==='starter'&&e.order%9!==m.battingOrder-1)fail('출전하지 않은 타석의 스킬 판정입니다.');
   order=e.order;inning=e.inning;
  }
  if(m.skillChecks.filter(e=>e.source==='manual').length!==m.highlights)fail('선택 타석의 스킬 판정이 누락되었습니다.');
- const expected=s.role==='pitcher'?m.faced:m.batting.ab+m.batting.walks;
- if(s.role==='pitcher'?m.skillChecks.length!==expected:m.skillChecks.length<expected||m.skillChecks.length>expected+m.highlights)fail('스킬 판정과 개인 기록이 다릅니다.');
+ const expected=s.role==='pitcher'?m.faced:m.batting.pa;
+ if(m.skillChecks.length!==expected)fail('스킬 판정과 개인 기록이 다릅니다.');
 }

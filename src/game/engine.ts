@@ -14,7 +14,7 @@ import { primaryKeys, labels } from './types.ts';
 import type { Action, Activity, GameState, Role, TrainingTarget, PrimaryKey, Choice, SupportId } from './types.ts';
 import { clamp, random } from './random.ts';
 import {failurePenalty,trainingFailureChance,trainingGrowth} from './training.ts';
-import { advanceMatch, chooseTactic, createMatch, intervene } from './match.ts';
+import { advanceMatch, chooseTactic, createMatch, intervene, summarizeMatch } from './match.ts';
 import { addBond, bondTrainingBonus, isJoint, participants, weeklyPlacements } from './support.ts';
 import { evaluateSelection } from './competition.ts';
 import {matchPlan,finishRound,weekKey,monthGoal} from './season.ts';
@@ -31,7 +31,7 @@ export function createGame(rawName:string,role:Role,seed=42,content:CardContent=
   const name=rawName.trim();
   if(!name||[...name].length>8||!['batter','pitcher'].includes(role))throw new Error('이름은 1~8자로 입력하고 타자 또는 투수를 선택해 주세요.');
   const frozen=deck?catalogForDeck(content,deck):structuredClone(content);
-  const state:GameState={version:7,career:initialCareer(),content:frozen,weekdayPart:1,activeEncounter:null,encounterHistory:[],competitor:createCompetitor(role),selectionHistory:[],name,role,month:3,week:1,phase:deck?'weekday':'lineup',revision:0,rng:(seed>>>0)||1,attributes:initialAttributes(),proficiency:initialProficiency(role),
+  const state:GameState={version:8,career:initialCareer(),content:frozen,weekdayPart:1,activeEncounter:null,encounterHistory:[],competitor:createCompetitor(role),selectionHistory:[],name,role,month:3,week:1,phase:deck?'weekday':'lineup',revision:0,rng:(seed>>>0)||1,attributes:initialAttributes(),proficiency:initialProficiency(role),
     energy:80,stress:15,trust:20,rival:10,catcher:10,
     log:[],schedule:[{month:3,week:1,weekday:'',weekday2:'',weekend:''}],initial:{},weekStart:{},monthStart:{},
     notice:'함께 성장할 연습 파트너를 골라 보자.',eventReply:'',match:null,matchRecorded:false,
@@ -123,7 +123,7 @@ function recordMatch(s:GameState){
     `청람고 ${m.score[1]} : ${m.score[0]} ${teamName(m.opponentId)} · ${won?'승리':'패배'}. 감독: “${!played?'오늘은 동료들의 승부를 배워 두자. 다음 기회를 향해 준비해.':achievement>=4?'연습한 것이 보이는구나. 오늘의 감각을 기억해.':'오늘 찾은 과제를 다음 훈련에 가져가자.'}”`);
   const before=snapshot(s);s.skillPoints=Math.min(1000,s.skillPoints+(played?8:2));
   logChange(s,before,'경기에서 배운 것',played?'승부를 돌아보며 스킬 포인트를 얻었다.':'동료의 플레이를 관찰하며 스킬 포인트를 얻었다.');
-  s.matchRecorded=true;s.records.push({month:s.month,match:structuredClone(m)});finishRound(s);
+  s.matchRecorded=true;s.records.push({month:s.month,match:summarizeMatch(m)});finishRound(s);
 }
 function startMatch(s:GameState){
   const plan=matchPlan(s)!;
@@ -200,7 +200,7 @@ export function transition(previous:GameState,action:Action):GameState {
     if(!intervene(s))return previous;s.phase='match';
   }else if(action.type==='playback'&&s.match&&['match','matchResult','matchEnd'].includes(s.phase)){
     const index=action.index??-1,m=s.match;
-    if(index<=m.playbackIndex||index>m.feed.length||index<m.feed.length&&index>0&&m.feed[index].inning===m.feed[index-1].inning&&m.feed[index].half===m.feed[index-1].half)return previous;
+    if(index<=m.playbackIndex||index>m.feed.length||index===m.feed.length&&!m.over&&m.feed.at(-1)?.inning===m.inning&&m.feed.at(-1)?.half===m.half||index<m.feed.length&&index>0&&m.feed[index].inning===m.feed[index-1].inning&&m.feed[index].half===m.feed[index-1].half)return previous;
     m.playbackIndex=index;
   }else if(action.type==='delegate'&&s.phase==='match'){
     if(!chooseTactic(s,s.role==='batter'?'contact':'control','auto'))return previous;s.phase='matchResult';

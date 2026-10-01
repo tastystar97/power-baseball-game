@@ -1,7 +1,7 @@
 import {z} from 'zod';
 import {outcomes} from './plate.ts';
 const count=z.number().int().nonnegative(),rating=count.max(100),half=z.union([z.literal(0),z.literal(1)]);
-const ratings=z.object({contact:rating,power:rating,eye:rating,speed:rating,field:rating,mental:rating,velocity:rating,control:rating,breaking:rating,stamina:rating});
+const ratings=z.object({contact:rating,power:rating,eye:rating,speed:rating,field:rating,mental:z.number().min(0).max(100),velocity:rating,control:rating,breaking:rating,stamina:rating});
 export const battingSchema=z.object({pa:count,ab:count,hits:count,doubles:count,triples:count,hr:count,rbi:count,walks:count,hbp:count,k:count,sf:count,sh:count,errors:count,rbiChances:count,sb:count,cs:count}).strict();
 export const pitchingSchema=z.object({outs:count,k:count,walks:count,hbp:count,hits:count,hr:count,runs:count,sv:count.max(1),hold:count.max(1),bs:count.max(1)}).strict();
 export const runnerSchema=z.object({id:z.string(),name:z.string(),owner:z.enum(['player','team','opponent']),speed:rating,responsible:z.string().nullable()}).strict();

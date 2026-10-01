@@ -15,7 +15,7 @@ export function advanceSeason(s:GameState):GameState {
     :s.phase==='weekday'?{type:'activity',id:s.energy<65?'rest':s.role==='batter'?'batting':'control'}
     :s.phase==='weekend'?{type:'activity',id:'weekend_rest'}
     :['event','supportEvent','weekendEvent'].includes(s.phase)?{type:'choice',index:0}
-    :s.phase==='match'?{type:'tactic',id:s.role==='batter'?'contact':'control'}:{type:'continue'};
+    :s.phase==='roleEvent'?{type:'choice',id:'stay'}:s.phase==='match'&&s.match!.awaiting?{type:'tactic',id:s.role==='batter'?'contact':'control'}:{type:'continue'};
   return act(s,a);
 }
 test('both roles play sixteen weeks through summer with every weekend and fixed deck intact',()=>{
@@ -62,13 +62,13 @@ test('specialized skills unlock by training and prerequisite without a permanent
 test('specialized skills change the matching tactic probabilities and real pitching burden',()=>{
   for(const [role,id,tactic,index,delta] of [
     ['batter','contact_master','contact',3,.075*.68],['batter','slugger','power',5,.065*.68],
-    ['pitcher','power_finish','breaking',0,.08*.68],['pitcher','efficient_pitch','control',2,-.035*.68],
+    ['pitcher','power_finish','breaking',0,.08*.68],['pitcher','efficient_pitch','control',2,-.045*.68],
   ] as const){
-    const s=createGame('특화',role,51);s.match=createMatch();s.match.awaiting=true;
+    const s=createGame('특화',role,51);s.match=createMatch();s.match.awaiting=true;s.match.pitchingRole='starter';s.match.half=role==='batter'?1:0;s.match.order[1]=7;
     const base=tactics(s).find(t=>t.id===tactic)!;s.skills=[id];
     const t=tactics(s).find(t=>t.id===tactic)!;
     assert.ok(Math.abs(t.probabilities[index]-base.probabilities[index]-delta)<1e-9);
     assert.match(t.reason,/발동 후보/);
-    if(id==='efficient_pitch'){assert.ok(Math.abs(t.burden-(5-3*.68))<1e-9);chooseTactic(s,tactic);assert.equal(s.match.load,s.match.skillChecks![0].active.includes('efficient_pitch')?2:5);}
+    if(id==='efficient_pitch'){assert.ok(Math.abs(t.burden-(3.4-2.4*.68))<1e-9);chooseTactic(s,tactic);assert.equal(s.match.load,s.match.skillChecks![0].active.includes('efficient_pitch')?1:3.4);}
   }
 });

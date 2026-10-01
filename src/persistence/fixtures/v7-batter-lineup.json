@@ -1,0 +1,5632 @@
+{
+  "version": 7,
+  "content": {
+    "cards": [
+      {
+        "id": "bat_senior",
+        "name": "강민재",
+        "title": "반복 끝의 감각",
+        "role": "타격 전문 선배",
+        "description": "스윙을 잘게 나눠 설명하는 차분한 선배. 기본기를 끝까지 함께 다듬습니다.",
+        "color": "#b47532",
+        "specialty": "sense",
+        "training": {
+          "batter": [
+            "batting",
+            "freebatting"
+          ],
+          "pitcher": [
+            "endurance",
+            "tactics"
+          ]
+        },
+        "bonus": {
+          "energy": 0,
+          "stress": 0,
+          "jointEnergy": 0,
+          "gains": {}
+        },
+        "hints": {
+          "batter": "contact_focus",
+          "pitcher": "calm"
+        },
+        "ultimates": {
+          "batter": "contact_master",
+          "pitcher": "batter_read"
+        }
+      },
+      {
+        "id": "pitch_senior",
+        "name": "이도윤",
+        "title": "공 하나의 의도",
+        "role": "투수 전문 선배",
+        "description": "공 하나의 이유를 묻는 연구파. 상대의 시선으로 승부를 준비합니다.",
+        "color": "#4d739a",
+        "specialty": "intelligence",
+        "training": {
+          "batter": [
+            "tactics",
+            "fielding"
+          ],
+          "pitcher": [
+            "velocity",
+            "breaking"
+          ]
+        },
+        "bonus": {
+          "energy": 0,
+          "stress": 0,
+          "jointEnergy": 0,
+          "gains": {}
+        },
+        "hints": {
+          "batter": "patient_eye",
+          "pitcher": "slider"
+        },
+        "ultimates": {
+          "batter": "eye_master",
+          "pitcher": "sharp_slider"
+        }
+      },
+      {
+        "id": "rival",
+        "name": "차준서",
+        "title": "한 세트 더",
+        "role": "동기 라이벌",
+        "description": "지기 싫은 마음을 꾸준한 훈련으로 바꾸는 동기. 경쟁이 연습의 힘이 됩니다.",
+        "color": "#a95950",
+        "specialty": "power",
+        "training": {
+          "batter": [
+            "weights",
+            "freebatting",
+            "fielding"
+          ],
+          "pitcher": [
+            "velocity",
+            "endurance"
+          ]
+        },
+        "bonus": {
+          "energy": 0,
+          "stress": 0,
+          "jointEnergy": 0,
+          "gains": {}
+        },
+        "hints": {
+          "batter": "power_drive",
+          "pitcher": "fastball_edge"
+        },
+        "ultimates": {
+          "batter": "slugger",
+          "pitcher": "power_finish"
+        }
+      },
+      {
+        "id": "catcher",
+        "name": "박하람",
+        "title": "같은 승부를 보는 눈",
+        "role": "동료 포수",
+        "description": "작은 흔들림도 알아채는 포수. 위기에서의 호흡을 맞춥니다.",
+        "color": "#578d73",
+        "specialty": "mental",
+        "training": {
+          "batter": [
+            "batting",
+            "fielding"
+          ],
+          "pitcher": [
+            "control",
+            "endurance"
+          ]
+        },
+        "bonus": {
+          "energy": 0,
+          "stress": 0,
+          "jointEnergy": 0,
+          "gains": {}
+        },
+        "hints": {
+          "batter": "calm",
+          "pitcher": "precision"
+        },
+        "ultimates": {
+          "batter": "clutch_signal",
+          "pitcher": "efficient_pitch"
+        }
+      },
+      {
+        "id": "manager",
+        "name": "한서현",
+        "title": "기록 밖의 성장",
+        "role": "학생 매니저",
+        "description": "관찰과 기록에 강한 동급생. 함께하는 활동의 체력 부담을 줄입니다.",
+        "color": "#826c9c",
+        "specialty": null,
+        "training": {
+          "batter": [
+            "tactics",
+            "rest"
+          ],
+          "pitcher": [
+            "tactics",
+            "rest"
+          ]
+        },
+        "bonus": {
+          "energy": 5,
+          "stress": -2,
+          "jointEnergy": 6,
+          "gains": {}
+        },
+        "hints": {
+          "batter": "steady",
+          "pitcher": "steady"
+        },
+        "ultimates": {
+          "batter": "steady_master",
+          "pitcher": "steady_master"
+        }
+      },
+      {
+        "id": "classmate",
+        "name": "윤유진",
+        "title": "다음 하나부터",
+        "role": "반 친구",
+        "description": "작은 계획을 실천하는 친구. 지능과 멘탈을 챙기며 생활의 균형을 돕습니다.",
+        "color": "#987e41",
+        "specialty": "intelligence",
+        "training": {
+          "batter": [
+            "study",
+            "tactics"
+          ],
+          "pitcher": [
+            "study",
+            "tactics"
+          ]
+        },
+        "bonus": {
+          "energy": 0,
+          "stress": 0,
+          "jointEnergy": 0,
+          "gains": {
+            "mental": 1
+          }
+        },
+        "hints": {
+          "batter": "focus_plan",
+          "pitcher": "focus_plan"
+        },
+        "ultimates": {
+          "batter": "clear_plan",
+          "pitcher": "clear_plan"
+        }
+      },
+      {
+        "id": "sera",
+        "name": "정세라",
+        "title": "단정한 풀스윙",
+        "role": "2학년 · 1루수",
+        "description": "우아한 말투와 대담한 스윙. 남몰래 반복하는 기본기가 한 방을 만듭니다.",
+        "color": "#ac627b",
+        "specialty": "power",
+        "training": {
+          "batter": [
+            "freebatting",
+            "weights"
+          ],
+          "pitcher": [
+            "weights",
+            "velocity"
+          ]
+        },
+        "bonus": {
+          "energy": 0,
+          "stress": 0,
+          "jointEnergy": 0,
+          "gains": {}
+        },
+        "hints": {
+          "batter": "pull",
+          "pitcher": null
+        },
+        "ultimates": {
+          "batter": "moonshot",
+          "pitcher": null
+        }
+      },
+      {
+        "id": "chaerin",
+        "name": "백채린",
+        "title": "직구 예고",
+        "role": "2학년 · 강속구 투수",
+        "description": "승부를 먼저 선언하는 자신감. 가장 믿는 공에 정확성을 더하려 합니다.",
+        "color": "#c35e48",
+        "specialty": "power",
+        "training": {
+          "batter": [
+            "weights",
+            "freebatting"
+          ],
+          "pitcher": [
+            "velocity",
+            "weights"
+          ]
+        },
+        "bonus": {
+          "energy": 0,
+          "stress": 0,
+          "jointEnergy": 0,
+          "gains": {}
+        },
+        "hints": {
+          "batter": null,
+          "pitcher": "heavy_fastball"
+        },
+        "ultimates": {
+          "batter": null,
+          "pitcher": "fireball"
+        }
+      },
+      {
+        "id": "narin",
+        "name": "강나린",
+        "title": "한 발 먼저",
+        "role": "1학년 · 중견수",
+        "description": "육상부 출신의 행동파. 빠른 발에 상황을 보는 눈을 더해 갑니다.",
+        "color": "#b39a35",
+        "specialty": "endurance",
+        "training": {
+          "batter": [
+            "running",
+            "fielding"
+          ],
+          "pitcher": [
+            "running",
+            "endurance"
+          ]
+        },
+        "bonus": {
+          "energy": 0,
+          "stress": 0,
+          "jointEnergy": 0,
+          "gains": {}
+        },
+        "hints": {
+          "batter": "sprint",
+          "pitcher": null
+        },
+        "ultimates": {
+          "batter": "live_legs",
+          "pitcher": null
+        }
+      },
+      {
+        "id": "sua",
+        "name": "임수아",
+        "title": "아홉 칸의 계획",
+        "role": "3학년 · 선발투수",
+        "description": "이닝별 계획을 세우는 완벽주의자. 동료를 믿는 빈칸을 배워 갑니다.",
+        "color": "#468985",
+        "specialty": "endurance",
+        "training": {
+          "batter": [
+            "running",
+            "tactics"
+          ],
+          "pitcher": [
+            "endurance",
+            "control"
+          ]
+        },
+        "bonus": {
+          "energy": 0,
+          "stress": 0,
+          "jointEnergy": 0,
+          "gains": {}
+        },
+        "hints": {
+          "batter": null,
+          "pitcher": "pace"
+        },
+        "ultimates": {
+          "batter": null,
+          "pitcher": "inning_design"
+        }
+      },
+      {
+        "id": "yeoreum",
+        "name": "최여름",
+        "title": "마지막 회의 여유",
+        "role": "2학년 · 유틸리티",
+        "description": "느긋해 보여도 후반에 강한 실속파. 남겨 둔 힘의 쓰임을 압니다.",
+        "color": "#bd945d",
+        "specialty": "endurance",
+        "training": {
+          "batter": [
+            "running",
+            "fielding"
+          ],
+          "pitcher": [
+            "endurance",
+            "running"
+          ]
+        },
+        "bonus": {
+          "energy": 0,
+          "stress": 0,
+          "jointEnergy": 0,
+          "gains": {}
+        },
+        "hints": {
+          "batter": "late_focus",
+          "pitcher": "late_focus"
+        },
+        "ultimates": {
+          "batter": "last_inning",
+          "pitcher": "last_inning"
+        }
+      },
+      {
+        "id": "rina",
+        "name": "유리나",
+        "title": "작은 목소리의 마무리",
+        "role": "2학년 · 구원투수",
+        "description": "평소에는 소심하지만 위기에서 승부에 집중합니다. 작은 목소리로 의도를 전합니다.",
+        "color": "#8271a8",
+        "specialty": "mental",
+        "training": {
+          "batter": [
+            "batting",
+            "tactics"
+          ],
+          "pitcher": [
+            "control",
+            "breaking"
+          ]
+        },
+        "bonus": {
+          "energy": 0,
+          "stress": 0,
+          "jointEnergy": 0,
+          "gains": {}
+        },
+        "hints": {
+          "batter": null,
+          "pitcher": "crisis_breath"
+        },
+        "ultimates": {
+          "batter": null,
+          "pitcher": "closer"
+        }
+      },
+      {
+        "id": "seoa",
+        "name": "남서아",
+        "title": "주장 완장의 무게",
+        "role": "3학년 · 주장·포수",
+        "description": "말수가 적고 책임감이 강한 주장. 중요한 순간을 동료에게 맡기는 법을 배웁니다.",
+        "color": "#5f7298",
+        "specialty": "mental",
+        "training": {
+          "batter": [
+            "batting",
+            "fielding"
+          ],
+          "pitcher": [
+            "control",
+            "tactics"
+          ]
+        },
+        "bonus": {
+          "energy": 0,
+          "stress": 0,
+          "jointEnergy": 0,
+          "gains": {}
+        },
+        "hints": {
+          "batter": "comeback",
+          "pitcher": "comeback"
+        },
+        "ultimates": {
+          "batter": "rally_core",
+          "pitcher": "rally_core"
+        }
+      },
+      {
+        "id": "sumin",
+        "name": "배수민",
+        "title": "확률 밖의 한 수",
+        "role": "2학년 · 전력분석원",
+        "description": "통계를 좋아하는 집요한 분석가. 예상 밖의 결과에서도 배울 이유를 찾습니다.",
+        "color": "#668ca5",
+        "specialty": "intelligence",
+        "training": {
+          "batter": [
+            "tactics",
+            "study"
+          ],
+          "pitcher": [
+            "tactics",
+            "study"
+          ]
+        },
+        "bonus": {
+          "energy": 0,
+          "stress": 0,
+          "jointEnergy": 0,
+          "gains": {}
+        },
+        "hints": {
+          "batter": "analysis",
+          "pitcher": "analysis"
+        },
+        "ultimates": {
+          "batter": "read_gap",
+          "pitcher": "read_gap"
+        }
+      },
+      {
+        "id": "yerin",
+        "name": "홍예린",
+        "title": "박수보다 정확하게",
+        "role": "2학년 · 교타 외야수",
+        "description": "관중 앞에서는 밝고 능청스럽지만 슬럼프는 감추는 편. 끈질긴 승부의 가치를 찾습니다.",
+        "color": "#c17594",
+        "specialty": "sense",
+        "training": {
+          "batter": [
+            "batting",
+            "tactics"
+          ],
+          "pitcher": [
+            "control",
+            "tactics"
+          ]
+        },
+        "bonus": {
+          "energy": 0,
+          "stress": 0,
+          "jointEnergy": 0,
+          "gains": {}
+        },
+        "hints": {
+          "batter": "persistent",
+          "pitcher": null
+        },
+        "ultimates": {
+          "batter": "endless_atbat",
+          "pitcher": null
+        }
+      },
+      {
+        "id": "dohee",
+        "name": "백도희",
+        "title": "공 끝의 장난",
+        "role": "1학년 · 기교파 투수",
+        "description": "구종마다 별명을 붙이는 실험가. 우연히 나온 좋은 공을 자신의 기술로 만듭니다.",
+        "color": "#739467",
+        "specialty": "sense",
+        "training": {
+          "batter": [
+            "fielding",
+            "tactics"
+          ],
+          "pitcher": [
+            "breaking",
+            "control"
+          ]
+        },
+        "bonus": {
+          "energy": 0,
+          "stress": 0,
+          "jointEnergy": 0,
+          "gains": {}
+        },
+        "hints": {
+          "batter": null,
+          "pitcher": "curve"
+        },
+        "ultimates": {
+          "batter": null,
+          "pitcher": "deep_curve"
+        }
+      },
+      {
+        "id": "jiwoo",
+        "name": "송지우",
+        "title": "오늘도 같은 준비",
+        "role": "2학년 · 훈련 지원",
+        "description": "준비 루틴을 수집하는 꼼꼼한 부원. 각자에게 맞는 좋은 시작을 찾습니다.",
+        "color": "#ad8d75",
+        "specialty": null,
+        "training": {
+          "batter": [
+            "rest",
+            "running"
+          ],
+          "pitcher": [
+            "rest",
+            "running"
+          ]
+        },
+        "bonus": {
+          "energy": 4,
+          "stress": -2,
+          "jointEnergy": 4,
+          "gains": {}
+        },
+        "hints": {
+          "batter": "routine",
+          "pitcher": "routine"
+        },
+        "ultimates": {
+          "batter": "body_rhythm",
+          "pitcher": "body_rhythm"
+        }
+      },
+      {
+        "id": "jian",
+        "name": "이지안",
+        "title": "좋은 장면부터",
+        "role": "1학년 · 영상 담당",
+        "description": "말보다 영상으로 응원하는 기록 담당. 실수 앞뒤에 남은 성장을 찾아냅니다.",
+        "color": "#818eac",
+        "specialty": null,
+        "training": {
+          "batter": [
+            "rest",
+            "study"
+          ],
+          "pitcher": [
+            "rest",
+            "study"
+          ]
+        },
+        "bonus": {
+          "energy": 2,
+          "stress": -4,
+          "jointEnergy": 3,
+          "gains": {}
+        },
+        "hints": {
+          "batter": "reset_mind",
+          "pitcher": "reset_mind"
+        },
+        "ultimates": {
+          "batter": "next_space",
+          "pitcher": "next_space"
+        }
+      }
+    ],
+    "skills": [
+      {
+        "id": "contact_focus",
+        "name": "짧고 정확한 스윙",
+        "description": "조건을 만족한 승부에서 발동합니다.",
+        "role": "batter",
+        "cost": 14,
+        "family": "contact_focus",
+        "tier": "normal",
+        "requires": {},
+        "conditions": [
+          {
+            "kind": "tactic",
+            "values": [
+              "contact"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "out",
+            "to": "single",
+            "amount": 0.05
+          }
+        ]
+      },
+      {
+        "id": "power_drive",
+        "name": "끝까지 밀어내기",
+        "description": "조건을 만족한 승부에서 발동합니다.",
+        "role": "batter",
+        "cost": 18,
+        "family": "power_drive",
+        "tier": "normal",
+        "requires": {},
+        "conditions": [
+          {
+            "kind": "tactic",
+            "values": [
+              "power"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "out",
+            "to": "homer",
+            "amount": 0.035
+          }
+        ]
+      },
+      {
+        "id": "patient_eye",
+        "name": "한 공 더 보기",
+        "description": "조건을 만족한 승부에서 발동합니다.",
+        "role": "batter",
+        "cost": 14,
+        "family": "patient_eye",
+        "tier": "normal",
+        "requires": {},
+        "conditions": [
+          {
+            "kind": "tactic",
+            "values": [
+              "patient"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "out",
+            "to": "walk",
+            "amount": 0.05
+          }
+        ]
+      },
+      {
+        "id": "fastball_edge",
+        "name": "살아 있는 직구",
+        "description": "조건을 만족한 승부에서 발동합니다.",
+        "role": "pitcher",
+        "cost": 14,
+        "family": "fastball_edge",
+        "tier": "normal",
+        "requires": {},
+        "conditions": [
+          {
+            "kind": "tactic",
+            "values": [
+              "fastball"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "out",
+            "to": "strikeout",
+            "amount": 0.055
+          }
+        ]
+      },
+      {
+        "id": "precision",
+        "name": "미트 끝을 향해",
+        "description": "조건을 만족한 승부에서 발동합니다.",
+        "role": "pitcher",
+        "cost": 14,
+        "family": "precision",
+        "tier": "normal",
+        "requires": {},
+        "conditions": [],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "walk",
+            "to": "out",
+            "amount": 0.035
+          }
+        ]
+      },
+      {
+        "id": "breaking_read",
+        "name": "타이밍 빼앗기",
+        "description": "조건을 만족한 승부에서 발동합니다.",
+        "role": "pitcher",
+        "cost": 18,
+        "family": "breaking_read",
+        "tier": "normal",
+        "requires": {},
+        "conditions": [
+          {
+            "kind": "tactic",
+            "values": [
+              "breaking"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "single",
+            "to": "out",
+            "amount": 0.035
+          }
+        ]
+      },
+      {
+        "id": "calm",
+        "name": "흔들리지 않는 마음",
+        "description": "조건을 만족한 승부에서 발동합니다.",
+        "role": "both",
+        "cost": 16,
+        "family": "calm",
+        "tier": "normal",
+        "requires": {},
+        "conditions": [
+          {
+            "kind": "outs",
+            "min": 2,
+            "max": 2,
+            "role": "batter"
+          },
+          {
+            "kind": "runners",
+            "present": true,
+            "role": "pitcher"
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "out",
+            "to": "single",
+            "amount": 0.035,
+            "role": "batter"
+          },
+          {
+            "kind": "probability",
+            "from": "single",
+            "to": "out",
+            "amount": 0.035,
+            "role": "pitcher"
+          }
+        ]
+      },
+      {
+        "id": "steady",
+        "name": "마지막까지 같은 자세",
+        "description": "조건을 만족한 승부에서 발동합니다.",
+        "role": "both",
+        "cost": 12,
+        "family": "steady",
+        "tier": "normal",
+        "requires": {},
+        "conditions": [
+          {
+            "kind": "energy",
+            "min": 0,
+            "max": 44
+          }
+        ],
+        "effects": [
+          {
+            "kind": "fatigue",
+            "amount": 0.7
+          }
+        ]
+      },
+      {
+        "id": "slider",
+        "name": "슬라이더",
+        "description": "조건을 만족한 승부에서 발동합니다.",
+        "role": "pitcher",
+        "cost": 16,
+        "family": "slider",
+        "tier": "normal",
+        "requires": {},
+        "conditions": [
+          {
+            "kind": "tactic",
+            "values": [
+              "breaking"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "out",
+            "to": "strikeout",
+            "amount": 0.03
+          }
+        ]
+      },
+      {
+        "id": "focus_plan",
+        "name": "승부 계획",
+        "description": "조건을 만족한 승부에서 발동합니다.",
+        "role": "both",
+        "cost": 14,
+        "family": "focus_plan",
+        "tier": "normal",
+        "requires": {},
+        "conditions": [
+          {
+            "kind": "score",
+            "value": "behind"
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "out",
+            "to": "single",
+            "amount": 0.02,
+            "role": "batter"
+          },
+          {
+            "kind": "probability",
+            "from": "single",
+            "to": "out",
+            "amount": 0.02,
+            "role": "pitcher"
+          }
+        ]
+      },
+      {
+        "id": "pull",
+        "name": "당겨치기",
+        "description": "조건을 만족한 승부에서 발동합니다.",
+        "role": "batter",
+        "cost": 16,
+        "family": "pull",
+        "tier": "normal",
+        "requires": {},
+        "conditions": [
+          {
+            "kind": "tactic",
+            "values": [
+              "power"
+            ]
+          },
+          {
+            "kind": "opponent",
+            "values": [
+              "fast"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "out",
+            "to": "homer",
+            "amount": 0.035
+          }
+        ]
+      },
+      {
+        "id": "heavy_fastball",
+        "name": "묵직한 직구",
+        "description": "조건을 만족한 승부에서 발동합니다.",
+        "role": "pitcher",
+        "cost": 16,
+        "family": "heavy_fastball",
+        "tier": "normal",
+        "requires": {},
+        "conditions": [
+          {
+            "kind": "tactic",
+            "values": [
+              "fastball"
+            ]
+          },
+          {
+            "kind": "runners",
+            "present": false
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "out",
+            "to": "strikeout",
+            "amount": 0.03
+          }
+        ]
+      },
+      {
+        "id": "sprint",
+        "name": "전력 질주",
+        "description": "조건을 만족한 승부에서 발동합니다.",
+        "role": "batter",
+        "cost": 14,
+        "family": "sprint",
+        "tier": "normal",
+        "requires": {},
+        "conditions": [
+          {
+            "kind": "tactic",
+            "values": [
+              "contact"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "out",
+            "to": "single",
+            "amount": 0.025
+          }
+        ]
+      },
+      {
+        "id": "pace",
+        "name": "페이스 조절",
+        "description": "조건을 만족한 승부에서 발동합니다.",
+        "role": "pitcher",
+        "cost": 16,
+        "family": "pace",
+        "tier": "normal",
+        "requires": {},
+        "conditions": [
+          {
+            "kind": "tactic",
+            "values": [
+              "control"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "kind": "burden",
+            "amount": 1
+          }
+        ]
+      },
+      {
+        "id": "late_focus",
+        "name": "후반 집중",
+        "description": "조건을 만족한 승부에서 발동합니다.",
+        "role": "both",
+        "cost": 14,
+        "family": "late_focus",
+        "tier": "normal",
+        "requires": {},
+        "conditions": [
+          {
+            "kind": "inning",
+            "min": 7,
+            "max": 99
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "out",
+            "to": "single",
+            "amount": 0.025,
+            "role": "batter"
+          },
+          {
+            "kind": "probability",
+            "from": "single",
+            "to": "out",
+            "amount": 0.025,
+            "role": "pitcher"
+          }
+        ]
+      },
+      {
+        "id": "crisis_breath",
+        "name": "위기 호흡",
+        "description": "조건을 만족한 승부에서 발동합니다.",
+        "role": "pitcher",
+        "cost": 14,
+        "family": "crisis_breath",
+        "tier": "normal",
+        "requires": {},
+        "conditions": [
+          {
+            "kind": "runners",
+            "present": true
+          },
+          {
+            "kind": "inning",
+            "min": 6,
+            "max": 99
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "single",
+            "to": "out",
+            "amount": 0.035
+          }
+        ]
+      },
+      {
+        "id": "comeback",
+        "name": "승부 집중",
+        "description": "조건을 만족한 승부에서 발동합니다.",
+        "role": "both",
+        "cost": 16,
+        "family": "comeback",
+        "tier": "normal",
+        "requires": {},
+        "conditions": [
+          {
+            "kind": "score",
+            "value": "behind"
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "out",
+            "to": "single",
+            "amount": 0.025,
+            "role": "batter"
+          },
+          {
+            "kind": "probability",
+            "from": "single",
+            "to": "out",
+            "amount": 0.025,
+            "role": "pitcher"
+          }
+        ]
+      },
+      {
+        "id": "analysis",
+        "name": "상대 분석",
+        "description": "조건을 만족한 승부에서 발동합니다.",
+        "role": "both",
+        "cost": 16,
+        "family": "analysis",
+        "tier": "normal",
+        "requires": {},
+        "conditions": [
+          {
+            "kind": "opponent",
+            "values": [
+              "power",
+              "wild"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "out",
+            "to": "single",
+            "amount": 0.025,
+            "role": "batter"
+          },
+          {
+            "kind": "probability",
+            "from": "single",
+            "to": "out",
+            "amount": 0.025,
+            "role": "pitcher"
+          }
+        ]
+      },
+      {
+        "id": "persistent",
+        "name": "끈질긴 승부",
+        "description": "조건을 만족한 승부에서 발동합니다.",
+        "role": "batter",
+        "cost": 14,
+        "family": "persistent",
+        "tier": "normal",
+        "requires": {},
+        "conditions": [
+          {
+            "kind": "tactic",
+            "values": [
+              "patient"
+            ]
+          },
+          {
+            "kind": "outs",
+            "min": 1,
+            "max": 2
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "out",
+            "to": "walk",
+            "amount": 0.03
+          }
+        ]
+      },
+      {
+        "id": "curve",
+        "name": "커브",
+        "description": "조건을 만족한 승부에서 발동합니다.",
+        "role": "pitcher",
+        "cost": 16,
+        "family": "curve",
+        "tier": "normal",
+        "requires": {},
+        "conditions": [
+          {
+            "kind": "tactic",
+            "values": [
+              "breaking"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "homer",
+            "to": "out",
+            "amount": 0.015
+          }
+        ]
+      },
+      {
+        "id": "routine",
+        "name": "준비 루틴",
+        "description": "조건을 만족한 승부에서 발동합니다.",
+        "role": "both",
+        "cost": 14,
+        "family": "routine",
+        "tier": "normal",
+        "requires": {},
+        "conditions": [
+          {
+            "kind": "energy",
+            "min": 0,
+            "max": 44
+          }
+        ],
+        "effects": [
+          {
+            "kind": "fatigue",
+            "amount": 0.4
+          }
+        ]
+      },
+      {
+        "id": "reset_mind",
+        "name": "마음 정리",
+        "description": "조건을 만족한 승부에서 발동합니다.",
+        "role": "both",
+        "cost": 14,
+        "family": "reset_mind",
+        "tier": "normal",
+        "requires": {},
+        "conditions": [
+          {
+            "kind": "stress",
+            "min": 70,
+            "max": 100
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "out",
+            "to": "single",
+            "amount": 0.005,
+            "role": "batter"
+          },
+          {
+            "kind": "probability",
+            "from": "single",
+            "to": "out",
+            "amount": 0.005,
+            "role": "pitcher"
+          }
+        ]
+      },
+      {
+        "id": "contact_master",
+        "name": "정교한 배트",
+        "description": "서포트 고유 사건으로 개방하는 상위 스킬. 같은 계열 일반 스킬을 대체합니다.",
+        "role": "batter",
+        "cost": 24,
+        "family": "contact_focus",
+        "tier": "advanced",
+        "prerequisite": "contact_focus",
+        "owner": "bat_senior",
+        "requires": {
+          "contact": 60,
+          "eye": 50
+        },
+        "conditions": [
+          {
+            "kind": "tactic",
+            "values": [
+              "contact",
+              "patient"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "out",
+            "to": "single",
+            "amount": 0.075
+          }
+        ],
+        "style": "교타형"
+      },
+      {
+        "id": "batter_read",
+        "name": "타자의 마음을 읽다",
+        "description": "서포트 고유 사건으로 개방하는 상위 스킬. 같은 계열 일반 스킬을 대체합니다.",
+        "role": "pitcher",
+        "cost": 24,
+        "family": "calm",
+        "tier": "advanced",
+        "prerequisite": "calm",
+        "owner": "bat_senior",
+        "requires": {
+          "control": 50
+        },
+        "conditions": [
+          {
+            "kind": "outs",
+            "min": 2,
+            "max": 2,
+            "role": "batter"
+          },
+          {
+            "kind": "runners",
+            "present": true,
+            "role": "pitcher"
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "out",
+            "to": "single",
+            "amount": 0.055,
+            "role": "batter"
+          },
+          {
+            "kind": "probability",
+            "from": "single",
+            "to": "out",
+            "amount": 0.055,
+            "role": "pitcher"
+          }
+        ]
+      },
+      {
+        "id": "eye_master",
+        "name": "기다리던 한 구",
+        "description": "서포트 고유 사건으로 개방하는 상위 스킬. 같은 계열 일반 스킬을 대체합니다.",
+        "role": "batter",
+        "cost": 24,
+        "family": "patient_eye",
+        "tier": "advanced",
+        "prerequisite": "patient_eye",
+        "owner": "pitch_senior",
+        "requires": {
+          "eye": 55
+        },
+        "conditions": [
+          {
+            "kind": "tactic",
+            "values": [
+              "patient"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "out",
+            "to": "walk",
+            "amount": 0.07
+          }
+        ]
+      },
+      {
+        "id": "sharp_slider",
+        "name": "예리한 슬라이더",
+        "description": "서포트 고유 사건으로 개방하는 상위 스킬. 같은 계열 일반 스킬을 대체합니다.",
+        "role": "pitcher",
+        "cost": 24,
+        "family": "slider",
+        "tier": "advanced",
+        "prerequisite": "slider",
+        "owner": "pitch_senior",
+        "requires": {
+          "breaking": 55,
+          "control": 45
+        },
+        "conditions": [
+          {
+            "kind": "tactic",
+            "values": [
+              "breaking"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "out",
+            "to": "strikeout",
+            "amount": 0.055
+          }
+        ]
+      },
+      {
+        "id": "slugger",
+        "name": "담장을 향한 스윙",
+        "description": "서포트 고유 사건으로 개방하는 상위 스킬. 같은 계열 일반 스킬을 대체합니다.",
+        "role": "batter",
+        "cost": 24,
+        "family": "power_drive",
+        "tier": "advanced",
+        "prerequisite": "power_drive",
+        "owner": "rival",
+        "requires": {
+          "power": 60,
+          "contact": 45
+        },
+        "conditions": [
+          {
+            "kind": "tactic",
+            "values": [
+              "power"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "out",
+            "to": "homer",
+            "amount": 0.065
+          }
+        ],
+        "style": "장타형"
+      },
+      {
+        "id": "power_finish",
+        "name": "결정구의 위력",
+        "description": "서포트 고유 사건으로 개방하는 상위 스킬. 같은 계열 일반 스킬을 대체합니다.",
+        "role": "pitcher",
+        "cost": 24,
+        "family": "fastball_edge",
+        "tier": "advanced",
+        "prerequisite": "fastball_edge",
+        "owner": "rival",
+        "requires": {
+          "velocity": 60,
+          "breaking": 45
+        },
+        "conditions": [
+          {
+            "kind": "tactic",
+            "values": [
+              "fastball",
+              "breaking"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "out",
+            "to": "strikeout",
+            "amount": 0.08
+          }
+        ],
+        "style": "구위형"
+      },
+      {
+        "id": "clutch_signal",
+        "name": "둘만의 승부 신호",
+        "description": "서포트 고유 사건으로 개방하는 상위 스킬. 같은 계열 일반 스킬을 대체합니다.",
+        "role": "batter",
+        "cost": 24,
+        "family": "calm",
+        "tier": "advanced",
+        "prerequisite": "calm",
+        "owner": "catcher",
+        "requires": {
+          "contact": 50
+        },
+        "conditions": [
+          {
+            "kind": "outs",
+            "min": 2,
+            "max": 2,
+            "role": "batter"
+          },
+          {
+            "kind": "runners",
+            "present": true,
+            "role": "pitcher"
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "out",
+            "to": "single",
+            "amount": 0.06,
+            "role": "batter"
+          },
+          {
+            "kind": "probability",
+            "from": "single",
+            "to": "out",
+            "amount": 0.06,
+            "role": "pitcher"
+          }
+        ]
+      },
+      {
+        "id": "efficient_pitch",
+        "name": "효율적인 투구",
+        "description": "서포트 고유 사건으로 개방하는 상위 스킬. 같은 계열 일반 스킬을 대체합니다.",
+        "role": "pitcher",
+        "cost": 24,
+        "family": "precision",
+        "tier": "advanced",
+        "prerequisite": "precision",
+        "owner": "catcher",
+        "requires": {
+          "control": 60,
+          "stamina": 50
+        },
+        "conditions": [
+          {
+            "kind": "tactic",
+            "values": [
+              "control"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "walk",
+            "to": "out",
+            "amount": 0.045
+          },
+          {
+            "kind": "burden",
+            "amount": 3
+          }
+        ],
+        "style": "제구형"
+      },
+      {
+        "id": "steady_master",
+        "name": "끝까지 같은 리듬",
+        "description": "서포트 고유 사건으로 개방하는 상위 스킬. 같은 계열 일반 스킬을 대체합니다.",
+        "role": "both",
+        "cost": 24,
+        "family": "steady",
+        "tier": "advanced",
+        "prerequisite": "steady",
+        "owner": "manager",
+        "requires": {},
+        "conditions": [
+          {
+            "kind": "energy",
+            "min": 0,
+            "max": 44
+          }
+        ],
+        "effects": [
+          {
+            "kind": "fatigue",
+            "amount": 1
+          }
+        ]
+      },
+      {
+        "id": "clear_plan",
+        "name": "흐름을 되찾는 계획",
+        "description": "서포트 고유 사건으로 개방하는 상위 스킬. 같은 계열 일반 스킬을 대체합니다.",
+        "role": "both",
+        "cost": 24,
+        "family": "focus_plan",
+        "tier": "advanced",
+        "prerequisite": "focus_plan",
+        "owner": "classmate",
+        "requires": {},
+        "conditions": [
+          {
+            "kind": "score",
+            "value": "behind"
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "out",
+            "to": "single",
+            "amount": 0.04,
+            "role": "batter"
+          },
+          {
+            "kind": "probability",
+            "from": "single",
+            "to": "out",
+            "amount": 0.04,
+            "role": "pitcher"
+          }
+        ]
+      },
+      {
+        "id": "moonshot",
+        "name": "담장을 깨우는 한 방",
+        "description": "서포트 고유 사건으로 개방하는 상위 스킬. 같은 계열 일반 스킬을 대체합니다.",
+        "role": "batter",
+        "cost": 24,
+        "family": "pull",
+        "tier": "advanced",
+        "prerequisite": "pull",
+        "owner": "sera",
+        "requires": {
+          "power": 55,
+          "contact": 45
+        },
+        "conditions": [
+          {
+            "kind": "tactic",
+            "values": [
+              "power"
+            ]
+          },
+          {
+            "kind": "opponent",
+            "values": [
+              "fast"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "out",
+            "to": "homer",
+            "amount": 0.06
+          }
+        ]
+      },
+      {
+        "id": "fireball",
+        "name": "불꽃 직구",
+        "description": "서포트 고유 사건으로 개방하는 상위 스킬. 같은 계열 일반 스킬을 대체합니다.",
+        "role": "pitcher",
+        "cost": 24,
+        "family": "heavy_fastball",
+        "tier": "advanced",
+        "prerequisite": "heavy_fastball",
+        "owner": "chaerin",
+        "requires": {
+          "velocity": 55
+        },
+        "conditions": [
+          {
+            "kind": "tactic",
+            "values": [
+              "fastball"
+            ]
+          },
+          {
+            "kind": "runners",
+            "present": false
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "out",
+            "to": "strikeout",
+            "amount": 0.06
+          }
+        ]
+      },
+      {
+        "id": "live_legs",
+        "name": "끝까지 살아 있는 발",
+        "description": "서포트 고유 사건으로 개방하는 상위 스킬. 같은 계열 일반 스킬을 대체합니다.",
+        "role": "batter",
+        "cost": 24,
+        "family": "sprint",
+        "tier": "advanced",
+        "prerequisite": "sprint",
+        "owner": "narin",
+        "requires": {
+          "speed": 55
+        },
+        "conditions": [
+          {
+            "kind": "tactic",
+            "values": [
+              "contact"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "out",
+            "to": "single",
+            "amount": 0.045
+          }
+        ]
+      },
+      {
+        "id": "inning_design",
+        "name": "긴 이닝의 설계자",
+        "description": "서포트 고유 사건으로 개방하는 상위 스킬. 같은 계열 일반 스킬을 대체합니다.",
+        "role": "pitcher",
+        "cost": 24,
+        "family": "pace",
+        "tier": "advanced",
+        "prerequisite": "pace",
+        "owner": "sua",
+        "requires": {
+          "stamina": 55,
+          "control": 45
+        },
+        "conditions": [
+          {
+            "kind": "tactic",
+            "values": [
+              "control"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "kind": "burden",
+            "amount": 3
+          }
+        ]
+      },
+      {
+        "id": "last_inning",
+        "name": "마지막 이닝의 저력",
+        "description": "서포트 고유 사건으로 개방하는 상위 스킬. 같은 계열 일반 스킬을 대체합니다.",
+        "role": "both",
+        "cost": 24,
+        "family": "late_focus",
+        "tier": "advanced",
+        "prerequisite": "late_focus",
+        "owner": "yeoreum",
+        "requires": {},
+        "conditions": [
+          {
+            "kind": "inning",
+            "min": 7,
+            "max": 99
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "out",
+            "to": "single",
+            "amount": 0.045,
+            "role": "batter"
+          },
+          {
+            "kind": "probability",
+            "from": "single",
+            "to": "out",
+            "amount": 0.045,
+            "role": "pitcher"
+          }
+        ]
+      },
+      {
+        "id": "closer",
+        "name": "흔들리지 않는 마무리",
+        "description": "서포트 고유 사건으로 개방하는 상위 스킬. 같은 계열 일반 스킬을 대체합니다.",
+        "role": "pitcher",
+        "cost": 24,
+        "family": "crisis_breath",
+        "tier": "advanced",
+        "prerequisite": "crisis_breath",
+        "owner": "rina",
+        "requires": {
+          "control": 50
+        },
+        "conditions": [
+          {
+            "kind": "runners",
+            "present": true
+          },
+          {
+            "kind": "inning",
+            "min": 6,
+            "max": 99
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "single",
+            "to": "out",
+            "amount": 0.06
+          }
+        ]
+      },
+      {
+        "id": "rally_core",
+        "name": "역전의 중심",
+        "description": "서포트 고유 사건으로 개방하는 상위 스킬. 같은 계열 일반 스킬을 대체합니다.",
+        "role": "both",
+        "cost": 24,
+        "family": "comeback",
+        "tier": "advanced",
+        "prerequisite": "comeback",
+        "owner": "seoa",
+        "requires": {},
+        "conditions": [
+          {
+            "kind": "score",
+            "value": "behind"
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "out",
+            "to": "single",
+            "amount": 0.045,
+            "role": "batter"
+          },
+          {
+            "kind": "probability",
+            "from": "single",
+            "to": "out",
+            "amount": 0.045,
+            "role": "pitcher"
+          }
+        ]
+      },
+      {
+        "id": "read_gap",
+        "name": "빈틈을 읽는 눈",
+        "description": "서포트 고유 사건으로 개방하는 상위 스킬. 같은 계열 일반 스킬을 대체합니다.",
+        "role": "both",
+        "cost": 24,
+        "family": "analysis",
+        "tier": "advanced",
+        "prerequisite": "analysis",
+        "owner": "sumin",
+        "requires": {},
+        "conditions": [
+          {
+            "kind": "opponent",
+            "values": [
+              "power",
+              "wild"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "out",
+            "to": "single",
+            "amount": 0.045,
+            "role": "batter"
+          },
+          {
+            "kind": "probability",
+            "from": "single",
+            "to": "out",
+            "amount": 0.045,
+            "role": "pitcher"
+          }
+        ]
+      },
+      {
+        "id": "endless_atbat",
+        "name": "끝나지 않는 타석",
+        "description": "서포트 고유 사건으로 개방하는 상위 스킬. 같은 계열 일반 스킬을 대체합니다.",
+        "role": "batter",
+        "cost": 24,
+        "family": "persistent",
+        "tier": "advanced",
+        "prerequisite": "persistent",
+        "owner": "yerin",
+        "requires": {
+          "eye": 55
+        },
+        "conditions": [
+          {
+            "kind": "tactic",
+            "values": [
+              "patient"
+            ]
+          },
+          {
+            "kind": "outs",
+            "min": 1,
+            "max": 2
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "out",
+            "to": "walk",
+            "amount": 0.055
+          }
+        ]
+      },
+      {
+        "id": "deep_curve",
+        "name": "낙차 큰 커브",
+        "description": "서포트 고유 사건으로 개방하는 상위 스킬. 같은 계열 일반 스킬을 대체합니다.",
+        "role": "pitcher",
+        "cost": 24,
+        "family": "curve",
+        "tier": "advanced",
+        "prerequisite": "curve",
+        "owner": "dohee",
+        "requires": {
+          "breaking": 55
+        },
+        "conditions": [
+          {
+            "kind": "tactic",
+            "values": [
+              "breaking"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "homer",
+            "to": "out",
+            "amount": 0.025
+          }
+        ]
+      },
+      {
+        "id": "body_rhythm",
+        "name": "몸이 기억하는 리듬",
+        "description": "서포트 고유 사건으로 개방하는 상위 스킬. 같은 계열 일반 스킬을 대체합니다.",
+        "role": "both",
+        "cost": 24,
+        "family": "routine",
+        "tier": "advanced",
+        "prerequisite": "routine",
+        "owner": "jiwoo",
+        "requires": {},
+        "conditions": [
+          {
+            "kind": "energy",
+            "min": 0,
+            "max": 44
+          }
+        ],
+        "effects": [
+          {
+            "kind": "fatigue",
+            "amount": 0.85
+          }
+        ]
+      },
+      {
+        "id": "next_space",
+        "name": "다음 승부의 여백",
+        "description": "서포트 고유 사건으로 개방하는 상위 스킬. 같은 계열 일반 스킬을 대체합니다.",
+        "role": "both",
+        "cost": 24,
+        "family": "reset_mind",
+        "tier": "advanced",
+        "prerequisite": "reset_mind",
+        "owner": "jian",
+        "requires": {},
+        "conditions": [
+          {
+            "kind": "stress",
+            "min": 70,
+            "max": 100
+          }
+        ],
+        "effects": [
+          {
+            "kind": "probability",
+            "from": "out",
+            "to": "single",
+            "amount": 0.01,
+            "role": "batter"
+          },
+          {
+            "kind": "probability",
+            "from": "single",
+            "to": "out",
+            "amount": 0.01,
+            "role": "pitcher"
+          }
+        ]
+      }
+    ],
+    "events": [
+      {
+        "id": "bat_senior-daily-a",
+        "owner": "bat_senior",
+        "kind": "daily",
+        "bond": 0,
+        "title": "배트에 남은 공 자국",
+        "text": "“좋았던 동작 하나만 다시 떠올려 봐.” 민재가 연습 노트의 빈칸을 가리킨다.",
+        "choices": [
+          {
+            "label": "함께 동작을 맞춰 본다",
+            "reply": "강민재와 짧게 집중하며 다음 연습에 쓸 감각을 찾았다.",
+            "gains": {
+              "sense": 2
+            },
+            "energy": -4,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "이야기를 들으며 잠시 쉰다",
+            "reply": "강민재의 생각을 듣고 몸과 마음의 여유를 챙겼다.",
+            "gains": {},
+            "energy": 6,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "bat_senior-daily-b",
+        "owner": "bat_senior",
+        "kind": "daily",
+        "bond": 0,
+        "title": "선배의 연습 노트",
+        "text": "“좋았던 동작 하나만 다시 떠올려 봐.” 민재가 연습 노트의 빈칸을 가리킨다.\n연습이 끝난 뒤 오늘 달라진 점을 함께 돌아보았다.",
+        "choices": [
+          {
+            "label": "다음에 해 볼 일을 적는다",
+            "reply": "느낌으로 알던 변화를 말로 정리했다.",
+            "gains": {
+              "intelligence": 1
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "잘된 점을 서로 알려 준다",
+            "reply": "작은 변화도 알아봐 주는 동료가 있다는 사실이 힘이 되었다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -4,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "bat_senior-growth-1",
+        "owner": "bat_senior",
+        "kind": "growth",
+        "bond": 20,
+        "title": "잘 맞았던 이유",
+        "text": "“좋았던 동작 하나만 다시 떠올려 봐.” 민재가 연습 노트의 빈칸을 가리킨다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "좋은 결과만 적던 노트에 실패의 이유를 함께 적었다. 다음 시도의 목표가 또렷해졌다.",
+            "gains": {
+              "sense": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "contact_focus",
+              "calm"
+            ],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "contact_focus",
+              "calm"
+            ],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "bat_senior-growth-2",
+        "owner": "bat_senior",
+        "kind": "growth",
+        "bond": 40,
+        "previous": "bat_senior-growth-1",
+        "title": "실패에도 남는 감각",
+        "text": "좋은 결과만 적던 노트에 실패의 이유를 함께 적었다. 다음 시도의 목표가 또렷해졌다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "민재가 고개를 끄덕였다. “이제는 네가 왜 잘했는지 설명할 수 있겠네.” 반복한 기본기가 내 기술이 되었다.",
+            "gains": {
+              "sense": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 1,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "bat_senior-growth-3",
+        "owner": "bat_senior",
+        "kind": "growth",
+        "bond": 60,
+        "previous": "bat_senior-growth-2",
+        "title": "한 번 더, 같은 스윙",
+        "text": "민재가 고개를 끄덕였다. “이제는 네가 왜 잘했는지 설명할 수 있겠네.” 반복한 기본기가 내 기술이 되었다.",
+        "choices": [
+          {
+            "label": "배운 것을 내 승부에 담는다",
+            "reply": "동료와 만든 경험을 내 야구로 이어갈 준비가 되었다.",
+            "gains": {},
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "contact_master",
+              "batter_read"
+            ]
+          },
+          {
+            "label": "함께 만든 과정을 기억한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "contact_master",
+              "batter_read"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "pitch_senior-daily-a",
+        "owner": "pitch_senior",
+        "kind": "daily",
+        "bond": 0,
+        "title": "공의 실밥을 따라",
+        "text": "“상대가 무슨 공을 기다리고 있을까?” 도윤이 영상 속 타자의 발을 가리킨다.",
+        "choices": [
+          {
+            "label": "함께 동작을 맞춰 본다",
+            "reply": "이도윤와 짧게 집중하며 다음 연습에 쓸 감각을 찾았다.",
+            "gains": {
+              "intelligence": 2
+            },
+            "energy": -4,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "이야기를 들으며 잠시 쉰다",
+            "reply": "이도윤의 생각을 듣고 몸과 마음의 여유를 챙겼다.",
+            "gains": {},
+            "energy": 6,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "pitch_senior-daily-b",
+        "owner": "pitch_senior",
+        "kind": "daily",
+        "bond": 0,
+        "title": "멈춰 놓은 경기 영상",
+        "text": "“상대가 무슨 공을 기다리고 있을까?” 도윤이 영상 속 타자의 발을 가리킨다.\n연습이 끝난 뒤 오늘 달라진 점을 함께 돌아보았다.",
+        "choices": [
+          {
+            "label": "다음에 해 볼 일을 적는다",
+            "reply": "느낌으로 알던 변화를 말로 정리했다.",
+            "gains": {
+              "intelligence": 1
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "잘된 점을 서로 알려 준다",
+            "reply": "작은 변화도 알아봐 주는 동료가 있다는 사실이 힘이 되었다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -4,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "pitch_senior-growth-1",
+        "owner": "pitch_senior",
+        "kind": "growth",
+        "bond": 20,
+        "title": "기다리는 공",
+        "text": "“상대가 무슨 공을 기다리고 있을까?” 도윤이 영상 속 타자의 발을 가리킨다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "내가 던지고 싶은 공과 상대가 기다리는 공을 나누어 적었다. 같은 장면도 다른 승부가 보였다.",
+            "gains": {
+              "intelligence": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "patient_eye",
+              "slider"
+            ],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "patient_eye",
+              "slider"
+            ],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "pitch_senior-growth-2",
+        "owner": "pitch_senior",
+        "kind": "growth",
+        "bond": 40,
+        "previous": "pitch_senior-growth-1",
+        "title": "타자의 시선에서",
+        "text": "내가 던지고 싶은 공과 상대가 기다리는 공을 나누어 적었다. 같은 장면도 다른 승부가 보였다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "“같은 동작으로 다른 의도를 보여주는 거야.” 도윤과의 연습에서 승부를 설계하는 감각을 찾았다.",
+            "gains": {
+              "intelligence": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 1,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "pitch_senior-growth-3",
+        "owner": "pitch_senior",
+        "kind": "growth",
+        "bond": 60,
+        "previous": "pitch_senior-growth-2",
+        "title": "공 하나에도 이유가 있다",
+        "text": "“같은 동작으로 다른 의도를 보여주는 거야.” 도윤과의 연습에서 승부를 설계하는 감각을 찾았다.",
+        "choices": [
+          {
+            "label": "배운 것을 내 승부에 담는다",
+            "reply": "동료와 만든 경험을 내 야구로 이어갈 준비가 되었다.",
+            "gains": {},
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "eye_master",
+              "sharp_slider"
+            ]
+          },
+          {
+            "label": "함께 만든 과정을 기억한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "eye_master",
+              "sharp_slider"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "rival-daily-a",
+        "owner": "rival",
+        "kind": "daily",
+        "bond": 0,
+        "title": "마지막 한 세트",
+        "text": "“오늘은 누가 끝까지 자세를 유지하나 볼까?” 준서가 먼저 준비 자세를 잡는다.",
+        "choices": [
+          {
+            "label": "함께 동작을 맞춰 본다",
+            "reply": "차준서와 짧게 집중하며 다음 연습에 쓸 감각을 찾았다.",
+            "gains": {
+              "power": 2
+            },
+            "energy": -4,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "이야기를 들으며 잠시 쉰다",
+            "reply": "차준서의 생각을 듣고 몸과 마음의 여유를 챙겼다.",
+            "gains": {},
+            "energy": 6,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "rival-daily-b",
+        "owner": "rival",
+        "kind": "daily",
+        "bond": 0,
+        "title": "준서의 숨 고르기",
+        "text": "“오늘은 누가 끝까지 자세를 유지하나 볼까?” 준서가 먼저 준비 자세를 잡는다.\n연습이 끝난 뒤 오늘 달라진 점을 함께 돌아보았다.",
+        "choices": [
+          {
+            "label": "다음에 해 볼 일을 적는다",
+            "reply": "느낌으로 알던 변화를 말로 정리했다.",
+            "gains": {
+              "intelligence": 1
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "잘된 점을 서로 알려 준다",
+            "reply": "작은 변화도 알아봐 주는 동료가 있다는 사실이 힘이 되었다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -4,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "rival-growth-1",
+        "owner": "rival",
+        "kind": "growth",
+        "bond": 20,
+        "title": "먼저 끝내는 사람",
+        "text": "“오늘은 누가 끝까지 자세를 유지하나 볼까?” 준서가 먼저 준비 자세를 잡는다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "서로의 잘된 동작을 지적하며 연습하자 경쟁의 기준도 달라졌다. 빨리 끝내는 것보다 제대로 하는 게 어려웠다.",
+            "gains": {
+              "power": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "power_drive",
+              "fastball_edge"
+            ],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "power_drive",
+              "fastball_edge"
+            ],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "rival-growth-2",
+        "owner": "rival",
+        "kind": "growth",
+        "bond": 40,
+        "previous": "rival-growth-1",
+        "title": "기록에 없는 경쟁",
+        "text": "서로의 잘된 동작을 지적하며 연습하자 경쟁의 기준도 달라졌다. 빨리 끝내는 것보다 제대로 하는 게 어려웠다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "“다음에는 경기에서 붙자.” 준서와 웃으며 손을 맞댔다. 경쟁하며 쌓은 힘을 내 승부에 실을 수 있게 되었다.",
+            "gains": {
+              "power": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 1,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "rival-growth-3",
+        "owner": "rival",
+        "kind": "growth",
+        "bond": 60,
+        "previous": "rival-growth-2",
+        "title": "끝까지 함께",
+        "text": "“다음에는 경기에서 붙자.” 준서와 웃으며 손을 맞댔다. 경쟁하며 쌓은 힘을 내 승부에 실을 수 있게 되었다.",
+        "choices": [
+          {
+            "label": "배운 것을 내 승부에 담는다",
+            "reply": "동료와 만든 경험을 내 야구로 이어갈 준비가 되었다.",
+            "gains": {},
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "slugger",
+              "power_finish"
+            ]
+          },
+          {
+            "label": "함께 만든 과정을 기억한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "slugger",
+              "power_finish"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "catcher-daily-a",
+        "owner": "catcher",
+        "kind": "daily",
+        "bond": 0,
+        "title": "글러브가 향하는 곳",
+        "text": "“힘이 들어가면 네 어깨가 먼저 올라가.” 하람이 미트를 내려놓고 자세를 보여준다.",
+        "choices": [
+          {
+            "label": "함께 동작을 맞춰 본다",
+            "reply": "박하람와 짧게 집중하며 다음 연습에 쓸 감각을 찾았다.",
+            "gains": {
+              "mental": 2
+            },
+            "energy": -4,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "이야기를 들으며 잠시 쉰다",
+            "reply": "박하람의 생각을 듣고 몸과 마음의 여유를 챙겼다.",
+            "gains": {},
+            "energy": 6,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "catcher-daily-b",
+        "owner": "catcher",
+        "kind": "daily",
+        "bond": 0,
+        "title": "둘만 아는 짧은 신호",
+        "text": "“힘이 들어가면 네 어깨가 먼저 올라가.” 하람이 미트를 내려놓고 자세를 보여준다.\n연습이 끝난 뒤 오늘 달라진 점을 함께 돌아보았다.",
+        "choices": [
+          {
+            "label": "다음에 해 볼 일을 적는다",
+            "reply": "느낌으로 알던 변화를 말로 정리했다.",
+            "gains": {
+              "intelligence": 1
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "잘된 점을 서로 알려 준다",
+            "reply": "작은 변화도 알아봐 주는 동료가 있다는 사실이 힘이 되었다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -4,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "catcher-growth-1",
+        "owner": "catcher",
+        "kind": "growth",
+        "bond": 20,
+        "title": "말하지 못한 흔들림",
+        "text": "“힘이 들어가면 네 어깨가 먼저 올라가.” 하람이 미트를 내려놓고 자세를 보여준다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "주고받던 지시를 짧은 신호로 바꿨다. 긴 설명 없이도 다음 동작에 집중할 수 있었다.",
+            "gains": {
+              "mental": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "calm",
+              "precision"
+            ],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "calm",
+              "precision"
+            ],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "catcher-growth-2",
+        "owner": "catcher",
+        "kind": "growth",
+        "bond": 40,
+        "previous": "catcher-growth-1",
+        "title": "서로의 눈높이",
+        "text": "주고받던 지시를 짧은 신호로 바꿨다. 긴 설명 없이도 다음 동작에 집중할 수 있었다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "미트가 움직이는 작은 신호만으로 의도를 알았다. 하람과 맞춘 호흡이 중요한 승부에서 떠오를 것 같다.",
+            "gains": {
+              "mental": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 1,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "catcher-growth-3",
+        "owner": "catcher",
+        "kind": "growth",
+        "bond": 60,
+        "previous": "catcher-growth-2",
+        "title": "말하지 않아도 통하는 신호",
+        "text": "미트가 움직이는 작은 신호만으로 의도를 알았다. 하람과 맞춘 호흡이 중요한 승부에서 떠오를 것 같다.",
+        "choices": [
+          {
+            "label": "배운 것을 내 승부에 담는다",
+            "reply": "동료와 만든 경험을 내 야구로 이어갈 준비가 되었다.",
+            "gains": {},
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "clutch_signal",
+              "efficient_pitch"
+            ]
+          },
+          {
+            "label": "함께 만든 과정을 기억한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "clutch_signal",
+              "efficient_pitch"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "manager-daily-a",
+        "owner": "manager",
+        "kind": "daily",
+        "bond": 0,
+        "title": "기록표의 작은 변화",
+        "text": "“마지막 동작이 전보다 안정적이야.” 서현이 지난 연습 기록을 펼친다.",
+        "choices": [
+          {
+            "label": "함께 동작을 맞춰 본다",
+            "reply": "한서현와 짧게 집중하며 다음 연습에 쓸 감각을 찾았다.",
+            "gains": {
+              "mental": 2
+            },
+            "energy": -4,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "이야기를 들으며 잠시 쉰다",
+            "reply": "한서현의 생각을 듣고 몸과 마음의 여유를 챙겼다.",
+            "gains": {},
+            "energy": 6,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "manager-daily-b",
+        "owner": "manager",
+        "kind": "daily",
+        "bond": 0,
+        "title": "벤치 위의 물병",
+        "text": "“마지막 동작이 전보다 안정적이야.” 서현이 지난 연습 기록을 펼친다.\n연습이 끝난 뒤 오늘 달라진 점을 함께 돌아보았다.",
+        "choices": [
+          {
+            "label": "다음에 해 볼 일을 적는다",
+            "reply": "느낌으로 알던 변화를 말로 정리했다.",
+            "gains": {
+              "intelligence": 1
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "잘된 점을 서로 알려 준다",
+            "reply": "작은 변화도 알아봐 주는 동료가 있다는 사실이 힘이 되었다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -4,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "manager-growth-1",
+        "owner": "manager",
+        "kind": "growth",
+        "bond": 20,
+        "title": "남아 있는 힘",
+        "text": "“마지막 동작이 전보다 안정적이야.” 서현이 지난 연습 기록을 펼친다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "잘된 날의 훈련과 휴식 순서를 비교했다. 무리하지 않아도 집중할 수 있는 준비법이 보였다.",
+            "gains": {
+              "mental": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "steady"
+            ],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "steady"
+            ],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "manager-growth-2",
+        "owner": "manager",
+        "kind": "growth",
+        "bond": 40,
+        "previous": "manager-growth-1",
+        "title": "점수 밖의 변화",
+        "text": "잘된 날의 훈련과 휴식 순서를 비교했다. 무리하지 않아도 집중할 수 있는 준비법이 보였다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "서현이 기록표에 선을 그었다. “처음부터 끝까지, 네 리듬이네.” 몸이 기억할 수 있는 준비를 완성했다.",
+            "gains": {
+              "mental": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 1,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "manager-growth-3",
+        "owner": "manager",
+        "kind": "growth",
+        "bond": 60,
+        "previous": "manager-growth-2",
+        "title": "기록에 남지 않는 노력",
+        "text": "서현이 기록표에 선을 그었다. “처음부터 끝까지, 네 리듬이네.” 몸이 기억할 수 있는 준비를 완성했다.",
+        "choices": [
+          {
+            "label": "배운 것을 내 승부에 담는다",
+            "reply": "동료와 만든 경험을 내 야구로 이어갈 준비가 되었다.",
+            "gains": {},
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "steady_master"
+            ]
+          },
+          {
+            "label": "함께 만든 과정을 기억한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "steady_master"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "classmate-daily-a",
+        "owner": "classmate",
+        "kind": "daily",
+        "bond": 0,
+        "title": "야구도 문제 풀이처럼",
+        "text": "“한꺼번에 고민하지 말고 다음 하나부터 정해 보자.” 유진이 메모지를 건넨다.",
+        "choices": [
+          {
+            "label": "함께 동작을 맞춰 본다",
+            "reply": "윤유진와 짧게 집중하며 다음 연습에 쓸 감각을 찾았다.",
+            "gains": {
+              "intelligence": 2
+            },
+            "energy": -4,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "이야기를 들으며 잠시 쉰다",
+            "reply": "윤유진의 생각을 듣고 몸과 마음의 여유를 챙겼다.",
+            "gains": {},
+            "energy": 6,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "classmate-daily-b",
+        "owner": "classmate",
+        "kind": "daily",
+        "bond": 0,
+        "title": "작게 나누는 목표",
+        "text": "“한꺼번에 고민하지 말고 다음 하나부터 정해 보자.” 유진이 메모지를 건넨다.\n연습이 끝난 뒤 오늘 달라진 점을 함께 돌아보았다.",
+        "choices": [
+          {
+            "label": "다음에 해 볼 일을 적는다",
+            "reply": "느낌으로 알던 변화를 말로 정리했다.",
+            "gains": {
+              "intelligence": 1
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "잘된 점을 서로 알려 준다",
+            "reply": "작은 변화도 알아봐 주는 동료가 있다는 사실이 힘이 되었다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -4,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "classmate-growth-1",
+        "owner": "classmate",
+        "kind": "growth",
+        "bond": 20,
+        "title": "세 줄의 계획",
+        "text": "“한꺼번에 고민하지 말고 다음 하나부터 정해 보자.” 유진이 메모지를 건넨다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "계획대로 되지 않은 일 옆에 바로 할 수 있는 일을 썼다. 실패를 곱씹기보다 다음 행동을 준비했다.",
+            "gains": {
+              "intelligence": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "focus_plan"
+            ],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "focus_plan"
+            ],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "classmate-growth-2",
+        "owner": "classmate",
+        "kind": "growth",
+        "bond": 40,
+        "previous": "classmate-growth-1",
+        "title": "계획이 어긋난 날",
+        "text": "계획대로 되지 않은 일 옆에 바로 할 수 있는 일을 썼다. 실패를 곱씹기보다 다음 행동을 준비했다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "유진과 만든 짧은 계획을 혼자 다시 적었다. 경기가 꼬여도 다음 승부를 차분히 고를 수 있을 것 같다.",
+            "gains": {
+              "intelligence": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 1,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "classmate-growth-3",
+        "owner": "classmate",
+        "kind": "growth",
+        "bond": 60,
+        "previous": "classmate-growth-2",
+        "title": "다음 하나부터",
+        "text": "유진과 만든 짧은 계획을 혼자 다시 적었다. 경기가 꼬여도 다음 승부를 차분히 고를 수 있을 것 같다.",
+        "choices": [
+          {
+            "label": "배운 것을 내 승부에 담는다",
+            "reply": "동료와 만든 경험을 내 야구로 이어갈 준비가 되었다.",
+            "gains": {},
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "clear_plan"
+            ]
+          },
+          {
+            "label": "함께 만든 과정을 기억한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "clear_plan"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "sera-daily-a",
+        "owner": "sera",
+        "kind": "daily",
+        "bond": 0,
+        "title": "장갑의 주름",
+        "text": "“멀리 보내려면 먼저 제대로 맞혀야겠죠.” 세라가 장갑의 주름을 정리한다.",
+        "choices": [
+          {
+            "label": "함께 동작을 맞춰 본다",
+            "reply": "정세라와 짧게 집중하며 다음 연습에 쓸 감각을 찾았다.",
+            "gains": {
+              "power": 2
+            },
+            "energy": -4,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "이야기를 들으며 잠시 쉰다",
+            "reply": "정세라의 생각을 듣고 몸과 마음의 여유를 챙겼다.",
+            "gains": {},
+            "energy": 6,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "sera-daily-b",
+        "owner": "sera",
+        "kind": "daily",
+        "bond": 0,
+        "title": "담장까지의 거리",
+        "text": "“멀리 보내려면 먼저 제대로 맞혀야겠죠.” 세라가 장갑의 주름을 정리한다.\n연습이 끝난 뒤 오늘 달라진 점을 함께 돌아보았다.",
+        "choices": [
+          {
+            "label": "다음에 해 볼 일을 적는다",
+            "reply": "느낌으로 알던 변화를 말로 정리했다.",
+            "gains": {
+              "intelligence": 1
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "잘된 점을 서로 알려 준다",
+            "reply": "작은 변화도 알아봐 주는 동료가 있다는 사실이 힘이 되었다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -4,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "sera-growth-1",
+        "owner": "sera",
+        "kind": "growth",
+        "bond": 20,
+        "title": "완벽한 스윙의 빈칸",
+        "text": "“멀리 보내려면 먼저 제대로 맞혀야겠죠.” 세라가 장갑의 주름을 정리한다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "늦은 연습장에서 세라가 짧은 스윙을 반복하고 있었다. 실패한 공의 위치까지 함께 확인했다.",
+            "gains": {
+              "power": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "pull"
+            ],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "pull"
+            ],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "sera-growth-2",
+        "owner": "sera",
+        "kind": "growth",
+        "bond": 40,
+        "previous": "sera-growth-1",
+        "title": "아무도 없는 배팅장",
+        "text": "늦은 연습장에서 세라가 짧은 스윙을 반복하고 있었다. 실패한 공의 위치까지 함께 확인했다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "“모든 공을 넘길 필요는 없어요.” 기다린 공 하나를 힘껏 보냈다. 단정한 준비 끝에 과감한 승부가 남았다.",
+            "gains": {
+              "power": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 1,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "sera-growth-3",
+        "owner": "sera",
+        "kind": "growth",
+        "bond": 60,
+        "previous": "sera-growth-2",
+        "title": "내가 고른 한 구",
+        "text": "“모든 공을 넘길 필요는 없어요.” 기다린 공 하나를 힘껏 보냈다. 단정한 준비 끝에 과감한 승부가 남았다.",
+        "choices": [
+          {
+            "label": "배운 것을 내 승부에 담는다",
+            "reply": "동료와 만든 경험을 내 야구로 이어갈 준비가 되었다.",
+            "gains": {},
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "moonshot"
+            ]
+          },
+          {
+            "label": "함께 만든 과정을 기억한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "moonshot"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "chaerin-daily-a",
+        "owner": "chaerin",
+        "kind": "daily",
+        "bond": 0,
+        "title": "구속보다 먼저 나온 선언",
+        "text": "“다음 공? 당연히 직구지!” 채린의 선언과 달리 공은 미트 옆으로 벗어난다.",
+        "choices": [
+          {
+            "label": "함께 동작을 맞춰 본다",
+            "reply": "백채린와 짧게 집중하며 다음 연습에 쓸 감각을 찾았다.",
+            "gains": {
+              "power": 2
+            },
+            "energy": -4,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "이야기를 들으며 잠시 쉰다",
+            "reply": "백채린의 생각을 듣고 몸과 마음의 여유를 챙겼다.",
+            "gains": {},
+            "energy": 6,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "chaerin-daily-b",
+        "owner": "chaerin",
+        "kind": "daily",
+        "bond": 0,
+        "title": "미트까지의 직선",
+        "text": "“다음 공? 당연히 직구지!” 채린의 선언과 달리 공은 미트 옆으로 벗어난다.\n연습이 끝난 뒤 오늘 달라진 점을 함께 돌아보았다.",
+        "choices": [
+          {
+            "label": "다음에 해 볼 일을 적는다",
+            "reply": "느낌으로 알던 변화를 말로 정리했다.",
+            "gains": {
+              "intelligence": 1
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "잘된 점을 서로 알려 준다",
+            "reply": "작은 변화도 알아봐 주는 동료가 있다는 사실이 힘이 되었다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -4,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "chaerin-growth-1",
+        "owner": "chaerin",
+        "kind": "growth",
+        "bond": 20,
+        "title": "예고한 공의 행방",
+        "text": "“다음 공? 당연히 직구지!” 채린의 선언과 달리 공은 미트 옆으로 벗어난다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "힘을 조금 뺀 동작에서 오히려 좋은 공이 나왔다. 채린은 같은 위치에 던지는 연습부터 다시 시작했다.",
+            "gains": {
+              "power": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "heavy_fastball"
+            ],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "heavy_fastball"
+            ],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "chaerin-growth-2",
+        "owner": "chaerin",
+        "kind": "growth",
+        "bond": 40,
+        "previous": "chaerin-growth-1",
+        "title": "힘을 빼는 연습",
+        "text": "힘을 조금 뺀 동작에서 오히려 좋은 공이 나왔다. 채린은 같은 위치에 던지는 연습부터 다시 시작했다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "“이번에는 진짜야.” 예고한 공이 미트 안으로 파고들었다. 빠르기와 정확성이 함께 있는 승부를 배웠다.",
+            "gains": {
+              "power": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 1,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "chaerin-growth-3",
+        "owner": "chaerin",
+        "kind": "growth",
+        "bond": 60,
+        "previous": "chaerin-growth-2",
+        "title": "알고도 늦는 직구",
+        "text": "“이번에는 진짜야.” 예고한 공이 미트 안으로 파고들었다. 빠르기와 정확성이 함께 있는 승부를 배웠다.",
+        "choices": [
+          {
+            "label": "배운 것을 내 승부에 담는다",
+            "reply": "동료와 만든 경험을 내 야구로 이어갈 준비가 되었다.",
+            "gains": {},
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "fireball"
+            ]
+          },
+          {
+            "label": "함께 만든 과정을 기억한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "fireball"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "narin-daily-a",
+        "owner": "narin",
+        "kind": "daily",
+        "bond": 0,
+        "title": "출발선이 없는 달리기",
+        "text": "“일단 뛰고 생각하면… 아, 야구는 그게 아니라고?” 나린이 멋쩍게 웃는다.",
+        "choices": [
+          {
+            "label": "함께 동작을 맞춰 본다",
+            "reply": "강나린와 짧게 집중하며 다음 연습에 쓸 감각을 찾았다.",
+            "gains": {
+              "endurance": 2
+            },
+            "energy": -4,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "이야기를 들으며 잠시 쉰다",
+            "reply": "강나린의 생각을 듣고 몸과 마음의 여유를 챙겼다.",
+            "gains": {},
+            "energy": 6,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "narin-daily-b",
+        "owner": "narin",
+        "kind": "daily",
+        "bond": 0,
+        "title": "돌아가는 길의 이유",
+        "text": "“일단 뛰고 생각하면… 아, 야구는 그게 아니라고?” 나린이 멋쩍게 웃는다.\n연습이 끝난 뒤 오늘 달라진 점을 함께 돌아보았다.",
+        "choices": [
+          {
+            "label": "다음에 해 볼 일을 적는다",
+            "reply": "느낌으로 알던 변화를 말로 정리했다.",
+            "gains": {
+              "intelligence": 1
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "잘된 점을 서로 알려 준다",
+            "reply": "작은 변화도 알아봐 주는 동료가 있다는 사실이 힘이 되었다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -4,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "narin-growth-1",
+        "owner": "narin",
+        "kind": "growth",
+        "bond": 20,
+        "title": "빠르기만 한 발",
+        "text": "“일단 뛰고 생각하면… 아, 야구는 그게 아니라고?” 나린이 멋쩍게 웃는다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "출발하기 전에 상황을 보는 연습을 했다. 처음 한 발의 방향이 끝까지 달린 거리보다 중요할 때도 있었다.",
+            "gains": {
+              "endurance": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "sprint"
+            ],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "sprint"
+            ],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "narin-growth-2",
+        "owner": "narin",
+        "kind": "growth",
+        "bond": 40,
+        "previous": "narin-growth-1",
+        "title": "고개를 드는 순간",
+        "text": "출발하기 전에 상황을 보는 연습을 했다. 처음 한 발의 방향이 끝까지 달린 거리보다 중요할 때도 있었다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "나린이 고개를 들고 타구를 확인한 뒤 달렸다. “이번에는 보고 뛰었어!” 속도를 야구의 기회로 바꾸는 법을 익혔다.",
+            "gains": {
+              "endurance": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 1,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "narin-growth-3",
+        "owner": "narin",
+        "kind": "growth",
+        "bond": 60,
+        "previous": "narin-growth-2",
+        "title": "한 베이스의 차이",
+        "text": "나린이 고개를 들고 타구를 확인한 뒤 달렸다. “이번에는 보고 뛰었어!” 속도를 야구의 기회로 바꾸는 법을 익혔다.",
+        "choices": [
+          {
+            "label": "배운 것을 내 승부에 담는다",
+            "reply": "동료와 만든 경험을 내 야구로 이어갈 준비가 되었다.",
+            "gains": {},
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "live_legs"
+            ]
+          },
+          {
+            "label": "함께 만든 과정을 기억한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "live_legs"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "sua-daily-a",
+        "owner": "sua",
+        "kind": "daily",
+        "bond": 0,
+        "title": "아홉 칸의 메모",
+        "text": "“지금 힘을 다 쓰면 다음 이닝에는 뭘 남길 건데?” 수아가 수첩을 펼친다.",
+        "choices": [
+          {
+            "label": "함께 동작을 맞춰 본다",
+            "reply": "임수아와 짧게 집중하며 다음 연습에 쓸 감각을 찾았다.",
+            "gains": {
+              "endurance": 2
+            },
+            "energy": -4,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "이야기를 들으며 잠시 쉰다",
+            "reply": "임수아의 생각을 듣고 몸과 마음의 여유를 챙겼다.",
+            "gains": {},
+            "energy": 6,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "sua-daily-b",
+        "owner": "sua",
+        "kind": "daily",
+        "bond": 0,
+        "title": "한 구 덜 던지는 법",
+        "text": "“지금 힘을 다 쓰면 다음 이닝에는 뭘 남길 건데?” 수아가 수첩을 펼친다.\n연습이 끝난 뒤 오늘 달라진 점을 함께 돌아보았다.",
+        "choices": [
+          {
+            "label": "다음에 해 볼 일을 적는다",
+            "reply": "느낌으로 알던 변화를 말로 정리했다.",
+            "gains": {
+              "intelligence": 1
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "잘된 점을 서로 알려 준다",
+            "reply": "작은 변화도 알아봐 주는 동료가 있다는 사실이 힘이 되었다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -4,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "sua-growth-1",
+        "owner": "sua",
+        "kind": "growth",
+        "bond": 20,
+        "title": "계획에 없던 출루",
+        "text": "“지금 힘을 다 쓰면 다음 이닝에는 뭘 남길 건데?” 수아가 수첩을 펼친다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "모든 상황을 예상한 메모에 동료가 판단할 빈칸을 남겼다. 수비를 믿는 승부도 계획의 일부가 되었다.",
+            "gains": {
+              "endurance": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "pace"
+            ],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "pace"
+            ],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "sua-growth-2",
+        "owner": "sua",
+        "kind": "growth",
+        "bond": 40,
+        "previous": "sua-growth-1",
+        "title": "포수에게 남기는 빈칸",
+        "text": "모든 상황을 예상한 메모에 동료가 판단할 빈칸을 남겼다. 수비를 믿는 승부도 계획의 일부가 되었다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "“이번 칸은 같이 채웠네.” 수아와 적은 이닝에는 힘을 아낀 승부들이 남았다. 경기 전체를 버티는 투구를 배웠다.",
+            "gains": {
+              "endurance": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 1,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "sua-growth-3",
+        "owner": "sua",
+        "kind": "growth",
+        "bond": 60,
+        "previous": "sua-growth-2",
+        "title": "함께 완성한 이닝",
+        "text": "“이번 칸은 같이 채웠네.” 수아와 적은 이닝에는 힘을 아낀 승부들이 남았다. 경기 전체를 버티는 투구를 배웠다.",
+        "choices": [
+          {
+            "label": "배운 것을 내 승부에 담는다",
+            "reply": "동료와 만든 경험을 내 야구로 이어갈 준비가 되었다.",
+            "gains": {},
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "inning_design"
+            ]
+          },
+          {
+            "label": "함께 만든 과정을 기억한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "inning_design"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "yeoreum-daily-a",
+        "owner": "yeoreum",
+        "kind": "daily",
+        "bond": 0,
+        "title": "벤치의 십 분",
+        "text": "“마지막까지 잘하려면 지금부터 잘 쉬어야지.” 여름이 작은 타이머를 누른다.",
+        "choices": [
+          {
+            "label": "함께 동작을 맞춰 본다",
+            "reply": "최여름와 짧게 집중하며 다음 연습에 쓸 감각을 찾았다.",
+            "gains": {
+              "endurance": 2
+            },
+            "energy": -4,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "이야기를 들으며 잠시 쉰다",
+            "reply": "최여름의 생각을 듣고 몸과 마음의 여유를 챙겼다.",
+            "gains": {},
+            "energy": 6,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "yeoreum-daily-b",
+        "owner": "yeoreum",
+        "kind": "daily",
+        "bond": 0,
+        "title": "마지막 한 세트의 표정",
+        "text": "“마지막까지 잘하려면 지금부터 잘 쉬어야지.” 여름이 작은 타이머를 누른다.\n연습이 끝난 뒤 오늘 달라진 점을 함께 돌아보았다.",
+        "choices": [
+          {
+            "label": "다음에 해 볼 일을 적는다",
+            "reply": "느낌으로 알던 변화를 말로 정리했다.",
+            "gains": {
+              "intelligence": 1
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "잘된 점을 서로 알려 준다",
+            "reply": "작은 변화도 알아봐 주는 동료가 있다는 사실이 힘이 되었다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -4,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "yeoreum-growth-1",
+        "owner": "yeoreum",
+        "kind": "growth",
+        "bond": 20,
+        "title": "느긋하다는 오해",
+        "text": "“마지막까지 잘하려면 지금부터 잘 쉬어야지.” 여름이 작은 타이머를 누른다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "여름은 정한 시간이 되자 먼저 일어났다. 느긋해 보여도 중요한 연습의 마지막 동작까지 자세가 같았다.",
+            "gains": {
+              "endurance": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "late_focus"
+            ],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "late_focus"
+            ],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "yeoreum-growth-2",
+        "owner": "yeoreum",
+        "kind": "growth",
+        "bond": 40,
+        "previous": "yeoreum-growth-1",
+        "title": "남겨 둔 힘의 용도",
+        "text": "여름은 정한 시간이 되자 먼저 일어났다. 느긋해 보여도 중요한 연습의 마지막 동작까지 자세가 같았다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "모두가 지친 마지막 연습에서도 여름의 발은 가벼웠다. 남겨 둔 힘을 언제 쓰는지 몸으로 배웠다.",
+            "gains": {
+              "endurance": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 1,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "yeoreum-growth-3",
+        "owner": "yeoreum",
+        "kind": "growth",
+        "bond": 60,
+        "previous": "yeoreum-growth-2",
+        "title": "마지막 아웃까지",
+        "text": "모두가 지친 마지막 연습에서도 여름의 발은 가벼웠다. 남겨 둔 힘을 언제 쓰는지 몸으로 배웠다.",
+        "choices": [
+          {
+            "label": "배운 것을 내 승부에 담는다",
+            "reply": "동료와 만든 경험을 내 야구로 이어갈 준비가 되었다.",
+            "gains": {},
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "last_inning"
+            ]
+          },
+          {
+            "label": "함께 만든 과정을 기억한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "last_inning"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "rina-daily-a",
+        "owner": "rina",
+        "kind": "daily",
+        "bond": 0,
+        "title": "미트에만 들리는 목소리",
+        "text": "“말은… 잘 못해도 이 공은 던질 수 있어.” 리나가 미트를 바라본다.",
+        "choices": [
+          {
+            "label": "함께 동작을 맞춰 본다",
+            "reply": "유리나와 짧게 집중하며 다음 연습에 쓸 감각을 찾았다.",
+            "gains": {
+              "mental": 2
+            },
+            "energy": -4,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "이야기를 들으며 잠시 쉰다",
+            "reply": "유리나의 생각을 듣고 몸과 마음의 여유를 챙겼다.",
+            "gains": {},
+            "energy": 6,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "rina-daily-b",
+        "owner": "rina",
+        "kind": "daily",
+        "bond": 0,
+        "title": "세 번의 숨",
+        "text": "“말은… 잘 못해도 이 공은 던질 수 있어.” 리나가 미트를 바라본다.\n연습이 끝난 뒤 오늘 달라진 점을 함께 돌아보았다.",
+        "choices": [
+          {
+            "label": "다음에 해 볼 일을 적는다",
+            "reply": "느낌으로 알던 변화를 말로 정리했다.",
+            "gains": {
+              "intelligence": 1
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "잘된 점을 서로 알려 준다",
+            "reply": "작은 변화도 알아봐 주는 동료가 있다는 사실이 힘이 되었다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -4,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "rina-growth-1",
+        "owner": "rina",
+        "kind": "growth",
+        "bond": 20,
+        "title": "불펜에서 못 한 말",
+        "text": "“말은… 잘 못해도 이 공은 던질 수 있어.” 리나가 미트를 바라본다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "리나는 떨리는 목소리로 원하는 코스를 말했다. 긴장이 남아 있어도 승부에서 도망가지 않는 연습이었다.",
+            "gains": {
+              "mental": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "crisis_breath"
+            ],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "crisis_breath"
+            ],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "rina-growth-2",
+        "owner": "rina",
+        "kind": "growth",
+        "bond": 40,
+        "previous": "rina-growth-1",
+        "title": "도망가지 않는 코스",
+        "text": "리나는 떨리는 목소리로 원하는 코스를 말했다. 긴장이 남아 있어도 승부에서 도망가지 않는 연습이었다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "“맡겨 줘.” 작은 목소리가 분명하게 들렸다. 주자가 나가도 자신이 준비한 승부를 고르는 호흡을 배웠다.",
+            "gains": {
+              "mental": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 1,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "rina-growth-3",
+        "owner": "rina",
+        "kind": "growth",
+        "bond": 60,
+        "previous": "rina-growth-2",
+        "title": "맡겨진 마지막 승부",
+        "text": "“맡겨 줘.” 작은 목소리가 분명하게 들렸다. 주자가 나가도 자신이 준비한 승부를 고르는 호흡을 배웠다.",
+        "choices": [
+          {
+            "label": "배운 것을 내 승부에 담는다",
+            "reply": "동료와 만든 경험을 내 야구로 이어갈 준비가 되었다.",
+            "gains": {},
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "closer"
+            ]
+          },
+          {
+            "label": "함께 만든 과정을 기억한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "closer"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "seoa-daily-a",
+        "owner": "seoa",
+        "kind": "daily",
+        "bond": 0,
+        "title": "먼저 도착한 주장",
+        "text": "“내가 다 할 필요는 없겠지.” 서아가 정리하던 장비 한쪽을 내민다.",
+        "choices": [
+          {
+            "label": "함께 동작을 맞춰 본다",
+            "reply": "남서아와 짧게 집중하며 다음 연습에 쓸 감각을 찾았다.",
+            "gains": {
+              "mental": 2
+            },
+            "energy": -4,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "이야기를 들으며 잠시 쉰다",
+            "reply": "남서아의 생각을 듣고 몸과 마음의 여유를 챙겼다.",
+            "gains": {},
+            "energy": 6,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "seoa-daily-b",
+        "owner": "seoa",
+        "kind": "daily",
+        "bond": 0,
+        "title": "끝나지 않은 미팅",
+        "text": "“내가 다 할 필요는 없겠지.” 서아가 정리하던 장비 한쪽을 내민다.\n연습이 끝난 뒤 오늘 달라진 점을 함께 돌아보았다.",
+        "choices": [
+          {
+            "label": "다음에 해 볼 일을 적는다",
+            "reply": "느낌으로 알던 변화를 말로 정리했다.",
+            "gains": {
+              "intelligence": 1
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "잘된 점을 서로 알려 준다",
+            "reply": "작은 변화도 알아봐 주는 동료가 있다는 사실이 힘이 되었다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -4,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "seoa-growth-1",
+        "owner": "seoa",
+        "kind": "growth",
+        "bond": 20,
+        "title": "혼자 적은 반성문",
+        "text": "“내가 다 할 필요는 없겠지.” 서아가 정리하던 장비 한쪽을 내민다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "자기 잘못만 적힌 반성문에 동료의 의견을 보탰다. 서아는 중요한 연습의 한 장면을 후배에게 맡겼다.",
+            "gains": {
+              "mental": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "comeback"
+            ],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "comeback"
+            ],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "seoa-growth-2",
+        "owner": "seoa",
+        "kind": "growth",
+        "bond": 40,
+        "previous": "seoa-growth-1",
+        "title": "후배에게 맡긴 한 장면",
+        "text": "자기 잘못만 적힌 반성문에 동료의 의견을 보탰다. 서아는 중요한 연습의 한 장면을 후배에게 맡겼다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "“네 몫도 믿어 볼게.” 주장의 짧은 말에 모두가 고개를 들었다. 뒤진 상황에서도 다음 기회를 함께 준비했다.",
+            "gains": {
+              "mental": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 1,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "seoa-growth-3",
+        "owner": "seoa",
+        "kind": "growth",
+        "bond": 60,
+        "previous": "seoa-growth-2",
+        "title": "모두의 역전",
+        "text": "“네 몫도 믿어 볼게.” 주장의 짧은 말에 모두가 고개를 들었다. 뒤진 상황에서도 다음 기회를 함께 준비했다.",
+        "choices": [
+          {
+            "label": "배운 것을 내 승부에 담는다",
+            "reply": "동료와 만든 경험을 내 야구로 이어갈 준비가 되었다.",
+            "gains": {},
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "rally_core"
+            ]
+          },
+          {
+            "label": "함께 만든 과정을 기억한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "rally_core"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "sumin-daily-a",
+        "owner": "sumin",
+        "kind": "daily",
+        "bond": 0,
+        "title": "동그라미가 많은 기록지",
+        "text": "“표본은 작지만 그냥 우연이라고 넘기기는 아깝거든?” 수민이 기록판을 돌려 보여준다.",
+        "choices": [
+          {
+            "label": "함께 동작을 맞춰 본다",
+            "reply": "배수민와 짧게 집중하며 다음 연습에 쓸 감각을 찾았다.",
+            "gains": {
+              "intelligence": 2
+            },
+            "energy": -4,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "이야기를 들으며 잠시 쉰다",
+            "reply": "배수민의 생각을 듣고 몸과 마음의 여유를 챙겼다.",
+            "gains": {},
+            "energy": 6,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "sumin-daily-b",
+        "owner": "sumin",
+        "kind": "daily",
+        "bond": 0,
+        "title": "숫자로 못 적는 표정",
+        "text": "“표본은 작지만 그냥 우연이라고 넘기기는 아깝거든?” 수민이 기록판을 돌려 보여준다.\n연습이 끝난 뒤 오늘 달라진 점을 함께 돌아보았다.",
+        "choices": [
+          {
+            "label": "다음에 해 볼 일을 적는다",
+            "reply": "느낌으로 알던 변화를 말로 정리했다.",
+            "gains": {
+              "intelligence": 1
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "잘된 점을 서로 알려 준다",
+            "reply": "작은 변화도 알아봐 주는 동료가 있다는 사실이 힘이 되었다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -4,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "sumin-growth-1",
+        "owner": "sumin",
+        "kind": "growth",
+        "bond": 20,
+        "title": "예측이 빗나간 날",
+        "text": "“표본은 작지만 그냥 우연이라고 넘기기는 아깝거든?” 수민이 기록판을 돌려 보여준다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "예상이 빗나간 이유를 선수에게 직접 물었다. 숫자 사이에 긴장과 습관이라는 설명이 붙었다.",
+            "gains": {
+              "intelligence": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "analysis"
+            ],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "analysis"
+            ],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "sumin-growth-2",
+        "owner": "sumin",
+        "kind": "growth",
+        "bond": 40,
+        "previous": "sumin-growth-1",
+        "title": "선수에게 물어본 이유",
+        "text": "예상이 빗나간 이유를 선수에게 직접 물었다. 숫자 사이에 긴장과 습관이라는 설명이 붙었다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "수민의 분석이 짧은 조언으로 바뀌었다. 상대의 특징을 보고 맞는 승부를 선택할 근거가 생겼다.",
+            "gains": {
+              "intelligence": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 1,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "sumin-growth-3",
+        "owner": "sumin",
+        "kind": "growth",
+        "bond": 60,
+        "previous": "sumin-growth-2",
+        "title": "숫자와 감각의 답",
+        "text": "수민의 분석이 짧은 조언으로 바뀌었다. 상대의 특징을 보고 맞는 승부를 선택할 근거가 생겼다.",
+        "choices": [
+          {
+            "label": "배운 것을 내 승부에 담는다",
+            "reply": "동료와 만든 경험을 내 야구로 이어갈 준비가 되었다.",
+            "gains": {},
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "read_gap"
+            ]
+          },
+          {
+            "label": "함께 만든 과정을 기억한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "read_gap"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "yerin-daily-a",
+        "owner": "yerin",
+        "kind": "daily",
+        "bond": 0,
+        "title": "거울 앞 타격 자세",
+        "text": "“오늘도 멋있게… 아니, 끝까지 끈질기게!” 예린이 배트 손잡이의 별을 톡 친다.",
+        "choices": [
+          {
+            "label": "함께 동작을 맞춰 본다",
+            "reply": "홍예린와 짧게 집중하며 다음 연습에 쓸 감각을 찾았다.",
+            "gains": {
+              "sense": 2
+            },
+            "energy": -4,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "이야기를 들으며 잠시 쉰다",
+            "reply": "홍예린의 생각을 듣고 몸과 마음의 여유를 챙겼다.",
+            "gains": {},
+            "energy": 6,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "yerin-daily-b",
+        "owner": "yerin",
+        "kind": "daily",
+        "bond": 0,
+        "title": "박수 없는 연습",
+        "text": "“오늘도 멋있게… 아니, 끝까지 끈질기게!” 예린이 배트 손잡이의 별을 톡 친다.\n연습이 끝난 뒤 오늘 달라진 점을 함께 돌아보았다.",
+        "choices": [
+          {
+            "label": "다음에 해 볼 일을 적는다",
+            "reply": "느낌으로 알던 변화를 말로 정리했다.",
+            "gains": {
+              "intelligence": 1
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "잘된 점을 서로 알려 준다",
+            "reply": "작은 변화도 알아봐 주는 동료가 있다는 사실이 힘이 되었다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -4,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "yerin-growth-1",
+        "owner": "yerin",
+        "kind": "growth",
+        "bond": 20,
+        "title": "멋진 장면이 없는 날",
+        "text": "“오늘도 멋있게… 아니, 끝까지 끈질기게!” 예린이 배트 손잡이의 별을 톡 친다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "큰 타구가 나오지 않는 날에도 예린은 공을 끝까지 보았다. 조용한 연습이 길어질수록 성급한 스윙이 줄었다.",
+            "gains": {
+              "sense": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "persistent"
+            ],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "persistent"
+            ],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "yerin-growth-2",
+        "owner": "yerin",
+        "kind": "growth",
+        "bond": 40,
+        "previous": "yerin-growth-1",
+        "title": "다시 오는 한 구",
+        "text": "큰 타구가 나오지 않는 날에도 예린은 공을 끝까지 보았다. 조용한 연습이 길어질수록 성급한 스윙이 줄었다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "기다린 공이 볼이 되자 예린이 배트를 내려놓고 웃었다. 안타 외에도 팀의 흐름을 바꾸는 승부가 있다는 것을 배웠다.",
+            "gains": {
+              "sense": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 1,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "yerin-growth-3",
+        "owner": "yerin",
+        "kind": "growth",
+        "bond": 60,
+        "previous": "yerin-growth-2",
+        "title": "끝나지 않는 타석",
+        "text": "기다린 공이 볼이 되자 예린이 배트를 내려놓고 웃었다. 안타 외에도 팀의 흐름을 바꾸는 승부가 있다는 것을 배웠다.",
+        "choices": [
+          {
+            "label": "배운 것을 내 승부에 담는다",
+            "reply": "동료와 만든 경험을 내 야구로 이어갈 준비가 되었다.",
+            "gains": {},
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "endless_atbat"
+            ]
+          },
+          {
+            "label": "함께 만든 과정을 기억한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "endless_atbat"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "dohee-daily-a",
+        "owner": "dohee",
+        "kind": "daily",
+        "bond": 0,
+        "title": "이름부터 붙인 공",
+        "text": "“이건 비밀 병기 7호! 이름은 아직 고민 중이야.” 도희의 노트에 실밥 그림이 가득하다.",
+        "choices": [
+          {
+            "label": "함께 동작을 맞춰 본다",
+            "reply": "백도희와 짧게 집중하며 다음 연습에 쓸 감각을 찾았다.",
+            "gains": {
+              "sense": 2
+            },
+            "energy": -4,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "이야기를 들으며 잠시 쉰다",
+            "reply": "백도희의 생각을 듣고 몸과 마음의 여유를 챙겼다.",
+            "gains": {},
+            "energy": 6,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "dohee-daily-b",
+        "owner": "dohee",
+        "kind": "daily",
+        "bond": 0,
+        "title": "손끝의 작은 차이",
+        "text": "“이건 비밀 병기 7호! 이름은 아직 고민 중이야.” 도희의 노트에 실밥 그림이 가득하다.\n연습이 끝난 뒤 오늘 달라진 점을 함께 돌아보았다.",
+        "choices": [
+          {
+            "label": "다음에 해 볼 일을 적는다",
+            "reply": "느낌으로 알던 변화를 말로 정리했다.",
+            "gains": {
+              "intelligence": 1
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "잘된 점을 서로 알려 준다",
+            "reply": "작은 변화도 알아봐 주는 동료가 있다는 사실이 힘이 되었다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -4,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "dohee-growth-1",
+        "owner": "dohee",
+        "kind": "growth",
+        "bond": 20,
+        "title": "딱 한 번 성공한 공",
+        "text": "“이건 비밀 병기 7호! 이름은 아직 고민 중이야.” 도희의 노트에 실밥 그림이 가득하다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "우연히 나온 좋은 공의 동작을 잘게 나누었다. 도희는 새로운 이름보다 같은 공을 다시 던지는 데 집중했다.",
+            "gains": {
+              "sense": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "curve"
+            ],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "curve"
+            ],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "dohee-growth-2",
+        "owner": "dohee",
+        "kind": "growth",
+        "bond": 40,
+        "previous": "dohee-growth-1",
+        "title": "같은 공을 다시",
+        "text": "우연히 나온 좋은 공의 동작을 잘게 나누었다. 도희는 새로운 이름보다 같은 공을 다시 던지는 데 집중했다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "여러 번 같은 궤적이 그려졌다. “이제 진짜 내 구종이네.” 관찰과 반복으로 날카로운 변화를 만드는 감각을 익혔다.",
+            "gains": {
+              "sense": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 1,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "dohee-growth-3",
+        "owner": "dohee",
+        "kind": "growth",
+        "bond": 60,
+        "previous": "dohee-growth-2",
+        "title": "내 구종의 이름",
+        "text": "여러 번 같은 궤적이 그려졌다. “이제 진짜 내 구종이네.” 관찰과 반복으로 날카로운 변화를 만드는 감각을 익혔다.",
+        "choices": [
+          {
+            "label": "배운 것을 내 승부에 담는다",
+            "reply": "동료와 만든 경험을 내 야구로 이어갈 준비가 되었다.",
+            "gains": {},
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "deep_curve"
+            ]
+          },
+          {
+            "label": "함께 만든 과정을 기억한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "deep_curve"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "jiwoo-daily-a",
+        "owner": "jiwoo",
+        "kind": "daily",
+        "bond": 0,
+        "title": "가방 안의 순서",
+        "text": "“네가 잘됐던 날에는 시작하기 전에 뭘 했어?” 지우가 체크리스트를 건넨다.",
+        "choices": [
+          {
+            "label": "함께 동작을 맞춰 본다",
+            "reply": "송지우와 짧게 집중하며 다음 연습에 쓸 감각을 찾았다.",
+            "gains": {
+              "mental": 2
+            },
+            "energy": -4,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "이야기를 들으며 잠시 쉰다",
+            "reply": "송지우의 생각을 듣고 몸과 마음의 여유를 챙겼다.",
+            "gains": {},
+            "energy": 6,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "jiwoo-daily-b",
+        "owner": "jiwoo",
+        "kind": "daily",
+        "bond": 0,
+        "title": "체크하지 않은 한 칸",
+        "text": "“네가 잘됐던 날에는 시작하기 전에 뭘 했어?” 지우가 체크리스트를 건넨다.\n연습이 끝난 뒤 오늘 달라진 점을 함께 돌아보았다.",
+        "choices": [
+          {
+            "label": "다음에 해 볼 일을 적는다",
+            "reply": "느낌으로 알던 변화를 말로 정리했다.",
+            "gains": {
+              "intelligence": 1
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "잘된 점을 서로 알려 준다",
+            "reply": "작은 변화도 알아봐 주는 동료가 있다는 사실이 힘이 되었다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -4,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "jiwoo-growth-1",
+        "owner": "jiwoo",
+        "kind": "growth",
+        "bond": 20,
+        "title": "누구에게나 같은 준비",
+        "text": "“네가 잘됐던 날에는 시작하기 전에 뭘 했어?” 지우가 체크리스트를 건넨다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "모두에게 같던 준비표를 선수별로 나눴다. 지우는 지켜야 할 순서와 편하게 바꿔도 되는 순서를 함께 찾았다.",
+            "gains": {
+              "mental": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "routine"
+            ],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "routine"
+            ],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "jiwoo-growth-2",
+        "owner": "jiwoo",
+        "kind": "growth",
+        "bond": 40,
+        "previous": "jiwoo-growth-1",
+        "title": "서로 다른 좋은 하루",
+        "text": "모두에게 같던 준비표를 선수별로 나눴다. 지우는 지켜야 할 순서와 편하게 바꿔도 되는 순서를 함께 찾았다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "내게 맞는 준비를 마치자 몸이 자연스럽게 움직였다. 지우가 체크표의 빈칸에 내 이름을 적었다.",
+            "gains": {
+              "mental": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 1,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "jiwoo-growth-3",
+        "owner": "jiwoo",
+        "kind": "growth",
+        "bond": 60,
+        "previous": "jiwoo-growth-2",
+        "title": "나에게 맞는 루틴",
+        "text": "내게 맞는 준비를 마치자 몸이 자연스럽게 움직였다. 지우가 체크표의 빈칸에 내 이름을 적었다.",
+        "choices": [
+          {
+            "label": "배운 것을 내 승부에 담는다",
+            "reply": "동료와 만든 경험을 내 야구로 이어갈 준비가 되었다.",
+            "gains": {},
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "body_rhythm"
+            ]
+          },
+          {
+            "label": "함께 만든 과정을 기억한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "body_rhythm"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "jian-daily-a",
+        "owner": "jian",
+        "kind": "daily",
+        "bond": 0,
+        "title": "멈춘 화면의 의미",
+        "text": "“못한 건 기억하잖아. 잘한 건 내가 남겨 둘게.” 지안이 카메라 화면을 돌린다.",
+        "choices": [
+          {
+            "label": "함께 동작을 맞춰 본다",
+            "reply": "이지안와 짧게 집중하며 다음 연습에 쓸 감각을 찾았다.",
+            "gains": {
+              "mental": 2
+            },
+            "energy": -4,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "이야기를 들으며 잠시 쉰다",
+            "reply": "이지안의 생각을 듣고 몸과 마음의 여유를 챙겼다.",
+            "gains": {},
+            "energy": 6,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "jian-daily-b",
+        "owner": "jian",
+        "kind": "daily",
+        "bond": 0,
+        "title": "소리 없이 보는 연습",
+        "text": "“못한 건 기억하잖아. 잘한 건 내가 남겨 둘게.” 지안이 카메라 화면을 돌린다.\n연습이 끝난 뒤 오늘 달라진 점을 함께 돌아보았다.",
+        "choices": [
+          {
+            "label": "다음에 해 볼 일을 적는다",
+            "reply": "느낌으로 알던 변화를 말로 정리했다.",
+            "gains": {
+              "intelligence": 1
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "잘된 점을 서로 알려 준다",
+            "reply": "작은 변화도 알아봐 주는 동료가 있다는 사실이 힘이 되었다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -4,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "jian-growth-1",
+        "owner": "jian",
+        "kind": "growth",
+        "bond": 20,
+        "title": "실수만 남은 영상",
+        "text": "“못한 건 기억하잖아. 잘한 건 내가 남겨 둘게.” 지안이 카메라 화면을 돌린다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "실수한 장면 앞뒤에도 좋아진 동작이 있었다. 지안은 실패를 지우는 대신 그다음 선택을 함께 남겼다.",
+            "gains": {
+              "mental": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "reset_mind"
+            ],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [
+              "reset_mind"
+            ],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "jian-growth-2",
+        "owner": "jian",
+        "kind": "growth",
+        "bond": 40,
+        "previous": "jian-growth-1",
+        "title": "지우지 않은 장면",
+        "text": "실수한 장면 앞뒤에도 좋아진 동작이 있었다. 지안은 실패를 지우는 대신 그다음 선택을 함께 남겼다.",
+        "choices": [
+          {
+            "label": "내 연습에도 적용해 본다",
+            "reply": "잘한 점과 고칠 점이 짧은 영상으로 이어졌다. 지안의 기록을 보며 지난 실수와 다음 승부를 나눌 수 있게 되었다.",
+            "gains": {
+              "mental": 2
+            },
+            "energy": 0,
+            "stress": 0,
+            "points": 0,
+            "trust": 1,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          },
+          {
+            "label": "내 생각을 이야기한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {
+              "mental": 1
+            },
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": []
+          }
+        ]
+      },
+      {
+        "id": "jian-growth-3",
+        "owner": "jian",
+        "kind": "growth",
+        "bond": 60,
+        "previous": "jian-growth-2",
+        "title": "다음 승부를 위한 편집",
+        "text": "잘한 점과 고칠 점이 짧은 영상으로 이어졌다. 지안의 기록을 보며 지난 실수와 다음 승부를 나눌 수 있게 되었다.",
+        "choices": [
+          {
+            "label": "배운 것을 내 승부에 담는다",
+            "reply": "동료와 만든 경험을 내 야구로 이어갈 준비가 되었다.",
+            "gains": {},
+            "energy": 0,
+            "stress": 0,
+            "points": 2,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "next_space"
+            ]
+          },
+          {
+            "label": "함께 만든 과정을 기억한다",
+            "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+            "gains": {},
+            "energy": 0,
+            "stress": -6,
+            "points": 0,
+            "trust": 0,
+            "bond": 4,
+            "hints": [],
+            "unlocks": [
+              "next_space"
+            ]
+          }
+        ]
+      }
+    ],
+    "images": {}
+  },
+  "weekdayPart": 1,
+  "activeEncounter": null,
+  "encounterHistory": [],
+  "competitor": {
+    "stats": {
+      "contact": 42,
+      "power": 40,
+      "eye": 35,
+      "speed": 35,
+      "field": 38,
+      "mental": 40,
+      "velocity": 0,
+      "control": 0,
+      "breaking": 0,
+      "stamina": 0
+    },
+    "trust": 25,
+    "weeks": []
+  },
+  "selectionHistory": [],
+  "name": "구형저장",
+  "role": "batter",
+  "month": 3,
+  "week": 1,
+  "phase": "lineup",
+  "revision": 0,
+  "rng": 42,
+  "attributes": {
+    "power": 35,
+    "endurance": 35,
+    "mental": 40,
+    "intelligence": 45,
+    "sense": 35
+  },
+  "proficiency": {
+    "contact": 42,
+    "power": 28,
+    "eye": 24,
+    "speed": 43,
+    "field": 30
+  },
+  "energy": 80,
+  "stress": 15,
+  "trust": 20,
+  "rival": 10,
+  "catcher": 10,
+  "log": [],
+  "schedule": [
+    {
+      "month": 3,
+      "week": 1,
+      "weekday": "",
+      "weekday2": "",
+      "weekend": ""
+    }
+  ],
+  "initial": {
+    "primary_power": 35,
+    "primary_endurance": 35,
+    "primary_mental": 40,
+    "primary_intelligence": 45,
+    "primary_sense": 35,
+    "proficiency_contact": 42,
+    "proficiency_power": 28,
+    "proficiency_eye": 24,
+    "proficiency_speed": 43,
+    "proficiency_field": 30,
+    "energy": 80,
+    "stress": 15,
+    "trust": 20,
+    "rival": 10,
+    "catcher": 10,
+    "skillPoints": 8,
+    "bond_bat_senior": 10,
+    "bond_pitch_senior": 10,
+    "bond_manager": 10,
+    "bond_classmate": 10,
+    "bond_sera": 10,
+    "bond_chaerin": 10,
+    "bond_narin": 10,
+    "bond_sua": 10,
+    "bond_yeoreum": 10,
+    "bond_rina": 10,
+    "bond_seoa": 10,
+    "bond_sumin": 10,
+    "bond_yerin": 10,
+    "bond_dohee": 10,
+    "bond_jiwoo": 10,
+    "bond_jian": 10
+  },
+  "weekStart": {
+    "primary_power": 35,
+    "primary_endurance": 35,
+    "primary_mental": 40,
+    "primary_intelligence": 45,
+    "primary_sense": 35,
+    "proficiency_contact": 42,
+    "proficiency_power": 28,
+    "proficiency_eye": 24,
+    "proficiency_speed": 43,
+    "proficiency_field": 30,
+    "energy": 80,
+    "stress": 15,
+    "trust": 20,
+    "rival": 10,
+    "catcher": 10,
+    "skillPoints": 8,
+    "bond_bat_senior": 10,
+    "bond_pitch_senior": 10,
+    "bond_manager": 10,
+    "bond_classmate": 10,
+    "bond_sera": 10,
+    "bond_chaerin": 10,
+    "bond_narin": 10,
+    "bond_sua": 10,
+    "bond_yeoreum": 10,
+    "bond_rina": 10,
+    "bond_seoa": 10,
+    "bond_sumin": 10,
+    "bond_yerin": 10,
+    "bond_dohee": 10,
+    "bond_jiwoo": 10,
+    "bond_jian": 10
+  },
+  "monthStart": {
+    "primary_power": 35,
+    "primary_endurance": 35,
+    "primary_mental": 40,
+    "primary_intelligence": 45,
+    "primary_sense": 35,
+    "proficiency_contact": 42,
+    "proficiency_power": 28,
+    "proficiency_eye": 24,
+    "proficiency_speed": 43,
+    "proficiency_field": 30,
+    "energy": 80,
+    "stress": 15,
+    "trust": 20,
+    "rival": 10,
+    "catcher": 10,
+    "skillPoints": 8,
+    "bond_bat_senior": 10,
+    "bond_pitch_senior": 10,
+    "bond_manager": 10,
+    "bond_classmate": 10,
+    "bond_sera": 10,
+    "bond_chaerin": 10,
+    "bond_narin": 10,
+    "bond_sua": 10,
+    "bond_yeoreum": 10,
+    "bond_rina": 10,
+    "bond_seoa": 10,
+    "bond_sumin": 10,
+    "bond_yerin": 10,
+    "bond_dohee": 10,
+    "bond_jiwoo": 10,
+    "bond_jian": 10
+  },
+  "notice": "함께 성장할 연습 파트너를 골라 보자.",
+  "eventReply": "",
+  "match": null,
+  "matchRecorded": false,
+  "supports": [],
+  "bonds": {
+    "bat_senior": 10,
+    "pitch_senior": 10,
+    "manager": 10,
+    "classmate": 10,
+    "sera": 10,
+    "chaerin": 10,
+    "narin": 10,
+    "sua": 10,
+    "yeoreum": 10,
+    "rina": 10,
+    "seoa": 10,
+    "sumin": 10,
+    "yerin": 10,
+    "dohee": 10,
+    "jiwoo": 10,
+    "jian": 10
+  },
+  "placements": {},
+  "trainingSeed": 42,
+  "supportCompleted": [],
+  "activeSupport": null,
+  "skillPoints": 8,
+  "skills": [],
+  "hints": [],
+  "unlockedSkills": [],
+  "records": [],
+  "evaluation": null,
+  "tournament": {
+    "rounds": []
+  }
+}

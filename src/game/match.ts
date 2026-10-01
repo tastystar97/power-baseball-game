@@ -1,3 +1,4 @@
+import {teamName} from '../content/teams.ts';
 import {derivedStats} from './abilities.ts';
 import {eligibleSkills,rollSkills,skillActivationChance} from './skill-activation.ts';
 import {getSkills} from '../content/skills.ts';
@@ -83,7 +84,7 @@ export function opponent(s:GameState){
 }
 export function tactics(s:GameState):Tactic[]{
  if(!s.match)return [];
- const draft=structuredClone(s);initializeMatch(draft);
+ const draft=structuredClone(s);if(!draft.match!.rosters){draft.match!.half=s.role==='batter'?1:0;draft.match!.order[1]=draft.match!.battingOrder-1;draft.match!.pitchingRole='starter';}initializeMatch(draft);
  const ids=s.role==='batter'?['contact','power','patient','bunt']:['fastball','breaking','control','chase'];
  return ids.map(id=>{
   const eligible=eligibleSkills(draft,id),chance=skillActivationChance(s.attributes.intelligence),ctx=plateContext(draft),base=plateDistribution(ctx,id);
@@ -95,7 +96,7 @@ export function tactics(s:GameState):Tactic[]{
   }
   const disabled=base.disabled||(s.role==='pitcher'&&s.match!.retired);
   const success=s.role==='batter'?(id==='bunt'?probabilities[6]:probabilities.slice(2,6).reduce((a,b)=>a+b,0)):probabilities[0]+probabilities[1];
-  return {id,title:titles[id][0],description:titles[id][1],disabled,burden,probabilities,outlook:disabled?'선택 불가':success>(s.role==='batter'?.35:.70)?'유리':success<(s.role==='batter'?.25:.55)?'불리':'보통',reason:disabled?'진루할 주자가 있고 2아웃 미만이어야 합니다.':`체력 ${s.energy} · 유효 멘탈 ${derivedStats(s).mental} · ${s.role==='batter'?'출루':'아웃'} 평균 전망 ${Math.round(success*100)}%${eligible.length?` · 지능 ${s.attributes.intelligence}: 각 스킬 발동 ${Math.round(chance*100)}% · 발동 후보: ${eligible.map(id=>getSkills(s).find(k=>k.id===id)!.name).join(', ')}`:''}`};
+  return {id,title:titles[id][0],description:titles[id][1],disabled,burden,probabilities,outlook:disabled?'선택 불가':success>(s.role==='batter'?.35:.70)?'유리':success<(s.role==='batter'?.25:.55)?'불리':'보통',reason:disabled?'진루할 주자가 있고 2아웃 미만이어야 합니다.':`${teamName(s.match!.opponentId)} · 체력 ${s.energy} · 유효 멘탈 ${derivedStats(s).mental} · ${s.role==='batter'?'출루':'아웃'} 평균 전망 ${Math.round(success*100)}%${eligible.length?` · 지능 ${s.attributes.intelligence}: 각 스킬 발동 ${Math.round(chance*100)}% · 발동 후보: ${eligible.map(id=>getSkills(s).find(k=>k.id===id)!.name).join(', ')}`:''}`};
  });
 }
 function note(m:Match,text:string){m.recent.push(text);m.recent=m.recent.slice(-12);}

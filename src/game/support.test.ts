@@ -14,7 +14,8 @@ function auto(s:GameState) {
   if(s.phase==='weekday')return act(s,{type:'activity',id:s.role==='batter'?'batting':'control'});
   if(s.phase==='weekend')return act(s,{type:'activity',id:'catch'});
   if(['event','weekendEvent','supportEvent'].includes(s.phase))return act(s,{type:'choice',index:0});
-  if(s.phase==='match')return act(s,{type:'tactic',id:s.role==='batter'?'contact':'control'});
+  if(s.phase==='roleEvent')return act(s,{type:'choice',id:'stay'});
+  if(s.phase==='match'&&s.match!.awaiting)return act(s,{type:'tactic',id:s.role==='batter'?'contact':'control'});
   return act(s,{type:'continue'});
 }
 test('six unique support people are required before starting; lineup costs no activity',()=>{

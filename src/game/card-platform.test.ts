@@ -10,7 +10,7 @@ import {eligibleSkills} from './skill-activation.ts';
 const deck=['bat_senior','pitch_senior','rival','catcher','manager','classmate'];
 const act=(s:GameState,a:Omit<Action,'revision'>)=>transition(s,{...a,revision:s.revision});
 const start=(role:'batter'|'pitcher',seed=123)=> (createGame as any)('새 덱',role,seed,catalogFromPacks([builtinPack]),deck) as GameState;
-function step(s:GameState){return act(s,s.phase==='weekday'?{type:'activity',id:'rest'}:s.phase==='weekend'?{type:'activity',id:'weekend_rest'}:s.phase==='supportEvent'?{type:'choice',index:0}:s.phase==='match'?{type:'tactic',id:s.role==='batter'?'contact':'control'}:{type:'continue'});}
+function step(s:GameState){return act(s,s.phase==='weekday'?{type:'activity',id:'rest'}:s.phase==='weekend'?{type:'activity',id:'weekend_rest'}:s.phase==='supportEvent'?{type:'choice',index:0}:s.phase==='roleEvent'?{type:'choice',id:'stay'}:s.phase==='match'&&s.match!.awaiting?{type:'tactic',id:s.role==='batter'?'contact':'control'}:{type:'continue'});}
 
 test('선수 생성 덱 전체가 참여하며 월 전환에 재선택이 없다',()=>{
   let s=start('pitcher');assert.equal(s.phase,'weekday');assert.deepEqual(s.supports,deck);

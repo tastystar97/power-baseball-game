@@ -22,7 +22,8 @@ function checkDuels(s:GameState,m:Match){
  let order=-1,inning=0;const actions=s.role==='batter'?['contact','power','patient','bunt']:['fastball','breaking','control','chase'];
  for(const e of entries){
   if(e.half!==(s.role==='batter'?1:0)||e.order<=order||e.order>=m.order[e.half]||e.inning<inning||e.inning>m.inning)fail('맞대결 타석 순서가 올바르지 않습니다.');
-  if(s.role==='batter'?(e.opponent!=='taeo'||e.inning>6||e.order%9!==4||m.appearance!=='starter'):(e.opponent!=='jihwan'||e.order%9!==3))fail('맞대결 선수와 타순이 다릅니다.');
+  const play=m.feed.find(p=>p.kind==='plate'&&p.half===e.half&&p.order===e.order);
+  if(!play||play.outcome!==e.outcome||play.source!==e.source||play.tactic!==e.tactic||(s.role==='batter'?(e.opponent!=='taeo'||play.pitcher.id!=='taeo'):(e.opponent!=='jihwan'||play.batter.id!=='jihwan')))fail('맞대결 선수와 타순이 다릅니다.');
   if(m.appearance==='substitute'&&e.inning<7)fail('교체 출전 전 맞대결이 있습니다.');
   if(!actions.includes(e.tactic)||(e.source==='auto'&&e.tactic!==(s.role==='batter'?'contact':'control'))||(e.outcome==='sacrificeBunt'&&(s.role!=='batter'||e.tactic!=='bunt')))fail('맞대결 작전이 올바르지 않습니다.');
   order=e.order;inning=e.inning;
@@ -30,8 +31,8 @@ function checkDuels(s:GameState,m:Match){
  if(entries.filter(e=>e.source==='manual').length>m.highlights)fail('선택 횟수보다 맞대결이 많습니다.');
  const t=summarizeDuels(entries);
  if(s.role==='batter'){
-  const b=m.batting;if(t.ab>b.ab||t.hits>b.hits||t.hr>b.hr||t.walks>b.walks||t.k>b.k||entries.length>m.order[1])fail('맞대결 타격 성적이 전체 성적을 넘습니다.');
- }else {const p=m.pitching;if(t.ab+t.walks+t.sacrifices>m.faced||t.hits>p.hits||t.walks>p.walks||t.k>p.k||t.ab-t.hits+t.sacrifices>p.outs)fail('맞대결 투구 성적이 전체 성적을 넘습니다.');}
+  const b=m.batting;if(t.ab>b.ab||t.hits>b.hits||t.hr>b.hr||t.walks>b.walks+b.hbp||t.k>b.k||entries.length>m.order[1])fail('맞대결 타격 성적이 전체 성적을 넘습니다.');
+ }else {const p=m.pitching;if(t.ab+t.walks+t.sacrifices>m.faced||t.hits>p.hits||t.walks>p.walks+p.hbp||t.k>p.k)fail('맞대결 투구 성적이 전체 성적을 넘습니다.');}
 }
 export function validateRivalryState(s:GameState):void {
  if(s.competitor.weeks.length!==s.schedule.filter(w=>w.weekday2).length)fail('라이벌 성장 횟수가 주간 활동과 다릅니다.');

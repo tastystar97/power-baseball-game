@@ -10,7 +10,7 @@ import {skillRequirements} from '../content/skills.ts';
 test('새 선수는 v6의 1차 능력과 역할 숙련만 저장한다',()=>{
  for(const role of ['batter','pitcher'] as const){
   const s=createGame('선수',role);
-  assert.equal(s.version,7);
+  assert.equal(s.version,8);
   const raw=JSON.parse(JSON.stringify(s));
   assert.deepEqual(raw.attributes,{power:35,endurance:35,mental:40,intelligence:45,sense:35});
   assert.equal(Object.keys(raw.proficiency).length,5);

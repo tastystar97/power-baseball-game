@@ -28,9 +28,9 @@ test('reject a retired pitcher or wrong half awaiting a tactic',()=>{
   }
   assert.equal(s.phase,'match');assert.deepEqual(parseSave(JSON.stringify(s)),s);
   s.match!.retired=true;
-  assert.throws(()=>parseSave(JSON.stringify(s)),/선수가 선택할 수 없는 경기 상태/);
+  assert.throws(()=>parseSave(JSON.stringify(s)),/선수가 선택할 수 없는 경기 상태|플레이 재생과 경기 half/);
   s.match!.retired=false;s.match!.half=1;
-  assert.throws(()=>parseSave(JSON.stringify(s)),/선수가 선택할 수 없는 경기 상태/);
+  assert.throws(()=>parseSave(JSON.stringify(s)),/선수가 선택할 수 없는 경기 상태|플레이 재생과 경기 half/);
 });
 test('every phase resumes identically across both roles and three raising styles', () => {
   for(const role of ['batter','pitcher'] as const)for(const style of ['training','balanced','study']) {
@@ -42,7 +42,8 @@ test('every phase resumes identically across both roles and three raising styles
       else if(state.phase==='weekday')a={type:'activity',id:style==='study'?'study':style==='balanced'&&state.week%2===0?'rest':role==='batter'?'batting':'control'};
       else if(state.phase==='weekend')a={type:'activity',id:style==='training'?'practice':style==='balanced'?'catch':'selfstudy',...(style==='training'?{target:role==='batter'?'power' as const:'breaking' as const}:{})};
       else if(['event','weekendEvent','supportEvent'].includes(state.phase))a={type:'choice',index:state.week%2};
-      else if(state.phase==='match')a={type:'tactic',id:role==='batter'?'power':'breaking'};
+      else if(state.phase==='roleEvent')a={type:'choice',id:'stay'};
+      else if(state.phase==='match'&&state.match!.awaiting)a={type:'tactic',id:role==='batter'?'power':'breaking'};
       else a={type:'continue'};
       const action={...a,revision:state.revision};
       const next=transition(state,action);

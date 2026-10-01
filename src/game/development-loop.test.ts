@@ -10,12 +10,12 @@ export function playStep(s:GameState):GameState {
  s.phase==='weekday'?{type:'activity',id:s.energy<65?'rest':s.role==='batter'?'batting':'control'}:
  s.phase==='weekend'?{type:'activity',id:s.stress>=30?'outing':'weekend_rest'}:
  ['event','supportEvent','weekendEvent'].includes(s.phase)?{type:'choice',index:0}:
- s.phase==='match'?{type:'tactic',id:s.role==='batter'?'contact':'control'}:{type:'continue'};
+ s.phase==='roleEvent'?{type:'choice',id:'stay'}:s.phase==='match'&&s.match!.awaiting?{type:'tactic',id:s.role==='batter'?'contact':'control'}:{type:'continue'};
  return transition(s,{...a,revision:s.revision});
 }
 test('intelligence replaces academics and every week has two distinct weekday activities',()=>{
  let s=createGame('새로운 봄','batter',7);
- assert.equal(s.version,7);assert.equal(s.attributes.intelligence,45);assert.equal('academics' in s,false);
+ assert.equal(s.version,8);assert.equal(s.attributes.intelligence,45);assert.equal('academics' in s,false);
  s=playStep(s);s=playStep(s);
  while(s.phase==='supportEvent'||s.phase==='supportResult')s=playStep(s);
  assert.equal(s.phase,'weekday');assert.equal(s.weekdayPart,2);assert.equal(s.week,1);
@@ -32,11 +32,11 @@ test('walking has a clear mental recovery reward and weekend offers seven choice
  assert.ok(previewActivity(s,'watch'));assert.ok(previewActivity(s,'partner','control'));
 });
 test('skill previews do not consume random state and real decisions retain their skill checks',()=>{
- const s=createGame('스킬','batter',19);s.skills=['contact_focus','contact_master'];s.match=createMatch();s.match.awaiting=true;s.match.half=1;s.match.order[1]=4;
+ const s=createGame('스킬','batter',19);s.skills=['contact_focus','contact_master'];s.match=createMatch();s.match.awaiting=true;s.match.half=1;s.match.order[1]=7;
  const rng=s.rng,view=tactics(s);assert.equal(s.rng,rng);assert.deepEqual(tactics(s),view);
  assert.ok(chooseTactic(s,'contact'));assert.equal(s.match.skillChecks?.length,1);
  const check=s.match.skillChecks![0];assert.deepEqual(check.eligible,['contact_master']);assert.equal(check.intelligence,45);
- assert.ok(check.active.every(id=>check.eligible.includes(id)));assert.equal(check.order,4);
+ assert.ok(check.active.every(id=>check.eligible.includes(id)));assert.equal(check.order,7);
 });
 test('both roles complete 32 weekday choices and 16 weekends with exact save resume',()=>{
  for(const role of ['batter','pitcher'] as const)for(let seed=1;seed<=8;seed++){

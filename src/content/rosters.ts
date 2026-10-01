@@ -15,7 +15,7 @@ function pitchers(team:TeamId,rows:Arm[]):RosterEntry[]{return rows.map(([name,g
 export const rosterEntries:Record<TeamId,{batters:RosterEntry[];pitchers:RosterEntry[]}>= {
   cheongram:{batters:batters('cheongram',[
     ['오세찬',2,'CF','LL','speed,contact'],['장건우',3,'SS','RR','field,bunt'],['강민재',3,'1B','LL','contact,eye','minjae'],['주도현',3,'RF','RR','power'],['하태수',2,'LF','RR','power'],['박하람',1,'C','RR','field,eye','haram'],['염규찬',2,'3B','RR'],['나도준',1,'2B','RR','field','dojun'],['표동민',2,'DH','LL','power'],
-  ]),pitchers:pitchers('cheongram',[['이도윤',3,'R','breaking','doyun'],['국태민',2,'R','velocity','taemin'],['신우람',1,'L','control','wooram']])},
+  ]),pitchers:pitchers('cheongram',[['이도윤',2,'R','breaking','doyun'],['국태민',2,'R','velocity','taemin'],['신우람',1,'L','control','wooram']])},
   haesol:{batters:batters('haesol',[
     ['하윤재',2,'CF','RL','speed,eye'],['곽태율',3,'2B','RR','contact,bunt'],['문시헌',3,'SS','RR','contact,field'],['서지환',3,'1B','RR','power','jihwan'],['변재혁',3,'LF','RR','power'],['염도경',2,'C','RR','field'],['심규원',2,'RF','LL','eye'],['피승호',1,'3B','RR','field'],['엄태경',2,'DH','RR','power'],
   ]),pitchers:pitchers('haesol',[['정태오',3,'R','velocity,control','taeo'],['봉준익',3,'L','breaking'],['왕재선',2,'R','velocity']])},

@@ -23,11 +23,11 @@ test('competition thresholds and ties let training reclaim a place',()=>{
  for(const [a,b,prev,winner] of [[64,64,null,'other'],[65,64,null,'player'],[65,65,null,'player'],[65,65,'junseo','junseo'],[78,76,'junseo','player'],[72,75,'player','junseo'],[65,65,'other','player']] as const)
   assert.equal(decideStarter(a,b,prev).starter,winner);
  const s=createGame('경쟁','batter');s.proficiency.contact=90;s.proficiency.power=48;
- const m=createMatch();m.batting.hits=2;m.batting.walks=1;m.batting.rbi=1;
+ const m=createMatch();m.batting.pa=5;m.batting.ab=4;m.batting.hits=2;m.batting.walks=1;m.batting.rbi=1;
  s.records=[{month:3,match:m}];const score=candidateScore(s.role,derivedStats(s),s.trust,s.records);
- assert.equal(score.practice,10);assert.equal(score.performance,10);assert.equal(score.readinessSource,'practice');
- s.records.push({month:4,match:createMatch('reserve')});assert.equal(candidateScore(s.role,derivedStats(s),s.trust,s.records).performance,10);
- s.records.push({month:5,match:createMatch()});assert.equal(candidateScore(s.role,derivedStats(s),s.trust,s.records).performance,5);
+ assert.equal(score.practice,10);assert.ok(score.performance!>10);assert.equal(score.readinessSource,'match');
+ s.records.push({month:4,match:createMatch('reserve')});assert.equal(candidateScore(s.role,derivedStats(s),s.trust,s.records).performance,score.performance);
+ s.records.push({month:5,match:createMatch()});assert.equal(candidateScore(s.role,derivedStats(s),s.trust,s.records).performance,score.performance);
  assert.equal(candidateScore(s.role,derivedStats(s),s.trust,null).performance,null);
  const comp=createCompetitor('batter');const initial=compareCandidates(s,comp,[],'test');
  assert.deepEqual(compareCandidates(s,comp,[initial],'test'),initial);
