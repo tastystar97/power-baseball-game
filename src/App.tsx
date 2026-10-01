@@ -27,17 +27,44 @@ import {bond,supportById,changeLabel} from './content/supports.ts';
 import {matchPlan,weekTitle,tournamentResult} from './game/season.ts';
 import {DevelopmentPanel,SeasonPanel,TournamentBoard,SeasonRecords} from './ui/SeasonPanel.tsx';
 import {getSkills} from './content/skills.ts';
+import {Hud,PlayerCard,LogPanel,CalendarDialog,BottomMenu} from './ui/GameShell.tsx';
+import {GameScene} from './ui/scene/GameScene.tsx';
+import {ActivityTile} from './ui/ActivityTile.tsx';
+import type {FloatingText} from './ui/scene/SceneStage.tsx';
+import {primaryLabels} from './game/types.ts';
+import type {PrimaryKey} from './game/types.ts';
 
 type Send=(a:Omit<Action,'revision'>)=>void;
 
 function Changes({changes,s}:{changes:Record<string,number>;s:GameState}) {
-  return <div className="chips">{Object.entries(changes).map(([k,v])=><span key={k} className={`chip ${(k==='stress'?v>0:v<0)?'cost':''}`}>{changeLabel(s,k,labels[k])} {v>0?'+':''}{v}</span>)}</div>;
+  // Proficiency is hidden: one technique marker instead of numbers.
+  const entries=Object.entries(changes).filter(([k])=>!k.startsWith('proficiency_'));
+  const technique=Object.entries(changes).some(([k,v])=>k.startsWith('proficiency_')&&v>0);
+  const label=(k:string)=>k.startsWith('primary_')?primaryLabels[k.slice(8) as PrimaryKey]:changeLabel(s,k,labels[k]);
+  return <div className="chips">{entries.map(([k,v])=><span key={k} className={`chip ${(k==='stress'?v>0:v<0)?'cost':''}`}>{label(k)} {v>0?'+':''}{v}</span>)}{technique&&<span className="chip">기술 ▲</span>}</div>;
 }
 
 function latestTrainingEntry(s:GameState) {
   const last=s.log.at(-1);
   const entry=last?.training?last:last?.title==='함께 쌓은 연습'?s.log.at(-2):undefined;
   return entry?.training?entry:null;
+}
+
+const primaryColors:Record<string,string>={power:'#d9573b',endurance:'#2f8fbf',mental:'#8a5cc7',intelligence:'#2e6fd1',sense:'#c98a12'};
+/** The activity that produced the newest journal entry, so the scene can replay its outcome. */
+function lastActivityScene(s:GameState):{activity?:string;present?:string[];outcome?:'success'|'failure';effects:FloatingText[]} {
+  const all=[...activities({role:s.role,phase:'weekday'}),...activities({role:s.role,phase:'weekend'})];
+  // The newest activity entry within the last few lines (a partner bonus line may follow it).
+  const named=(title:string)=>all.find(a=>title===a.title||title.startsWith(`${a.title} · `));
+  const entry=s.log.slice(-3).reverse().find(l=>l.slot&&named(l.title));
+  if(!entry)return {effects:[]};
+  const activity=named(entry.title)?.id;
+  const present=Object.entries({...entry.changes,...(s.log.at(-1)!==entry?s.log.at(-1)!.changes:{})}).filter(([k,v])=>v>0&&(k.startsWith('bond_')||k==='rival'||k==='catcher')).map(([k])=>k.startsWith('bond_')?k.slice(5):k);
+  const outcome=entry.training?.outcome;
+  const effects:FloatingText[]=Object.entries(entry.changes).filter(([k,v])=>k.startsWith('primary_')&&v>0).slice(0,3).map(([k,v],i)=>({key:`${s.log.length}-${k}`,text:`${primaryLabels[k.slice(8) as PrimaryKey]} +${v}`,color:primaryColors[k.slice(8)]??'#1f2d4d',x:36+i*16,y:34+i*6}));
+  if(Object.entries(entry.changes).some(([k,v])=>k.startsWith('proficiency_')&&v>0))effects.push({key:`${s.log.length}-tech`,text:'기술 ▲',color:'#3a6f37',x:60,y:22});
+  if(outcome==='failure')effects.push({key:`${s.log.length}-fail`,text:'실패…',color:'#b4441f',x:50,y:30});
+  return {activity,present,outcome:outcome==='failure'?'failure':outcome==='success'||!entry.training?'success':undefined,effects};
 }
 
 function TrainingFeedback({s}:{s:GameState}) {
@@ -49,7 +76,7 @@ function TrainingFeedback({s}:{s:GameState}) {
   const changes={...entry.changes,...(last===entry?{}:Object.fromEntries(Object.entries(last.changes).filter(([k])=>k!=='skillPoints')))};
   return <section className={`training-feedback ${failed?'failed':'succeeded'}`} role="status">
     <p className="reason">{entry.month}월 {entry.week}주 · 방금 마친 훈련</p>
-    <strong>{entry.title}</strong>
+    <strong>{result.failureChance>0&&<span key={s.log.length} className={`train-die ${failed?'bad':'good'}`} aria-label={failed?'실패 판정':'성공 판정'}>{failed?'✕':'★'}</span>}{entry.title}</strong>
     <Changes s={s} changes={changes}/>
     <p className="reason">시작 체력 {result.energyBefore} · 실패 확률 {result.failureChance}% · 스킬 +{result.points} Pt</p>
     {last!==entry&&last.title==='함께 쌓은 연습'&&<p className="reason">{last.text}</p>}
@@ -71,18 +98,19 @@ function ActivityScreen({s,send}:{s:GameState;send:Send}) {
   const [target,setTarget]=useState<TrainingTarget>(trainingTargets(s.role)[0]);
   const [partner,setPartner]=useState<SupportId>([...s.supports].sort((a,b)=>bond(s,b)-bond(s,a))[0]);
   const options=activities(s,target),preview=previewActivity(s,selected,target,partner);
-  return <><Background id={weekend?'riverside':s.role==='pitcher'?'bullpen':'batting'} banner caption={weekend?'일요일 · 나를 돌보는 시간':'방과 후 · 청람고 야구부'}/>
+  const last=selected?null:lastActivityScene(s);
+  return <><GameScene s={s} input={selected?{activity:selected,present:preview?.present??[]}:{activity:last?.activity,present:last?.present,outcome:last?.outcome}} effects={last?.effects} caption={weekend?'일요일 · 나를 돌보는 시간':undefined}/>
     <h1 className="screen-title" tabIndex={-1}>{weekend?'이번 주말은 어떻게 보낼까?':`이번 주 ${s.weekdayPart===1?'전반':'후반'}, 무엇을 할까?`}</h1>
     <p className="lead">{weekend?'쉬어 가는 선택도 다음 승부를 위한 준비입니다.':s.weekdayPart===1?'전반 활동 뒤에는 편성한 파트너와 뜻밖의 만남이 있을 수 있습니다. 후반 활동도 남아 있습니다.':'후반 활동 뒤에도 카드 사건이 찾아옵니다. 경기와 주말까지 생각해 컨디션을 조절하세요.'}</p>
     <div className="mobile-condition"><Meter label="체력" value={s.energy}/><Meter label="스트레스" value={s.stress} bad/></div>
-    <div className="cards" role="group" aria-label={weekend?'주말 활동':'평일 활동'}>{options.map(a=>{
+    <div className="cards activity-tiles" role="group" aria-label={weekend?'주말 활동':'평일 활동'}>{options.map(a=>{
       const cardTarget=trainingTargets(s.role,a.id==='partner').includes(target)?target:trainingTargets(s.role)[0];
       const p=previewActivity(s,a.id,cardTarget,partner)!;
-      return <button className="card" key={a.id} disabled={!!p.disabledReason} aria-pressed={selected===a.id} onClick={()=>{setSelected(a.id);setTarget(cardTarget);}}><span className="top"><span className="name">{a.title}</span><span className={`chip risk ${p.failureChance>=25?'cost':''}`}>{p.training?`실패 ${p.failureChance}%`:'안전 활동'}</span></span><span className="desc">{a.description}</span>{p.disabledReason&&<span className="reason warning">{p.disabledReason}</span>}<span className="chips">{p.present.map(id=><span key={id} className={`chip ${p.joint.includes(id)?'joint':''}`}>{p.joint.includes(id)?'★ ':''}{supportById(id,s).name} · 인연 {bond(s,id)}{p.joint.includes(id)?' · 합동':''}</span>)}</span><span className="reward-caption">{p.training?'성공 시 성장·소모':'예상 변화'}</span>{p.bondBonuses.map(b=><span key={b.stat} className="bond-bonus-label">인연 보너스 · {labels[b.stat]} +{b.amount} 포함</span>)}<span className="chips">{p.points>0&&<span className="chip points">스킬 +{p.points} Pt</span>}{effectChips(p).map(c=><span key={c.key} className={`chip ${(c.key==='stress'?c.value>0:c.value<0)?'cost':''}`}>{c.label}</span>)}</span></button>;
+      return <ActivityTile key={a.id} s={s} id={a.id} title={a.title} description={a.description} preview={p} selected={selected===a.id} onSelect={()=>{setSelected(a.id);setTarget(cardTarget);}}/>;
     })}</div>
     {['practice','partner'].includes(selected)&&<div className="practice-target"><label className="field-label" htmlFor="practice-target">연습할 능력</label><select id="practice-target" value={target} onChange={e=>setTarget(e.target.value as TrainingTarget)}>{trainingTargets(s.role,selected==='partner').map(k=><option key={k} value={k}>{labels[k]}{k.startsWith('primary_')?'':' 숙련'}</option>)}</select></div>}
     {selected==='partner'&&<div className="practice-target"><label className="field-label" htmlFor="partner-target">함께 특훈할 파트너</label><select id="partner-target" value={partner} onChange={e=>setPartner(e.target.value as SupportId)}>{s.supports.map(id=><option key={id} value={id} disabled={bond(s,id)<40}>{supportById(id,s).name} · 인연 {bond(s,id)}{bond(s,id)<40?' (40 필요)':''}</option>)}</select></div>}
-    <div className="activity-confirm panel gap-top" aria-live="polite">{preview?<><strong>{preview.title}{['practice','partner'].includes(selected)?` · ${labels[target]}`:''}</strong>{preview.training&&<p className={`training-odds ${preview.failureChance>=25?'warning':''}`}>시작 체력 {s.energy} · 성공 {100-preview.failureChance}% / 실패 {preview.failureChance}%</p>}<p className="reason">{preview.training?'성공 시':'활동 후'} 체력 {s.energy+preview.energy} · 스트레스 {s.stress+preview.stress} · 스킬 +{preview.points} Pt</p>{preview.failureChance>0&&preview.failure&&<div className="failure-preview"><strong>실패 시 · 능력 성장 없음 / 스킬 +0 Pt</strong><div className="chips">{effectChips(preview.failure).map(c=><span key={c.key} className="chip cost">{c.label}</span>)}</div><p className="reason">체력 {s.energy+preview.failure.energy} · 스트레스 {s.stress+preview.failure.stress}가 됩니다. 훈련 시간은 그대로 소비됩니다.</p></div>}{preview.present.length>0&&<p className="reason">{preview.present.map(id=>`${supportById(id,s).name} 인연 +${Math.min(8,100-bond(s,id))}`).join(' · ')}{preview.joint.length>0&&' · 성공 시 합동 훈련 보너스 포함'}</p>}{preview.bondBonuses.map(b=><BondBonusPreview key={b.stat} bonus={b} s={s}/>)}<AbilityPreview preview={preview}/>{preview.competitorGrowth&&<div className="rival-opponent"><strong>준서의 주간 성장 예상</strong><p className="reason">{preview.competitorGrowth.sharedPrimary?'함께 성공하면':'기본 계획'} · {growthText(preview.competitorGrowth.success)} · 신뢰 +1</p>{preview.competitorGrowth.sharedPrimary&&preview.failureChance>0&&<p className="reason">내 훈련 실패 시 · {growthText(preview.competitorGrowth.failure)} · 함께한 추가 성장 없음</p>}<p className="reason">후반 활동 완료 후 주 1회 반영됩니다. 함께한 전반·후반 훈련이 모두 보너스에 반영됩니다.</p></div>}{preview.disabledReason&&<p className="warning">{preview.disabledReason}</p>}{preview.warning&&<p className="warning gap-top">{preview.warning}</p>}</>:<p className="muted">활동을 고르면 성공·실패 확률과 예상 변화를 확인할 수 있습니다.</p>}
+    <div className="activity-confirm panel gap-top" aria-live="polite">{preview?<><strong>{preview.title}{['practice','partner'].includes(selected)?` · ${labels[target]}`:''}</strong><p className="reason">{options.find(o=>o.id===selected)?.description}</p>{preview.training&&<p className={`training-odds ${preview.failureChance>=25?'warning':''}`}>시작 체력 {s.energy} · 성공 {100-preview.failureChance}% / 실패 {preview.failureChance}%</p>}<p className="reason">{preview.training?'성공 시':'활동 후'} 체력 {s.energy+preview.energy} · 스트레스 {s.stress+preview.stress} · 스킬 +{preview.points} Pt</p>{preview.failureChance>0&&preview.failure&&<div className="failure-preview"><strong>실패 시 · 능력 성장 없음 / 스킬 +0 Pt</strong><div className="chips">{effectChips(preview.failure).map(c=><span key={c.key} className="chip cost">{c.label}</span>)}</div><p className="reason">체력 {s.energy+preview.failure.energy} · 스트레스 {s.stress+preview.failure.stress}가 됩니다. 훈련 시간은 그대로 소비됩니다.</p></div>}{preview.present.length>0&&<p className="reason">{preview.present.map(id=>`${supportById(id,s).name} 인연 +${Math.min(8,100-bond(s,id))}`).join(' · ')}{preview.joint.length>0&&' · 성공 시 합동 훈련 보너스 포함'}</p>}{preview.bondBonuses.map(b=><BondBonusPreview key={b.stat} bonus={b} s={s}/>)}<AbilityPreview preview={preview}/>{preview.competitorGrowth&&<div className="rival-opponent"><strong>준서의 주간 성장 예상</strong><p className="reason">{preview.competitorGrowth.sharedPrimary?'함께 성공하면':'기본 계획'} · {growthText(preview.competitorGrowth.success)} · 신뢰 +1</p>{preview.competitorGrowth.sharedPrimary&&preview.failureChance>0&&<p className="reason">내 훈련 실패 시 · {growthText(preview.competitorGrowth.failure)} · 함께한 추가 성장 없음</p>}<p className="reason">후반 활동 완료 후 주 1회 반영됩니다. 함께한 전반·후반 훈련이 모두 보너스에 반영됩니다.</p></div>}{preview.disabledReason&&<p className="warning">{preview.disabledReason}</p>}{preview.warning&&<p className="warning gap-top">{preview.warning}</p>}</>:<p className="muted">활동을 고르면 성공·실패 확률과 예상 변화를 확인할 수 있습니다.</p>}
     <div className="actions"><button className="primary" disabled={!preview||!!preview.disabledReason} onClick={()=>send({type:'activity',id:selected,...(['practice','partner'].includes(selected)?{target}:{}),...(selected==='partner'?{partner}:{})})}>{weekend?'주말 보내기':`${s.weekdayPart===1?'전반':'후반'} 활동 시작`}</button></div></div>
   </>;
 }
@@ -98,7 +126,7 @@ function EventScreen({s,send}:{s:GameState;send:Send}) {
   const hints=result?getSkills(s).filter(k=>chosen.hints.includes(k.id)&&owner.hints[s.role]===k.id):[];
   const unlocked=result?getSkills(s).filter(k=>chosen.unlocks.includes(k.id)&&owner.ultimates[s.role]===k.id):[];
   return <><h1 className="screen-title" tabIndex={-1}>{ev.title}</h1><p className="lead">{s.weekdayPart===1?'전반 활동 후 · 파트너 인카운터':'후반 활동 후 · 파트너 인카운터'}</p>
-    {weekend?<div className="stage"><Background id="ground" fill/><Portrait id={person}/><span className="place">청람고 운동장</span></div>:<Background id="ground" banner/>}
+    <GameScene s={s} input={{speaker:person,answered:result}}/>
     <section className="scene-card"><div className="event-body">{!weekend&&<CardAvatar card={owner} content={s.content}/>}<div><p className="speaker"><strong>{ev.speaker}</strong></p><p className="quote">{result?s.eventReply:ev.text}</p></div></div>
     {result?<><Changes s={s} changes={changes}/>{hints.length>0&&<p className="notice">스킬 힌트 · {hints.map(k=>k.name).join(', ')}<br/><span className="reason">습득 비용이 4 Pt 줄었습니다. 다음 활동 선택 화면에서 배울 수 있습니다.</span></p>}{unlocked.length>0&&<p className="notice">상위 스킬 개방 · {unlocked.map(k=>k.name).join(', ')}<br/><span className="reason">일반 스킬과 능력 조건, 스킬 포인트를 갖춰 상태창에서 배울 수 있습니다.</span></p>}<div className="actions"><button className="primary" onClick={()=>send({type:'continue'})}>{s.weekdayPart===1?'후반 활동으로':matchPlan(s)?'경기 준비로':'주말 활동으로'}</button></div></>:<div className="cards one gap-top">{ev.choices.map((c,i)=><button className="card" key={c.label} onClick={()=>send({type:'choice',index:i})}><strong>{c.label}</strong><span className="desc">{c.hint}</span><Changes s={s} changes={{...growthChanges(c.gains,c.proficiency),...(c.points?{skillPoints:c.points}:{}),...Object.fromEntries((['energy','stress','trust'] as const).filter(k=>c[k]).map(k=>[k,c[k]!]))}}/></button>)}</div>}</section>
   </>;
@@ -116,6 +144,7 @@ export default function App() {
   const [role,setRole]=useState<Role>('batter'),[name,setName]=useState('');
   const [statusOpen,setStatusOpen]=useState(false),[statusTab,setStatusTab]=useState('능력'),[confirmNew,setConfirmNew]=useState(false);
   const [saveOk,setSaveOk]=useState(true),[saving,setSaving]=useState(false);
+  const [calendarOpen,setCalendarOpen]=useState(false),[logSince,setLogSince]=useState(Number.MAX_SAFE_INTEGER);
   const saveQueue=useRef(Promise.resolve()),saveTicket=useRef(0);
   function persist(state:GameState){const ticket=++saveTicket.current;setSaving(true);saveQueue.current=saveQueue.current.catch(()=>{}).then(async()=>{try{await database().saveSession(state);if(ticket===saveTicket.current)setSaveOk(true);}catch{if(ticket===saveTicket.current)setSaveOk(false);}finally{if(ticket===saveTicket.current)setSaving(false);}});}
   const [error,setError]=useState('');
@@ -135,6 +164,7 @@ export default function App() {
     const previous=gameRef.current!;
     const next=transition(previous,{...a,revision:game.revision});
     if(next===previous)return;
+    setLogSince(previous.log.length);
     gameRef.current=next;setGame(next);persist(next);
   };
   function start() {
@@ -160,22 +190,27 @@ export default function App() {
   const steps=['전반 활동','전반 인카운터','후반 활동','후반 인카운터',...(game&&matchPlan(game)?['출전 · 경기']:[]),'주말 활동'];
   const visibleStep=step===5?steps.length-1:step;
   return <div className="app" data-layout={layout} data-mood={weekend?'weekend':'weekday'} data-phase={playing?game.phase:mode}>
-    <header className="topbar"><span className="brand">마지막 여름</span>{playing&&<><span className="date">1학년 {game.month}월 {game.week}주차{game.phase==='weekday'?` · ${game.weekdayPart===1?'전반':'후반'}`:''}</span><span className="who">{game.name} · {roleName(game)}</span></>}<div className="right">{playing&&<><span className={`save-state ${saveOk?'':'warning'}`}>{saving?'저장 중…':saveOk?'자동 저장됨':'저장되지 않음'}</span><button onClick={()=>{setStatusTab('능력');setStatusOpen(true);}}>상태창</button><button className="menu-button" onClick={()=>{setConfirmNew(false);setMode('menu');}}>처음 화면</button></>}</div></header>
+    <header className="topbar"><span className="brand">마지막 여름</span>{playing&&<><span className="date">1학년 {game.month}월 {game.week}주차{game.phase==='weekday'?` · ${game.weekdayPart===1?'전반':'후반'}`:''}</span><span className="who">{game.name} · {roleName(game)}</span></>}<div className="right">{playing&&<><span className={`save-state ${saveOk?'':'warning'}`}>{saving?'저장 중…':saveOk?'자동 저장됨':'저장되지 않음'}</span>{(completed||layout!=='three'&&!match)&&<><button onClick={()=>{setStatusTab('능력');setStatusOpen(true);}}>상태창</button><button className="menu-button" onClick={()=>{setConfirmNew(false);setMode('menu');}}>처음 화면</button></>}</>}</div></header>
     {!saveOk&&<p className="notice warning" role="status">브라우저에 저장할 수 없습니다. 지금은 플레이할 수 있지만, 새로고침하거나 창을 닫으면 이번 진행을 잃을 수 있습니다.</p>}
+    {playing&&!completed&&game.phase!=='lineup'&&<Hud s={game} steps={steps} step={visibleStep} onCalendar={()=>setCalendarOpen(true)}/>}
     <div className="body">
-    {playing&&layout==='three'&&<aside className="side"><section className="panel player-panel"><Portrait id={game.role}/><h2>{game.name}</h2><p className="muted">청람고 1학년 · {roleName(game)}</p><div className="gap-top"><Meter label="체력" value={game.energy}/><Meter label="스트레스" value={game.stress} bad/><Meter label="지능" value={game.attributes.intelligence}/><p className="reason">스킬 발동 {Math.round(skillActivationChance(game.attributes.intelligence)*1000)/10}% · 조건 충족 시</p></div><button className="full-button gap-top" onClick={()=>{setStatusTab('능력');setStatusOpen(true);}}>능력과 기록 보기</button></section></aside>}
+    {playing&&layout==='three'&&<aside className="side game-side"><PlayerCard s={game} onStatus={()=>{setStatusTab('능력');setStatusOpen(true);}}/><CompetitionPanel s={game}/><SupportPanel s={game}/></aside>}
     <main className="center" ref={main}>
     {playing&&<TrainingFeedback s={game}/>}
     {mode==='menu'&&<><div className="hero"><Background id="gate"/><div className="title-block"><h1 className="logo" tabIndex={-1}>마지막 여름</h1><p className="tag">교문에서 시작된, 나만의 야구 이야기</p></div></div><p className="lead">스윙 한 번, 공 하나. 오늘의 선택이 내일의 선수를 만듭니다.</p><section className="panel"><p>청람고 야구부의 신입생이 되어 3월부터 6월 여름 대회까지 뛰어보세요. 훈련과 스킬로 나만의 스타일을 만들고, 동료와 함께 대회에 도전합니다.</p><div className="actions">{booting&&<p role="status">저장과 카드 라이브러리를 읽고 있습니다…</p>}{game&&<button className="primary" onClick={()=>{setConfirmNew(false);setMode('play');}}>이어서 하기</button>}<button className={game?'':'primary'} disabled={booting} onClick={requestNew}>새 선수 만들기</button><button disabled={booting} onClick={()=>setMode('library')}>카드 라이브러리</button></div>{game&&<p className="muted gap-top">{game.name} · {roleName(game)} · {game.month}월 {game.week}주차 {game.phase==='complete'?'여름 시즌 완료':''}</p>}{loaded.kind==='invalid'&&!game&&<p className="notice warning" role="alert">{loaded.message}</p>}</section><p className="muted gap-top">3~6월 · 첫 여름 대회 버전 · 이 브라우저에 자동 저장됩니다.</p></>}
     {mode==='library'&&<CardLibrary packs={packs} onChange={setPacks} onClose={()=>setMode('menu')}/>}
     {mode==='menu'&&error&&<p className="notice warning" role="alert">{error}</p>}
     {mode==='create'&&<><h1 className="screen-title" tabIndex={-1}>새 유니폼의 주인공</h1><p className="lead">어떤 선수로 첫걸음을 내딛을까요?</p><form onSubmit={e=>{e.preventDefault();start();}}><label className="field-label" htmlFor="player-name">선수 이름</label><input id="player-name" type="text" value={name} onChange={e=>setName(e.target.value)} autoComplete="off" placeholder="이름을 입력하세요" aria-describedby="name-hint"/><p className="muted gap-top" id="name-hint">이름은 1~8자. 역할은 입학 후에 바꿀 수 없습니다.</p><p className="field-label section-label">나의 포지션</p><div className="roles" role="group" aria-label="선수 역할">{(['batter','pitcher'] as const).map(r=><button type="button" className="card role-card" aria-pressed={role===r} key={r} onClick={()=>{setRole(r);setDeck(recommendedDeck(r));}}><Portrait id={r} size="sm"/><span><strong>{r==='batter'?'타자':'투수'}</strong><span className="role-description">{r==='batter'?'팀의 흐름을 바꾸는 한 번의 스윙':'마운드 위에서 만드는 나만의 승부'}</span><span className="desc">{roleStats(r).map(k=>labels[k]).join(' · ')}</span></span></button>)}</div><DeckBuilder content={content} role={role} selected={deck} onChange={setDeck}/>{error&&<p className="notice warning" role="alert">{error}</p>}<div className="actions"><button className="primary" type="submit" disabled={!name.trim()||[...name.trim()].length>8||deck.length!==6}>입학하기</button><button type="button" onClick={()=>setMode('menu')}>돌아가기</button></div></form></>}
-    {playing&&!completed&&<>{game.phase!=='lineup'&&<ol className="steps" aria-label="이번 주 진행">{steps.map((label,i)=><li key={label} className={visibleStep===i?'now':visibleStep>i?'done':''} aria-current={visibleStep===i?'step':undefined}>{i+1}. {label}</li>)}</ol>}{!match&&(!trainingEntry||!game.notice.startsWith(trainingEntry.title))&&<p className="recap" role="status">{game.notice}</p>}{['weekday','weekend','selection','lineup'].includes(game.phase)&&<div className="growth-toolbar"><button onClick={()=>{setStatusTab('시즌');setStatusOpen(true);}}>시즌 일정·대진</button><button onClick={()=>{setStatusTab('스킬');setStatusOpen(true);}}>스킬 배우기 · {game.skillPoints} Pt</button></div>}{game.phase==='weekday'&&<div className="mobile-goal"><SeasonPanel s={game}/><CompetitionPanel s={game}/></div>}{game.phase==='lineup'?<SupportLineup key={game.month} s={game} send={send}/>:game.phase==='roleEvent'?<RoleEventScreen s={game} send={send}/>:game.phase==='selection'?<SelectionScreen s={game} send={send}/>:game.phase==='weekday'||game.phase==='weekend'?<ActivityScreen key={`${game.month}-${game.week}-${game.phase}-${game.weekdayPart}`} s={game} send={send}/>:match?<MatchScreen key={game.match!.id} s={game} send={send}/>:<EventScreen s={game} send={send}/>}</>}
+    {playing&&!completed&&<>{!match&&(!trainingEntry||!game.notice.startsWith(trainingEntry.title))&&<p className="recap" role="status">{game.notice}</p>}{game.phase==='weekday'&&<div className="mobile-goal"><SeasonPanel s={game}/><CompetitionPanel s={game}/></div>}{game.phase==='lineup'?<SupportLineup key={game.month} s={game} send={send}/>:game.phase==='roleEvent'?<RoleEventScreen s={game} send={send}/>:game.phase==='selection'?<SelectionScreen s={game} send={send}/>:game.phase==='weekday'||game.phase==='weekend'?<ActivityScreen key={`${game.month}-${game.week}-${game.phase}-${game.weekdayPart}`} s={game} send={send}/>:match?<MatchScreen key={game.match!.id} s={game} send={send}/>:<EventScreen s={game} send={send}/>}</>}
     {completed&&<><Background id="ground" banner caption="1학년 6월의 끝 · 함께 만든 첫 여름"/><h1 className="screen-title" tabIndex={-1}>나의 첫 여름 · {tournamentResult(game)}</h1><p className="lead">{game.name}의 첫 시즌, 훈련으로 만든 야구가 기록으로 남았습니다.</p><DevelopmentPanel s={game} detail/><TournamentBoard s={game}/><SeasonRecords s={game}/><SchoolRivalryPanel s={game}/><section className="panel"><p>3월의 첫 연습부터 6월의 마지막 주말까지 마쳤습니다. 함께한 파트너와 배운 스킬, 경기 기록을 돌아보세요.</p><p className="muted gap-top">현재 버전은 첫 여름 대회까지입니다. 7월 이후의 이야기는 앞으로 이어집니다.</p><div className="actions"><button className="primary" onClick={()=>{setStatusTab('기록');setStatusOpen(true);}}>시즌 기록 돌아보기</button><button onClick={requestNew}>다른 선수로 시작</button></div></section></>}
     {confirmNew&&<section className="confirm-box" role="alert" aria-label="새 선수 확인"><strong>새 선수로 시작할까요?</strong><p>새 선수의 ‘입학하기’를 누르면 기존 저장을 덮어씁니다. 그전까지는 돌아갈 수 있습니다.</p><div className="actions"><button onClick={()=>{setConfirmNew(false);setName('');setDeck(recommendedDeck(role));setMode('create');}}>새 선수 만들러 가기</button><button onClick={()=>setConfirmNew(false)}>취소</button></div></section>}
     </main>
-    {playing&&layout==='three'&&<aside className="side"><SeasonPanel s={game}/><DevelopmentPanel s={game}/><CompetitionPanel s={game}/><SupportPanel s={game}/><section className="panel"><h3>{game.month}월의 일정</h3><ul className="cal">{[1,2,3,4].map(w=>weekTitle(game,w)).map((t,i)=><li key={t} className={game.week===i+1?'now':''}><span className="wk">{i+1}주차</span><span>{t}{i+1<game.week?' ✓':''}</span></li>)}</ul><p className="reason gap-top">경기 주간에도 일요일 활동은 남습니다. 대회 일정과 상대는 상태창의 시즌 탭에서 확인하세요.</p></section></aside>}
-    </div>{statusOpen&&game&&<StatusDialog s={game} send={send} initialTab={statusTab} onClose={()=>setStatusOpen(false)}/>}<footer>마지막 여름 · FIRST SUMMER</footer>
+    {playing&&layout==='three'&&<LogPanel s={game} since={logSince}/>}
+    </div>
+    {playing&&!completed&&layout==='three'&&<div className="mobile-log"><LogPanel s={game} since={logSince} mobile/></div>}
+    {playing&&!completed&&<BottomMenu s={game} openStatus={t=>{setStatusTab(t);setStatusOpen(true);}} openCalendar={()=>setCalendarOpen(true)} toMenu={()=>{setConfirmNew(false);setMode('menu');}}/>}
+    {calendarOpen&&game&&<CalendarDialog s={game} onClose={()=>setCalendarOpen(false)}/>}
+    {statusOpen&&game&&<StatusDialog s={game} send={send} initialTab={statusTab} onClose={()=>setStatusOpen(false)}/>}<footer>마지막 여름 · FIRST SUMMER</footer>
   </div>;
 }
 

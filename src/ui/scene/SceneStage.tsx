@@ -9,6 +9,7 @@ export type CharacterResolver=(id:string)=>ResolvedCharacter|undefined;
 export interface FloatingText {key:string;text:string;color:string;x?:number;y?:number}
 
 const positions={left:26,center:50,right:74};
+const crowdPositions={left:19,center:50,right:81};
 const fallbackArt:CharacterArt={name:'인물',tint:['#d8dde6','#7c8597'],head:.13,files:{}};
 
 function Img({src,className}:{src?:string;className?:string}) {
@@ -34,20 +35,20 @@ export function Silhouette({art}:{art:Pick<CharacterArt,'tint'|'cap'|'longHair'>
   </svg>;
 }
 
-function Character({member,art}:{member:CastMember;art:ResolvedCharacter}) {
+function Character({member,art,crowd}:{member:CastMember;art:ResolvedCharacter;crowd:boolean}) {
   const file=characterFile(art,member.expression)??art.portrait;
-  return <div className={`scene-char ${member.dim?'dim':''}`} style={{left:`${positions[member.pos]}%`}} data-slot={`L1 ${member.id}/${member.expression} · 3:4`}>
+  return <div className={`scene-char ${member.dim?'dim':''}`} style={{left:`${(crowd?crowdPositions:positions)[member.pos]}%`}} data-slot={`L1 ${member.id}/${member.expression} · 3:4`}>
     <Silhouette art={art}/>
     <Img className="scene-sprite" src={file}/>
   </div>;
 }
 
-function EmotionBubble({member,art}:{member:CastMember;art:ResolvedCharacter}) {
+function EmotionBubble({member,art,crowd}:{member:CastMember;art:ResolvedCharacter;crowd:boolean}) {
   if(!member.bubble)return null;
   const b=bubbles[member.bubble];
-  // Characters are 92% of the stage height and anchored to the bottom edge.
-  const top=8+art.head*92;
-  return <div className="scene-bubble" style={{left:`${positions[member.pos]+9}%`,top:`${top}%`}} data-slot={`L2 ${member.bubble} · 1:1`}>
+  // Characters are 92% (78% in a crowd) of the stage height and anchored to the bottom edge.
+  const height=crowd?78:92,top=100-height+art.head*height;
+  return <div className="scene-bubble" style={{left:`${(crowd?crowdPositions:positions)[member.pos]+(crowd?7:9)}%`,top:`${top}%`}} data-slot={`L2 ${member.bubble} · 1:1`}>
     <span className="scene-bubble-fallback" style={{color:b.color}}>{b.glyph}</span>
   </div>;
 }
@@ -55,14 +56,15 @@ function EmotionBubble({member,art}:{member:CastMember;art:ResolvedCharacter}) {
 /** Layered stage: background (L0) → characters (L1) → emotion bubbles (L2) → floating effects (L3). Decorative only. */
 export function SceneStage({spec,resolve,effects=[],caption,children}:{spec:SceneSpec;resolve:CharacterResolver;effects?:FloatingText[];caption?:string;children?:ReactNode}) {
   const arts=spec.cast.map(m=>resolve(m.id)??characterArt[m.id]??fallbackArt);
+  const crowd=spec.cast.length>2;
   const who=spec.cast.map((m,i)=>`${arts[i].name}(${expressions[m.expression]})`).join(', ');
-  return <section className="scene-stage" data-place={spec.place} data-time={spec.time} aria-label={`장면 · ${places[spec.place]} · ${times[spec.time]} · ${who}`}>
+  return <section className={`scene-stage ${crowd?'crowd':''}`} data-place={spec.place} data-time={spec.time} aria-label={`장면 · ${places[spec.place]} · ${times[spec.time]} · ${who}`}>
     <div className="scene-layer scene-bg" aria-hidden="true" data-slot={`L0 ${spec.place}.${spec.time} · 16:9`}>
       <div className="scene-sky"/><div className="scene-glow a"/><div className="scene-glow b"/><div className="scene-floor"/><div className="scene-grain"/><div className="scene-vignette"/>
       <Img className="scene-bg-img" src={backgroundFile(spec.place,spec.time)}/>
     </div>
-    <div className="scene-layer scene-chars" aria-hidden="true">{spec.cast.map((m,i)=><Character key={m.id} member={m} art={arts[i]}/>)}</div>
-    <div className="scene-layer scene-bubbles" aria-hidden="true">{spec.cast.map((m,i)=><EmotionBubble key={`${m.id}-${m.bubble}`} member={m} art={arts[i]}/>)}</div>
+    <div className="scene-layer scene-chars" aria-hidden="true">{spec.cast.map((m,i)=><Character key={m.id} member={m} art={arts[i]} crowd={crowd}/>)}</div>
+    <div className="scene-layer scene-bubbles" aria-hidden="true">{spec.cast.map((m,i)=><EmotionBubble key={`${m.id}-${m.bubble}`} member={m} art={arts[i]} crowd={crowd}/>)}</div>
     <div className="scene-layer scene-fx" aria-hidden="true">{effects.map(e=><span key={e.key} className="scene-float" style={{color:e.color,left:`${e.x??50}%`,top:`${e.y??40}%`}}>{e.text}</span>)}</div>
     <span className="scene-place">{caption??`${places[spec.place]} · ${times[spec.time]}`}</span>
     {children}
