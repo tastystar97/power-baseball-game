@@ -3,7 +3,16 @@ import {availableSkills} from '../content/skills.ts';
 import type {GameState,SkillId} from './types.ts';
 import type {SkillCondition} from '../cards/schema.ts';
 export const skillActivationChance=(intelligence:number)=>(500+clamp(intelligence)*4)/1000;
-export const opponentType=(s:GameState)=>s.role==='batter'?(s.match!.inning<=3?'wild':s.match!.inning<=6?'fast':'tired'):(s.match!.order[0]%9>=2&&s.match!.order[0]%9<=4?'power':'patient');
+export const opponentType=(s:GameState)=>{
+ const m=s.match!;
+ if(!m.rosters)return s.role==='batter'?'wild':'patient';
+ if(s.role==='batter'){
+  const p=m.rosters[0].pitchers.find(p=>p.id===m.pitcherIds[0])!;
+  if((m.pitcherLines[p.id]?.load??0)>(78+p.ratings.stamina*.6)*.8)return 'tired';
+  return p.traits.includes('velocity')?'fast':'wild';
+ }
+ const b=m.rosters[0].batters[m.order[0]%9];return b.traits.includes('power')?'power':'patient';
+};
 export function conditionMet(s:GameState,tactic:string,c:SkillCondition):boolean {
  if(c.role&&c.role!==s.role)return true;
  const m=s.match!;

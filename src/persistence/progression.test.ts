@@ -1,7 +1,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createGame, transition, snapshot } from '../game/engine.ts';
-import { createMatch, applyOutcome } from '../game/match.ts';
+import { createMatch, initializeMatch, plateContext } from '../game/match.ts';
+import {createPlay} from '../game/plate.ts';
+import {applyPlay} from '../game/scoring.ts';
 import type { Action } from '../game/types.ts';
 import { parseSave } from './save.ts';
 import { defaultSupports } from '../content/supports.ts';
@@ -55,12 +57,13 @@ test('every phase resumes identically across both roles and three raising styles
   }
 });
 test('player batter identity follows the runner through hits and scoring',()=>{
-  const m=createMatch();m.half=1;
-  applyOutcome(m,'single',true,false);
+  const s=createGame('여름','batter',42);s.match=createMatch();s.match.half=1;s.match.order[1]=7;initializeMatch(s);const m=s.match;
+  const hit=(outcome:'single'|'double')=>applyPlay(m,createPlay(plateContext(s),'contact',{outcome,ball:'line',direction:'center',fielder:null},()=>.99));
+  hit('single');
   assert.equal(m.bases[0]?.owner,'player');
-  applyOutcome(m,'single',false,false);
+  hit('single');
   assert.equal(m.bases[1]?.owner,'player');
-  applyOutcome(m,'double',false,false);
+  hit('double');
   assert.ok(!m.bases.some(r=>r?.owner==='player'));
   assert.equal(m.pitching.runs,0);
 });

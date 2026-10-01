@@ -143,5 +143,5 @@ export function createPlay(ctx:PlateContext,tactic:string,path:Omit<PlatePath,'p
   move(runner,0,step as 1|2|3|4);
  }else {move(runner,0,'out');}
  const runs=after.score[ctx.half]-before.score[ctx.half];
- return {...path,kind:'plate',inning:ctx.inning,half:ctx.half,order:ctx.order,batter:{id:ctx.batter.id,name:ctx.batter.name},pitcher:{id:ctx.pitcher.id,name:ctx.pitcher.name},playerBatter:ctx.playerBatter,playerPitcher:ctx.playerPitcher,tactic,source:ctx.source,burden,moves,outs:after.outs-before.outs,runs,rbi:o==='error'||o==='doublePlay'?0:runs,before,after};
+ return {outcome:path.outcome,ball:path.ball,direction:path.direction,fielder:path.fielder,kind:'plate',inning:ctx.inning,half:ctx.half,order:ctx.order,batter:{id:ctx.batter.id,name:ctx.batter.name},pitcher:{id:ctx.pitcher.id,name:ctx.pitcher.name},playerBatter:ctx.playerBatter,playerPitcher:ctx.playerPitcher,tactic,source:ctx.source,burden,moves,outs:after.outs-before.outs,runs,rbi:o==='error'||o==='doublePlay'?0:runs,before,after};
 }

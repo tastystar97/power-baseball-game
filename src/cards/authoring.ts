@@ -89,7 +89,7 @@ export function previewCard(input:CardPack,id:string,role:Role,bond:number,learn
   s.bonds[cardId]=bond;s.energy=context.energy;s.stress=context.stress;
   s.placements={[cardId]:card.training[role][0]};
   const activity=previewActivity(s,card.training[role][0])!;
-  s.match=createMatch();s.match.inning=context.inning;s.match.outs=context.outs;s.match.score=context.behind?[2,0]:[0,2];s.match.bases[0]=context.runners?{owner:'team'}:null;
+  s.match=createMatch();s.match.pitchingRole='starter';s.match.half=role==='batter'?1:0;s.match.order[1]=7;s.match.inning=context.inning;s.match.outs=context.outs;s.match.score=context.behind?[2,0]:[0,2];s.match.bases[0]=context.runners?{id:'preview_runner',name:'주자',owner:'team',speed:50,responsible:null}:null;
   const base=tactics(s);s.skills=learned==='upper'?[card.hints[role],card.ultimates[role]].filter((id):id is string=>Boolean(id)):learned==='normal'&&card.hints[role]?[card.hints[role]!]:[];
   return {activity,tactics:tactics(s),base};
 }

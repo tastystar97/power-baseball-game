@@ -24,7 +24,7 @@ function checkDuels(s:GameState,m:Match){
   if(e.half!==(s.role==='batter'?1:0)||e.order<=order||e.order>=m.order[e.half]||e.inning<inning||e.inning>m.inning)fail('맞대결 타석 순서가 올바르지 않습니다.');
   if(s.role==='batter'?(e.opponent!=='taeo'||e.inning>6||e.order%9!==4||m.appearance!=='starter'):(e.opponent!=='jihwan'||e.order%9!==3))fail('맞대결 선수와 타순이 다릅니다.');
   if(m.appearance==='substitute'&&e.inning<7)fail('교체 출전 전 맞대결이 있습니다.');
-  if(!actions.includes(e.tactic)||(e.source==='auto'&&e.tactic!==(s.role==='batter'?'contact':'control'))||(e.outcome==='sacrifice'&&(s.role!=='batter'||e.tactic!=='bunt')))fail('맞대결 작전이 올바르지 않습니다.');
+  if(!actions.includes(e.tactic)||(e.source==='auto'&&e.tactic!==(s.role==='batter'?'contact':'control'))||(e.outcome==='sacrificeBunt'&&(s.role!=='batter'||e.tactic!=='bunt')))fail('맞대결 작전이 올바르지 않습니다.');
   order=e.order;inning=e.inning;
  }
  if(entries.filter(e=>e.source==='manual').length>m.highlights)fail('선택 횟수보다 맞대결이 많습니다.');

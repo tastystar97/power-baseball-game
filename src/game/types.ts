@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import {matchSchema,runnerSchema} from './match-schema.ts';
+export {matchSchema} from './match-schema.ts';
 import {contentSchema,idSchema,roleAbilityNames} from '../cards/schema.ts';
 
 export const statKeys = ['contact', 'power', 'eye', 'speed', 'field', 'mental', 'velocity', 'control', 'breaking', 'stamina'] as const;
@@ -31,30 +33,14 @@ const teamSchema=z.enum(teamIds);
 export const statsSchema = z.object({ contact:value, power:value, eye:value, speed:value, field:value, mental:value, velocity:value, control:value, breaking:value, stamina:value });
 export type Stats = z.infer<typeof statsSchema>;
 export type Gains = Partial<Record<StatKey, number>>;
-const runnerSchema = z.object({owner:z.enum(['player','team','opponent'])});
 export type Runner = z.infer<typeof runnerSchema>;
-export type Outcome = 'strikeout' | 'out' | 'walk' | 'single' | 'double' | 'homer' | 'sacrifice';
+export type Outcome = import('./plate.ts').PlateOutcome;
 const starterSchema=z.enum(['player','junseo','other']);
 const candidateSchema=z.object({ability:count.max(115),practice:count.max(20),performance:count.max(20).nullable(),readiness:count.max(20),readinessSource:z.enum(['practice','match']),trust:count.max(20),total:count.max(155)});
 export const competitionSchema=z.object({matchId:z.string(),month:z.number().int().min(4).max(6),week:z.number().int().min(1).max(4),player:candidateSchema,junseo:candidateSchema,starter:starterSchema,previous:starterSchema.nullable(),reason:z.enum(['lead','incumbent','first_chance','below_threshold'])});
 const duelSchema=z.object({half:z.union([z.literal(0),z.literal(1)]),order:count,inning:z.number().int().min(1).max(99),opponent:z.enum(['taeo','jihwan']),tactic:z.string(),source:z.enum(['manual','auto']),outcome:z.enum(['strikeout','out','walk','single','double','homer','sacrifice'])});
 const competitorSchema=z.object({stats:statsSchema,trust:value,weeks:z.array(z.object({key:z.number().int().min(1).max(16),gains:z.partialRecord(z.enum(statKeys),count.max(100)),trustDelta:count.max(1),sharedPrimary:z.enum(statKeys).nullable(),source:z.literal('v6'),sharedSecondary:z.enum(statKeys).nullable().optional()})).max(16)});
 const skillCheckSchema=z.object({half:z.union([z.literal(0),z.literal(1)]),order:count,inning:z.number().int().min(1).max(99),tactic:z.string(),source:z.enum(['manual','auto']),intelligence:value,eligible:z.array(idSchema).max(32),active:z.array(idSchema).max(32)});
-export const matchSchema = z.object({
-  skillChecks:z.array(skillCheckSchema).max(500),
-  duels:z.array(duelSchema),
-  id:z.string().optional(), opponentId:teamSchema.optional(),
-  appearance:z.enum(['starter','substitute','reserve']),
-  inning:z.number().int().min(1).max(99), half:z.union([z.literal(0),z.literal(1)]), outs:z.number().int().min(0).max(3),
-  bases:z.tuple([runnerSchema.nullable(),runnerSchema.nullable(),runnerSchema.nullable()]),
-  score:z.tuple([count,count]), lines:z.tuple([z.array(count).max(99),z.array(count).max(99)]),
-  order:z.tuple([count,count]), highlights:z.number().int().min(0).max(3),
-  faced:count, load:count, retired:z.boolean(), awaiting:z.boolean(), over:z.boolean(),
-  batting:z.object({ab:count,hits:count,hr:count,rbi:count,walks:count,k:count}),
-  pitching:z.object({outs:count,k:count,walks:count,hits:count,runs:count}),
-  recent:z.array(z.string().max(250)).max(12),
-  last:z.object({title:z.string(),text:z.string(),reasons:z.array(z.string()),runs:count}).nullable(),
-});
 export type Match = z.infer<typeof matchSchema>;
 export const supportIds=['bat_senior','pitch_senior','rival','catcher','manager','classmate'] as const;
 export type SupportId=string;
@@ -86,7 +72,7 @@ export const stateSchema = z.object({
 }).strict();
 export type GameState = z.infer<typeof stateSchema>;
 // The revision is captured when a UI action is offered, not when it is applied.
-export type Action = {revision:number; type:'lineup'|'editLineup'|'learn'|'activity'|'choice'|'continue'|'tactic'; id?:string; target?:TrainingTarget; index?:number; supports?:SupportId[];partner?:SupportId};
+export type Action = {revision:number; type:'lineup'|'editLineup'|'learn'|'activity'|'choice'|'continue'|'tactic'|'delegate'|'intervene'|'playback'; id?:string; target?:TrainingTarget; index?:number; supports?:SupportId[];partner?:SupportId};
 export interface Activity { id:string; title:string; description:string; gains:PrimaryGains; proficiency?:Gains; rivalTrainingStat?:StatKey; energy:number; stress:number; catcher?:number; training?:boolean; }
 export interface Choice { points?:number; label:string; hint:string; reply:string; gains?:PrimaryGains; proficiency?:Gains; energy?:number; stress?:number; trust?:number; rival?:number; catcher?:number; }
 export interface Tactic {id:string; title:string; description:string; outlook:string; reason:string; disabled:boolean; burden:number; probabilities:number[];}

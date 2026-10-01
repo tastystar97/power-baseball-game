@@ -12,7 +12,7 @@ import { primaryKeys, labels } from './types.ts';
 import type { Action, Activity, GameState, Role, TrainingTarget, PrimaryKey, Choice, SupportId } from './types.ts';
 import { clamp, random } from './random.ts';
 import {failurePenalty,trainingFailureChance,trainingGrowth} from './training.ts';
-import { advanceMatch, chooseTactic, createMatch } from './match.ts';
+import { advanceMatch, chooseTactic, createMatch, intervene } from './match.ts';
 import { addBond, bondTrainingBonus, isJoint, participants, weeklyPlacements } from './support.ts';
 import { evaluateSelection } from './competition.ts';
 import {matchPlan,finishRound,weekKey,monthGoal} from './season.ts';
@@ -190,12 +190,20 @@ export function transition(previous:GameState,action:Action):GameState {
       logChange(s,before,newly.length?'상위 스킬 개방':choice.hints.length?'스킬 힌트':'함께한 시간',`${supportById(id,s).name}와 인연이 깊어졌다.${newly.length?' '+newly.map(id=>s.content.skills.find(k=>k.id===id)!.name).join(', ')+'의 습득 조건이 개방되었다.':choice.hints.some(id=>valid.includes(id))?' 일반 스킬 비용이 4 Pt 줄었다.':''}`);
       s.phase='supportResult';
     }
+  }else if(action.type==='intervene'&&['match','matchResult'].includes(s.phase)){
+    if(!intervene(s))return previous;s.phase='match';
+  }else if(action.type==='playback'&&s.match&&['match','matchResult','matchEnd'].includes(s.phase)){
+    const index=action.index??-1,m=s.match;
+    if(index<=m.playbackIndex||index>m.feed.length||index<m.feed.length&&index>0&&m.feed[index].inning===m.feed[index-1].inning&&m.feed[index].half===m.feed[index-1].half)return previous;
+    m.playbackIndex=index;
+  }else if(action.type==='delegate'&&s.phase==='match'){
+    if(!chooseTactic(s,s.role==='batter'?'contact':'control','auto'))return previous;s.phase='matchResult';
   }else if(action.type==='tactic'&&s.phase==='match'){
     if(!chooseTactic(s,action.id||''))return previous;s.phase='matchResult';
   }else if(action.type==='continue'){
     if(s.phase==='supportResult'){if(s.weekdayPart===1)beginSecond(s);else{s.activeEncounter=null;s.activeSupport=null;finishWeekday(s);}}
     else if(s.phase==='selection')startMatch(s);
-    else if(s.phase==='matchResult'){advanceMatch(s);s.phase=s.match!.over?'matchEnd':'match';if(s.match!.over)recordMatch(s);}
+    else if(s.phase==='matchResult'||s.phase==='match'&&!s.match!.awaiting){advanceMatch(s);s.phase=s.match!.over?'matchEnd':'match';if(s.match!.over)recordMatch(s);}
     else if(s.phase==='matchEnd')s.phase='weekend';
     else return previous;
   }else return previous;

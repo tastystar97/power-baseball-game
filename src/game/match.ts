@@ -1,247 +1,132 @@
 import {derivedStats} from './abilities.ts';
 import {eligibleSkills,rollSkills,skillActivationChance} from './skill-activation.ts';
 import {getSkills} from '../content/skills.ts';
-import type {SkillId} from './types.ts';
 import {identifyDuel,duelEntry} from './rivalry.ts';
-import {namedRivals} from '../content/rivals.ts';
-import type { GameState, Match, Outcome, Tactic } from './types.ts';
-import { clamp, random } from './random.ts';
-import {teams} from '../content/teams.ts';
-
-export const outcomeNames: Record<Outcome,string> = {strikeout:'삼진',out:'범타',walk:'볼넷',single:'안타',double:'2루타',homer:'홈런',sacrifice:'희생번트 성공'};
-const outcomes: Outcome[] = ['strikeout','out','walk','single','double','homer','sacrifice'];
-export function createMatch(appearance:Match['appearance']='starter'): Match {
-  return {skillChecks:[],duels:[],appearance,inning:1,half:0,outs:0,bases:[null,null,null],score:[0,0],lines:[[0],[0]],order:[0,0],highlights:0,
-    faced:0,load:0,retired:appearance==='reserve',awaiting:false,over:false,
-    batting:{ab:0,hits:0,hr:0,rbi:0,walks:0,k:0},pitching:{outs:0,k:0,walks:0,hits:0,runs:0},recent:[],last:null};
+import type {GameState,Match,Tactic,SkillId} from './types.ts';
+import type {MatchPlayer} from './roster.ts';
+import {rosterFor} from './roster.ts';
+import {plateDistribution,resolvePlate,outcomeNames as plateNames} from './plate.ts';
+import type {Distribution,PlateContext,PlayEvent} from './plate.ts';
+import {createScoreState,applyPlay,advanceHalf,enterPitcher,leavePitcher,stealPlay} from './scoring.ts';
+import {random} from './random.ts';
+export const outcomeNames={...plateNames,stolenBase:'도루 성공',caughtStealing:'도루 실패'};
+export function createMatch(appearance:Match['appearance']='starter'):Match {
+ return {...createScoreState(),appearance,skillChecks:[],duels:[],highlights:0,entered:false,retired:appearance==='reserve',awaiting:false,playerBoundary:false,intervene:false,
+  rosters:null,pitcherIds:['',''],usedPitchers:[[],[]],battingOrder:8,pitchingRole:'middle',feed:[],playbackIndex:0,summary:false,recent:[],last:null};
 }
-export const loadLimit = (s:GameState) => 42 + Math.round(derivedStats(s).stamina * .5);
-function genericOpponent(s: GameState) {
-  const m = s.match!;
-  if(s.role==='batter') return m.inning <= 3
-    ? {name:'상대 선발 · 우완',trait:'빠른 공 · 제구 불안',weakness:'선구안으로 볼넷을 노릴 기회',type:'wild'}
-    : m.inning <= 6 ? {name:'상대 선발 · 우완',trait:'직구 위주 · 공격적인 승부',weakness:'정확한 타격으로 빠른 공에 대응',type:'fast'}
-    : {name:'상대 구원 · 좌완',trait:'변화구 위주 · 누적된 피로',weakness:'실투를 기다렸다가 장타를 노릴 기회',type:'tired'};
-  const slot = m.order[0] % 9;
-  return slot>=2 && slot<=4 ? {name:`상대 ${slot+1}번 타자`,trait:'장타력 좋음 · 적극적인 스윙',weakness:'변화구와 유인구에 헛스윙 가능',type:'power'}
-    : {name:`상대 ${slot+1}번 타자`,trait:'끈질긴 승부 · 좋은 선구안',weakness:'스트라이크를 던져 승부할 필요',type:'patient'};
+export const loadLimit=(s:GameState)=>78+derivedStats(s).stamina*.6;
+export function initializeMatch(s:GameState){
+ const m=s.match!;if(m.rosters)return;
+ m.rosters=[rosterFor(m.opponentId??'haesol',s),rosterFor('cheongram',s,{appearance:m.appearance,battingOrder:m.battingOrder,pitchingRole:m.pitchingRole})];
+ for(const team of [0,1] as const){const p=m.rosters[team].pitchers.find(p=>p.duty==='starter')!;m.pitcherIds[team]=p.id;m.usedPitchers[team]=[p.id];enterPitcher(m,team,p.id,true);if(p.id==='player')m.entered=true;}
 }
-export function opponent(s:GameState) {
- const base=genericOpponent(s),id=s.match?.duels!==null?identifyDuel(s.role,s.match!,true):null;
- return id?{...base,name:`${namedRivals[id].name} · ${namedRivals[id].role}`} :base;
+export function currentBatter(s:GameState):MatchPlayer {initializeMatch(s);const m=s.match!;return m.rosters![m.half].batters[m.order[m.half]%9];}
+export function currentPitcher(s:GameState):MatchPlayer {initializeMatch(s);const m=s.match!,team=m.half===0?1:0;return m.rosters![team].pitchers.find(p=>p.id===m.pitcherIds[team])!;}
+function changePitcher(s:GameState,team:0|1,next:MatchPlayer){
+ const m=s.match!,old=m.pitcherIds[team];if(old===next.id||m.usedPitchers[team].includes(next.id))return;
+ leavePitcher(m,old);if(old==='player')m.retired=true;
+ m.pitcherIds[team]=next.id;m.usedPitchers[team].push(next.id);enterPitcher(m,team,next.id,false);
+ if(next.id==='player')m.entered=true;
+ note(m,`${m.inning}회 ${next.name} 등판`);
 }
-function recordDuel(s:GameState,result:Outcome,playerTurn:boolean,tactic:string,source:'manual'|'auto') {
- const m=s.match!;if(m.duels===null)return;
- const id=identifyDuel(s.role,m,playerTurn);if(!id)return;
- if(m.duels.some(e=>e.half===m.half&&e.order===m.order[m.half]))throw Error('맞대결 타석이 중복되었습니다.');
- m.duels.push(duelEntry(m,id,tactic,source,result));
-}
-function probs(k:number,walk:number,hit:number,hr:number,double:number,sac=0) {
-  const p=[k,1-k-walk-hit-sac,walk,hit-hr-double,double,hr,sac];
-  const weights=p.map(n=>Math.max(0,n));
-  const total=weights.reduce((a,b)=>a+b,0);
-  // Preview percentages and sampling must use the same distribution at 0/100 bounds.
-  return weights.map(n=>n/total);
-}
-function resolvedTactics(s:GameState,activeSkills:SkillId[],only?:string):Tactic[] {
-  if(!s.match) return [];
-  const m=s.match, st=derivedStats(s), opp=opponent(s),team=teams[m.opponentId||'haesol'];
-  const effects=getSkills(s).filter(k=>activeSkills.includes(k.id)).flatMap(k=>k.effects.filter(e=>!e.role||e.role===s.role).map(e=>({effect:e,name:k.name})));
-  const relief=Math.max(0,...effects.map(({effect:e})=>e.kind==='fatigue'?e.amount:0));
-  const fatigue=s.energy<45?.065*(1-relief):0;
-  const mental=(st.mental-35)*.0008;
-  const baseReason=`체력 ${s.energy} · 멘탈 ${s.attributes.mental} (스트레스 보정 ${(st.mental-s.attributes.mental).toFixed(1)}) · ${team.name} · ${opp.trait}`;
-  const raw: Omit<Tactic,'outlook'|'reason'>[] = [];
-  if(s.role==='batter') {
-    const hit=clamp(.23+(st.contact-35)*.004+mental-fatigue,.09,.48);
-    raw.push(
-      {id:'contact',title:'정확하게 맞히기',description:'짧은 스윙으로 안타를 노립니다.',disabled:false,burden:0,probabilities:probs(.17,.065,hit+.07,.018,.04)},
-      {id:'power',title:'장타 노리기',description:'삼진 위험을 감수하고 큰 타구를 노립니다.',disabled:false,burden:0,probabilities:probs(.32,.055,clamp(hit-.025+(st.power-35)*.001,.1,.52),clamp(.065+(st.power-35)*.002+(opp.type==='tired'?.02:0),.025,.18),.07)},
-      {id:'patient',title:'공 골라내기',description:'상대의 제구를 보고 출루를 노립니다.',disabled:false,burden:0,probabilities:probs(.24,clamp(.13+(st.eye-35)*.003+(opp.type==='wild'?.10:-.015)-fatigue,.04,.40),hit-.02,.018,.035)},
-      {id:'bunt',title:'희생번트',description:'아웃 하나를 대가로 주자의 진루를 노립니다.',disabled:m.outs>=2||!m.bases.some(Boolean),burden:0,probabilities:probs(.13,0,.05,.0,0,clamp(.48+(st.contact+st.speed-70)*.003-fatigue,.3,.85))},
-    );
-  } else {
-    const wear=m.load/loadLimit(s)*.095;
-    const hit=clamp(.29-(st.control-35)*.0025-mental+fatigue+wear,.1,.48);
-    raw.push(
-      {id:'fastball',title:'직구로 승부',description:'힘 있는 공으로 정면 승부합니다.',disabled:m.retired,burden:8,probabilities:probs(clamp(.27+(st.velocity-35)*.004-wear,.1,.5),.065,hit+(opp.type==='power'?.045:0),.055,.055)},
-      {id:'breaking',title:'변화구로 유도',description:'타이밍을 빼앗아 헛스윙을 노립니다.',disabled:m.retired,burden:9,probabilities:probs(clamp(.26+(st.breaking-35)*.004+(opp.type==='power'?.07:0)-wear,.1,.5),clamp(.12-(st.control-35)*.002+wear,.035,.28),hit-.03,.025,.045)},
-      {id:'control',title:'맞혀 잡기',description:'수비를 믿고 적은 부담으로 아웃을 노립니다.',disabled:m.retired,burden:5,probabilities:probs(.12,.035,hit+.025-(st.field-35)*.001,.025,.05)},
-      {id:'chase',title:'유인구 위주',description:'장타를 경계하며 볼넷의 위험을 감수합니다.',disabled:m.retired,burden:8,probabilities:probs(.26,clamp(.19+(opp.type==='patient'?.10:0)-(st.control-35)*.002+wear,.05,.42),hit-.08,.015,.025)},
-    );
+function updateLineup(s:GameState){
+ const m=s.match!,team=m.half===0?1:0,arms=m.rosters![team].pitchers;
+ if(s.role==='batter'&&m.appearance==='substitute'&&m.inning>=7&&!m.entered){
+  const original=m.rosters![1].batters.findIndex(p=>p.id==='junseo');
+  m.rosters![1].batters[original]=rosterFor('cheongram',s,{battingOrder:m.battingOrder,appearance:'starter'}).batters[m.battingOrder-1];m.entered=true;note(m,`${s.name}, 대타로 들어와 2루 수비까지 맡는다.`);
+ }
+ let current=arms.find(p=>p.id===m.pitcherIds[team])!,line=m.pitcherLines[current.id];
+ const used=m.usedPitchers[team];
+ if(team===1&&s.role==='pitcher'){
+  const roleArm=arms.find(p=>p.id===(m.appearance==='starter'?'player':'junseo'));
+  const playerSub=m.appearance==='substitute'&&!m.entered&&m.inning>=7;
+  if(playerSub){
+   const p={...rosterFor('cheongram',s,{pitchingRole:'middle'}).pitchers.find(p=>p.id==='player')!,duty:'middle' as const};arms.push(p);changePitcher(s,team,p);
+  }else if(roleArm&&!used.includes(roleArm.id)&&(m.pitchingRole==='closer'?m.inning>=9:m.pitchingRole==='middle'&&(m.inning>=6||line.load>=78+current.ratings.stamina*.6))){changePitcher(s,team,roleArm);}
+  current=arms.find(p=>p.id===m.pitcherIds[team])!;line=m.pitcherLines[current.id];
+  const roleId=m.appearance==='starter'?'player':'junseo';
+  const roleActive=current.id===roleId||current.id==='player';
+  const inningLimit=current.id==='player'&&m.appearance==='substitute'?9:roleActive&&m.pitchingRole==='closer'?11:8;
+  const limit=roleActive&&m.pitchingRole==='middle'?36+current.ratings.stamina*.15:roleActive&&m.pitchingRole==='closer'?999:78+current.ratings.stamina*.6;
+  if(line.load>=limit||m.inning>=inningLimit){
+   const next=arms.find(p=>!used.includes(p.id)&&!(p.id===roleId&&m.pitchingRole==='closer'&&m.inning<9));
+   if(next)changePitcher(s,team,next);
   }
-  return raw.filter(t=>!only||t.id===only).map(t=>{
-    const active:string[]=[];
-    const move=(from:number,to:number,amount:number,name?:string)=>{const n=Math.min(t.probabilities[from],amount);t.probabilities[from]-=n;t.probabilities[to]+=n;if(name)active.push(name);};
-    let matchup='';
-    if(s.role==='batter'&&team.pitching==='power'){
-      move(3,0,.025);matchup='상대 구위: 안타 -2.5%p·삼진 +2.5%p';
-      if(t.id==='contact'){move(0,3,.015);matchup+=' · 정확한 타격으로 1.5%p 보완';}
-    }
-    if(s.role==='batter'&&team.pitching==='control'){
-      move(2,1,.02);matchup='상대 제구: 볼넷 -2%p';
-      if(t.id==='power'){move(1,4,.015);matchup+=' · 적극적 승부로 2루타 +1.5%p';}
-    }
-    if(s.role==='pitcher'&&team.batting==='power'){
-      move(1,5,.02);matchup='상대 장타력: 피홈런 +2%p';
-      if(t.id==='breaking'){move(5,1,.015);matchup+=' · 변화구로 1.5%p 보완';}
-    }
-    if(s.role==='pitcher'&&team.batting==='patient'){
-      move(1,2,.02);matchup='상대 선구안: 볼넷 +2%p';
-      if(t.id==='control'){move(2,1,.015);matchup+=' · 맞혀 잡기로 1.5%p 보완';}
-    }
-    for(const {effect:e,name} of effects){
-      if(e.kind==='probability')move(outcomes.indexOf(e.from),outcomes.indexOf(e.to),e.amount,name);
-      else if(e.kind==='burden'){t.burden=Math.max(1,t.burden-e.amount);active.push(name);}
-      else if(s.energy<45)active.push(name);
-    }
-    const success=s.role==='batter' ? (t.id==='bunt'?t.probabilities[6]:t.probabilities.slice(2,6).reduce((a,b)=>a+b,0)) : t.probabilities[0]+t.probabilities[1];
-    const outlook=t.disabled?'선택 불가':success>=(s.role==='batter'?.36:.63)?'유리':success<(s.role==='batter'?.26:.48)?'불리':'보통';
-    const reason=t.disabled?'2아웃 미만이며 진루할 주자가 있어야 합니다.':`${baseReason} · ${s.role==='batter'?(t.id==='bunt'?'진루':'출루'):'아웃'} 전망 ${Math.round(success*100)}%`;
-    return {...t,outlook,reason:reason+(matchup?` · ${matchup}`:'')+(active.length?` · 적용 스킬: ${active.join(', ')}`:'')};
-  });
+ }else{
+  const first=used.length===1;
+  if(first&&(line.load>=78+current.ratings.stamina*.6||m.inning>=7&&line.runs>=3||m.inning>=8)||!first&&line.load>=36){const next=arms.find(p=>!used.includes(p.id));if(next)changePitcher(s,team,next);}
+ }
 }
-/** Preview integrates every activation subset, including clamped probability transfers. */
-export function tactics(s:GameState):Tactic[] {
-  if(!s.match)return [];
-  const chance=skillActivationChance(s.attributes.intelligence);
-  return resolvedTactics(s,[]).map(base=>{
-    const eligible=eligibleSkills(s,base.id);
-    if(!eligible.length)return base;
-    const probabilities=Array<number>(7).fill(0);let burden=0;
-    for(let mask=0;mask<2**eligible.length;mask++){
-      const active=eligible.filter((_,i)=>mask&(1<<i));
-      const weight=chance**active.length*(1-chance)**(eligible.length-active.length);
-      const t=resolvedTactics(s,active,base.id)[0];
-      t.probabilities.forEach((v,i)=>probabilities[i]+=v*weight);burden+=t.burden*weight;
-    }
-    const success=s.role==='batter'?(base.id==='bunt'?probabilities[6]:probabilities.slice(2,6).reduce((a,b)=>a+b,0)):probabilities[0]+probabilities[1];
-    const outlook=base.disabled?'선택 불가':success>=(s.role==='batter'?.36:.63)?'유리':success<(s.role==='batter'?.26:.48)?'불리':'보통';
-    const reason=base.reason.replace(/전망 \d+%/,`평균 전망 ${Math.round(success*100)}%`)+` · 지능 ${s.attributes.intelligence}: 각 스킬 발동 ${(chance*100).toFixed(1).replace('.0','')}% · 발동 후보: ${eligible.map(id=>getSkills(s).find(k=>k.id===id)!.name).join(', ')} · 발동 여부를 반영한 평균 확률`;
-    return {...base,probabilities,burden,outlook,reason};
-  });
+function playerTurn(s:GameState){const m=s.match!;return m.appearance!=='reserve'&&(s.role==='batter'?m.half===1&&currentBatter(s).id==='player':m.half===0&&!m.retired&&currentPitcher(s).id==='player');}
+export function isDecisionPoint(s:GameState):boolean {
+ const m=s.match;if(!m||m.over||!playerTurn(s))return false;
+ if(s.role==='batter'||m.pitchingRole==='closer'||m.intervene)return true;
+ const b=currentBatter(s);
+ return !!(m.bases[1]||m.bases[2])||[3,4,5].includes(b.slot)||b.id==='jihwan'||m.inning>=7&&Math.abs(m.score[1]-m.score[0])<=2;
 }
-function actualTactic(s:GameState,id:string,source:'manual'|'auto'):Tactic|undefined {
-  const available=resolvedTactics(s,[]).find(t=>t.id===id);
-  if(!available||available.disabled)return;
-  const active=rollSkills(s,id,source);
-  const tactic=resolvedTactics(s,active,id)[0];
-  if(s.match!.skillChecks!==null){
-    const names=active.map(id=>getSkills(s).find(k=>k.id===id)!.name);
-    tactic.reason+=` · 스킬 판정: ${names.length?names.join(', '):eligibleSkills(s,id).length?'미발동':'발동 조건을 만족한 스킬 없음'}`;
+export function intervene(s:GameState):boolean{
+ const m=s.match;if(!m||m.over||m.appearance==='reserve'||s.role==='pitcher'&&(!m.entered||m.retired)||!m.playerBoundary)return false;
+ m.intervene=true;m.awaiting=true;return true;
+}
+export function plateContext(s:GameState,source:'manual'|'auto'='manual',active:SkillId[]=[]):PlateContext {
+ const m=s.match!,p=currentPitcher(s),b=currentBatter(s),isPlayer=playerTurn(s);
+ return {batter:b,pitcher:p,fielders:m.rosters![m.half===0?1:0].batters,inning:m.inning,half:m.half,order:m.order[m.half],outs:m.outs,bases:m.bases,score:m.score,energy:isPlayer?s.energy:100,load:m.pitcherLines[p.id]?.load??0,playerBatter:isPlayer&&s.role==='batter',playerPitcher:isPlayer&&s.role==='pitcher',source,
+ effects:getSkills(s).filter(k=>active.includes(k.id)).flatMap(k=>k.effects.filter(e=>!e.role||e.role===s.role))};
+}
+const titles:Record<string,[string,string]>={contact:['정확하게 맞히기','짧은 스윙으로 안타를 노린다.'],power:['장타 노리기','삼진 위험을 감수하고 큰 타구를 노린다.'],patient:['공 골라내기','볼넷을 노리며 실투를 기다린다.'],bunt:['희생번트','아웃 하나를 대가로 주자를 보낸다.'],fastball:['직구로 승부','빠른 공으로 정면 승부한다.'],breaking:['변화구로 유도','타이밍을 빼앗아 땅볼과 헛스윙을 노린다.'],control:['맞혀 잡기','수비를 믿고 투구 부담을 줄인다.'],chase:['유인구 위주','장타를 경계하며 볼넷 위험을 감수한다.']};
+function legacyProbabilities(d:Distribution){const p=d.probabilities;return [p.strikeout,p.groundOut+p.flyOut+p.lineOut+p.doublePlay+p.error,p.walk+p.hitByPitch,p.single+p.infieldSingle,p.double+p.triple,p.homer,p.sacrificeBunt+p.sacrificeFly];}
+export function opponent(s:GameState){
+ const p=s.role==='batter'?currentPitcher(s):currentBatter(s),m=s.match!,line=s.role==='batter'?m.pitcherLines[p.id]:m.batterLines[p.id];
+ const traits:Record<string,string>={velocity:'강속구',control:'제구형',breaking:'변화구형',stamina:'철완',contact:'컨택형',power:'장타력',eye:'선구안',speed:'빠른 발',field:'수비형',bunt:'번트 장인'};
+ const record=!line?'오늘 첫 승부':s.role==='batter'?`${m.pitcherLines[p.id]?.outs??0}아웃 · ${m.pitcherLines[p.id]?.k??0}K · ${m.pitcherLines[p.id]?.runs??0}실점`:`${m.batterLines[p.id]?.ab??0}타수 ${m.batterLines[p.id]?.hits??0}안타`;
+ return {name:p.name,trait:p.traits.map(t=>traits[t]).join(' · ')||'균형형',weakness:record,type:p.traits.includes('power')?'power':p.traits.includes('velocity')?'fast':p.traits.includes('eye')?'patient':'wild'};
+}
+export function tactics(s:GameState):Tactic[]{
+ if(!s.match)return [];
+ const draft=structuredClone(s);initializeMatch(draft);
+ const ids=s.role==='batter'?['contact','power','patient','bunt']:['fastball','breaking','control','chase'];
+ return ids.map(id=>{
+  const eligible=eligibleSkills(draft,id),chance=skillActivationChance(s.attributes.intelligence),ctx=plateContext(draft),base=plateDistribution(ctx,id);
+  const probabilities=Array<number>(7).fill(0);let burden=0;
+  for(let mask=0;mask<2**eligible.length;mask++){
+   const active=eligible.filter((_,i)=>Boolean(mask&2**i)),weight=chance**active.length*(1-chance)**(eligible.length-active.length);
+   const d=mask===0?base:plateDistribution(plateContext(draft,'manual',active),id);
+   legacyProbabilities(d).forEach((p,i)=>probabilities[i]+=p*weight);burden+=d.burden*weight;
   }
-  return tactic;
+  const disabled=base.disabled||(s.role==='pitcher'&&s.match!.retired);
+  const success=s.role==='batter'?(id==='bunt'?probabilities[6]:probabilities.slice(2,6).reduce((a,b)=>a+b,0)):probabilities[0]+probabilities[1];
+  return {id,title:titles[id][0],description:titles[id][1],disabled,burden,probabilities,outlook:disabled?'선택 불가':success>(s.role==='batter'?.35:.70)?'유리':success<(s.role==='batter'?.25:.55)?'불리':'보통',reason:disabled?'진루할 주자가 있고 2아웃 미만이어야 합니다.':`체력 ${s.energy} · 유효 멘탈 ${derivedStats(s).mental} · ${s.role==='batter'?'출루':'아웃'} 평균 전망 ${Math.round(success*100)}%${eligible.length?` · 지능 ${s.attributes.intelligence}: 각 스킬 발동 ${Math.round(chance*100)}% · 발동 후보: ${eligible.map(id=>getSkills(s).find(k=>k.id===id)!.name).join(', ')}`:''}`};
+ });
 }
-function note(m:Match,text:string) {m.recent.push(text);m.recent=m.recent.slice(-12);}
-
-/** Shared baserunning and scoring rules. Mutates only the supplied match draft. */
-export function applyOutcome(m:Match, result:Outcome, playerBatter:boolean, playerPitcher:boolean) {
-  const before=m.score[m.half];
-  // Away: owner identifies the responsible pitcher. Home: it identifies our batter.
-  const runner={owner:playerPitcher||playerBatter?'player' as const:m.half===0?'opponent' as const:'team' as const};
-  const scoreRunner=(r:Match['bases'][number])=>{
-    if(!r) return;
-    // A non-HR walk-off ends scoring as soon as the winning run crosses home.
-    if(result!=='homer' && m.half===1 && m.inning>=9 && m.score[1]>m.score[0]) return;
-    m.score[m.half]++;
-    m.lines[m.half][m.inning-1]=(m.lines[m.half][m.inning-1]||0)+1;
-    if(m.half===0 && r.owner==='player') m.pitching.runs++;
-  };
-  const isHit=['single','double','homer'].includes(result);
-  if(playerBatter) {
-    if(result==='walk') m.batting.walks++;
-    else if(result!=='sacrifice') m.batting.ab++;
-    if(isHit)m.batting.hits++;
-    if(result==='homer')m.batting.hr++;
-    if(result==='strikeout')m.batting.k++;
-  }
-  if(playerPitcher) {
-    m.faced++;
-    if(result==='walk')m.pitching.walks++;
-    if(isHit)m.pitching.hits++;
-    if(result==='strikeout')m.pitching.k++;
-  }
-  if(result==='walk') {
-    if(m.bases[0]) {
-      if(m.bases[1]) { if(m.bases[2])scoreRunner(m.bases[2]); m.bases[2]=m.bases[1]; }
-      m.bases[1]=m.bases[0];
-    }
-    m.bases[0]=runner;
-  } else if(result==='sacrifice') {
-    m.outs++; if(playerPitcher)m.pitching.outs++;
-    if(m.outs<3) { scoreRunner(m.bases[2]);m.bases=[null,m.bases[0],m.bases[1]]; }
-  } else if(isHit) {
-    const advance=result==='homer'?4:result==='double'?2:1;
-    for(let i=2;i>=0;i--) {
-      const r=m.bases[i];m.bases[i]=null;
-      if(r) {if(i+advance>=3)scoreRunner(r);else m.bases[i+advance]=r;}
-    }
-    if(advance===4)scoreRunner(runner);else m.bases[advance-1]=runner;
-  } else {m.outs++;if(playerPitcher)m.pitching.outs++;}
-  if(playerBatter)m.batting.rbi+=m.score[m.half]-before;
-  m.order[m.half]++;
+function note(m:Match,text:string){m.recent.push(text);m.recent=m.recent.slice(-12);}
+function playOne(s:GameState,id:string,source:'manual'|'auto'){
+ const m=s.match!,isPlayer=playerTurn(s),active=isPlayer?rollSkills(s,id,source):[];
+ const ctx=plateContext(s,source,active),e=resolvePlate(ctx,id,()=>random(s));
+ if(!ctx.playerPitcher)e.burden=3.8;
+ const duel=identifyDuel(s.role,m,isPlayer);if(duel)m.duels.push(duelEntry(m,duel,id,source,e.outcome as import('./plate.ts').PlateOutcome));
+ applyPlay(m,e);m.feed.push(e);
+ if(isPlayer&&source==='manual')m.highlights++;
+ m.awaiting=false;m.playerBoundary=false;m.intervene=false;
+ const text=`${e.inning}회 ${e.half===0?'초':'말'} · ${e.batter.name}: ${outcomeNames[e.outcome]}${e.runs?` · ${e.runs}득점`:''}`;
+ m.last={title:outcomeNames[e.outcome],text,reasons:[titles[id]?.[0]??'자동 승부',active.length?`발동 스킬: ${active.map(id=>getSkills(s).find(k=>k.id===id)!.name).join(', ')}`:'이번 승부의 스킬 발동 없음'],runs:e.runs};note(m,text);advanceHalf(m);
 }
-function boundary(m:Match) {
-  if(m.half===1 && m.inning>=9 && m.score[1]>m.score[0]) {m.over=true;return;}
-  if(m.outs<3)return;
-  if(m.inning>=9 && ((m.half===0&&m.score[1]>m.score[0])||(m.half===1&&m.score[0]!==m.score[1]))) {m.over=true;return;}
-  m.outs=0;m.bases=[null,null,null];
-  if(m.half===0)m.half=1;
-  else {m.half=0;m.inning++;m.lines[0].push(0);m.lines[1].push(0);}
-  if(m.inning>=10) m.bases[1]={owner:'team'}; // extra-inning runner, never charged to the former starter
+export function chooseTactic(s:GameState,id:string,source:'manual'|'auto'='manual'):boolean{
+ const m=s.match;if(!m||!m.awaiting||m.over)return false;
+ const valid=(s.role==='batter'?['contact','power','patient','bunt']:['fastball','breaking','control','chase']).includes(id);
+ if(!valid||plateDistribution(plateContext(s),id).disabled)return false;
+ playOne(s,id,source);return true;
 }
-function sample(s:GameState, probabilities:number[]):Outcome {
-  const roll=random(s)*probabilities.reduce((a,b)=>a+b,0);
-  let sum=0;
-  for(let i=0;i<probabilities.length;i++){sum+=probabilities[i];if(roll<sum)return outcomes[i];}
-  return 'out';
+export function advanceMatch(s:GameState){
+ const m=s.match!;if(m.over||m.awaiting)return;initializeMatch(s);
+ if(m.playerBoundary){playOne(s,s.role==='batter'?'contact':'control','auto');if(m.over)return;}
+ for(let safety=0;safety<2500;safety++){
+  advanceHalf(m);if(m.over)return;updateLineup(s);
+  if(playerTurn(s)){m.playerBoundary=true;m.awaiting=isDecisionPoint(s);return;}
+  const ctx=plateContext(s,'auto');
+  if(ctx.bases[0]&&!ctx.bases[1]&&ctx.bases[0].speed>=55&&random(s)<.045){const e=stealPlay(ctx,random(s)<.6+ctx.bases[0].speed*.002);applyPlay(m,e);m.feed.push(e);advanceHalf(m);if(m.over)return;if(e.outs&&e.after.outs===3)continue;}
+  playOne(s,'contact','auto');
+ }
+ throw Error('경기 진행이 정상적으로 끝나지 않았습니다.');
 }
-function pitchLoad(s:GameState, burden:number) {
-  const m=s.match!;m.load+=burden;
-  if(m.load>=loadLimit(s)&&!m.retired){m.retired=true;note(m,'감독이 투구 부담을 확인하고 교체했다. 남은 경기는 동료들이 이어간다.');}
-}
-export function chooseTactic(s:GameState,id:string):boolean {
-  const m=s.match;
-  if(!m||!m.awaiting||m.over)return false;
-  const t=actualTactic(s,id,'manual');
-  if(!t||t.disabled)return false;
-  const before=m.score[m.half];
-  const result=sample(s,t.probabilities);
-  const half=`${m.inning}회 ${m.half===0?'초':'말'}`;
-  recordDuel(s,result,true,t.id,'manual');
-  applyOutcome(m,result,s.role==='batter',s.role==='pitcher');
-  if(s.role==='pitcher')pitchLoad(s,t.burden);
-  m.highlights++;m.awaiting=false;
-  const runs=m.score[m.half]-before;
-  m.last={title:outcomeNames[result],text:`${half} · ${t.title}. ${runs?`${runs}점 ${s.role==='batter'?'득점':'실점'}. `:''}${m.outs}아웃, ${m.bases.filter(Boolean).length}명의 주자.`,reasons:[t.reason,`선택의 결과는 능력·컨디션·상대 특징과 난수로 결정됩니다.`],runs};
-  note(m,`${half} · 나의 승부: ${outcomeNames[result]}${runs?` (${runs}점)`:''}`);
-  boundary(m);
-  return true;
-}
-/** Simulate actual plate appearances until the next player choice or game end. */
-export function advanceMatch(s:GameState) {
-  const m=s.match!;
-  if(m.over||m.awaiting)return;
-  for(let safety=0;safety<2500;safety++) {
-    boundary(m);if(m.over)break;
-    const pb=s.role==='batter'&&m.half===1&&(m.appearance==='starter'?m.order[1]%9===4:m.appearance==='substitute'&&m.inning>=7&&m.highlights===0);
-    const pp=s.role==='pitcher'&&m.half===0&&!m.retired&&(m.appearance==='starter'||m.inning>=7);
-    const highlight=pb||(pp&&[0,3,6].includes(m.faced));
-    if(highlight&&m.highlights<3){m.awaiting=true;return;}
-    const team=teams[m.opponentId||'haesol'];
-    let probabilities=m.half===0?probs(.2,team.batting==='patient'?.095:.075,.265,team.batting==='power'?.048:.028,.05)
-      :probs(team.pitching==='power'?.225:.2,team.pitching==='control'?.055:.075,team.pitching==='power'?.25:.265,.028,.05);
-    const chosen=pb||pp?actualTactic(s,pb?'contact':'control','auto'):null;
-    if(chosen)probabilities=chosen.probabilities;
-    const before=m.score[m.half];
-    const half=`${m.inning}회 ${m.half===0?'초':'말'}`;
-    const result=sample(s,probabilities);
-    recordDuel(s,result,pb||pp,pb?'contact':'control','auto');
-    applyOutcome(m,result,pb,pp);
-    if(pp)pitchLoad(s,chosen!.burden+Math.floor(random(s)*3));
-    const runs=m.score[m.half]-before;
-    if(runs||pb)note(m,`${half} · ${pb?'나의 타석 (요약)':m.half===1?'우리 팀':'상대 팀'} ${outcomeNames[result]}${runs?` · ${runs}점`:''}`);
-  }
-  if(!m.over)throw new Error('경기 진행이 정상적으로 끝나지 않았습니다.');
-  m.awaiting=false;
-}
+export function summarizeMatch(m:Match):Match {return {...structuredClone(m),feed:m.feed.filter(e=>e.playerBatter||e.playerPitcher),playbackIndex:0,summary:true};}
+export type {PlayEvent};

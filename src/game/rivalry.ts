@@ -27,16 +27,16 @@ export function competitorTrainingFeedback(s:GameState,entry:GameState['log'][nu
 }
 export function identifyDuel(role:Role,m:Match,playerTurn:boolean):NamedRivalId|null {
  if(!playerTurn||m.opponentId!=='haesol'||m.appearance==='reserve'||m.over||(m.appearance==='substitute'&&m.inning<7))return null;
- if(role==='batter')return m.half===1&&m.inning<=6?'taeo':null;
- return m.half===0&&!m.retired&&m.order[0]%9===3?'jihwan':null;
+ if(role==='batter')return m.half===1&&m.pitcherIds[0]==='taeo'?'taeo':null;
+ return m.half===0&&!m.retired&&m.rosters?.[0].batters[m.order[0]%9].id==='jihwan'?'jihwan':null;
 }
 export function duelEntry(m:Match,opponent:NamedRivalId,tactic:string,source:'manual'|'auto',outcome:Outcome):DuelEntry {
  return {half:m.half,order:m.order[m.half],inning:m.inning,opponent,tactic,source,outcome};
 }
 export function summarizeDuels(entries:DuelEntry[]):DuelSummary {
  const r:DuelSummary={ab:0,hits:0,hr:0,walks:0,k:0,sacrifices:0};
- for(const e of entries){if(e.outcome==='walk')r.walks++;else if(e.outcome==='sacrifice')r.sacrifices++;else r.ab++;
-  if(['single','double','homer'].includes(e.outcome))r.hits++;if(e.outcome==='homer')r.hr++;if(e.outcome==='strikeout')r.k++;}
+ for(const e of entries){if(['walk','hitByPitch'].includes(e.outcome))r.walks++;else if(['sacrificeBunt','sacrificeFly'].includes(e.outcome))r.sacrifices++;else r.ab++;
+  if(['infieldSingle','single','double','triple','homer'].includes(e.outcome))r.hits++;if(e.outcome==='homer')r.hr++;if(e.outcome==='strikeout')r.k++;}
  return r;
 }
 export function schoolRivalry(records:GameState['records'],excludeMatchId?:string):SchoolRivalry {
