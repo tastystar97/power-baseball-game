@@ -23,7 +23,7 @@ export function derivedStats(s:AbilityState,effective=true):Stats {
  return out;
 }
 export function overall(s:AbilityState,effective=true):number {const stats=derivedStats(s,effective);return secondaryKeys(s.role).reduce((n,k)=>n+stats[k],0)/5;}
-export function proficiencyMultiplier(value:number,base:number){const gap=value*100-Math.round(base*100);return gap>2000?.25:gap>1000?.5:1;}
+export function proficiencyMultiplier(value:number,base:number){return value>base+20?.25:value>base+10?.5:1;}
 export function resolveGrowth(s:AbilityState,gains:PrimaryGains={},proficiency:Gains={}) {
  const primary:PrimaryGains={},technical:Gains={},base=baseStats(s.attributes);
  for(const [key,raw] of Object.entries(gains)) {const k=key as PrimaryKey,value=s.attributes[k];primary[k]=raw>0?Math.max(0,Math.min(YEAR_CAPS[0]-value,Math.round(raw*curve(value,PRIMARY_CURVE)))):Math.max(-value,Math.round(raw));}

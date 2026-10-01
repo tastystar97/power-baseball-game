@@ -24,6 +24,12 @@ test('숨긴 숙련은 단계별 곡선과 소수 누적을 적용하고 최소 
  for(const [value,want] of [[590,100],[600,40],[700,22],[800,12],[900,6],[1000,0]]){s.proficiency.control=value;assert.equal(resolveGrowth(s,{}, {control:10}).proficiency.control,want);}
  s.proficiency.control=900;assert.equal(resolveGrowth(s,{}, {control:1}).proficiency.control,1);
 });
+test('비선형 기반의 실제 격차가 10·20을 조금 넘어도 숙련 둔화를 적용한다',()=>{
+ const s=createGame('정밀도','batter');for(const k of primaryKeys)s.attributes[k]=248;
+ // Base contact is about 43.6964, so these gaps exceed 10 and 20.
+ s.proficiency.contact=537;assert.equal(resolveGrowth(s,{}, {contact:7}).proficiency.contact,35);
+ s.proficiency.contact=637;assert.equal(resolveGrowth(s,{}, {contact:7}).proficiency.contact,7);
+});
 test('1차 성장 곡선 경계와 손해는 정수이며 학년 상한을 넘은 값도 깎지 않는다',()=>{
  const s=createGame('경계','batter');
  for(const [value,want] of [[799,34],[800,29],[999,1],[1000,0],[1300,0]]){s.attributes.power=value;assert.equal(resolveGrowth(s,{power:34}).gains.power,want);}

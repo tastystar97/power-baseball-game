@@ -19,6 +19,20 @@ test('이미지 포함 카드팩은 ZIP 왕복에서 사건·스킬 연결과 �
   assert.deepEqual([...bytes.slice(0,2)],[80,75]);
   assert.deepEqual(decodePack(bytes),pack);
 });
+test('v1 ZIP은 변환 전 규격으로 읽고 이미지·보상을 한 번만 v2로 옮긴다',()=>{
+ const source=samplePack(),{cards,skills,events,images,...meta}=source;
+ const files:Record<string,Uint8Array>={
+  'manifest.json':strToU8(JSON.stringify({...meta,images:{'sera.png':'image/png'}})),
+  'content.json':strToU8(JSON.stringify({cards,skills,events})),
+  'assets/sera.png':Uint8Array.from(atob(images['sera.png'].data),c=>c.charCodeAt(0)),
+ };
+ const converted=decodePack(zipSync(files));
+ assert.deepEqual(converted,validatePack(source));
+ assert.equal(converted.events[0].choices[0].gains.power,17);
+ assert.deepEqual(decodePack(encodePack(converted)),converted);
+ files['content.json']=strToU8(JSON.stringify({cards,skills,events,version:2}));
+ assert.throws(()=>decodePack(zipSync(files)),/version|Unrecognized/);
+});
 test('누락 참조와 잘못된 역할·순환은 게임 가져오기 전에 거절한다',()=>{
   for(const mutate of [(p:any)=>p.cards[0].hints.batter='missing',(p:any)=>p.events[0].previous='finish',
     (p:any)=>p.skills[1].prerequisite='moonshot',(p:any)=>p.cards[0].portrait='gone.webp',

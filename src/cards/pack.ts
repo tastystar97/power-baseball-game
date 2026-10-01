@@ -1,5 +1,6 @@
 import {strFromU8,strToU8,zipSync,unzipSync} from 'fflate';
 import {packSchema,contentSchema,requirementNames} from './schema.ts';
+import {contentSchema as legacyContentSchema} from './legacy-schema.ts';
 import {upgradePack} from './upgrade.ts';
 import type {CardPack,CardContent} from './schema.ts';
 
@@ -119,7 +120,8 @@ export function decodePack(bytes:Uint8Array):CardPack {
     const data=files[`assets/${name}`]||fail(`이미지 파일이 없습니다: ${name}`);images[name]={mime:mime as CardPack['images'][string]['mime'],data:base64(data)};
   }
   if(Object.keys(files).length!==Object.keys(images).length+2)fail('목록에 없는 이미지 파일이 있습니다.');
-  const content=contentSchema.omit({images:true}).parse(JSON.parse(strFromU8(files['content.json'])));
+  const schema=meta.version===1?legacyContentSchema:contentSchema;
+  const content=schema.omit({images:true}).parse(JSON.parse(strFromU8(files['content.json'])));
   return validatePack({...meta,...content,images});
 }
 export function subsetPack(input:CardPack,ids:string[]):CardPack {

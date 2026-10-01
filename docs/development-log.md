@@ -334,3 +334,5 @@
 - `npm test`166/166(276.157초), `npm run typecheck`/`npm run build` 통과. 실제 16주300시즌과 배율 대안120시즌, 설계 근사300시드 재현. 혼합의 6월 능력 점수70.33/71.10(최소65, 목표68~69보다 높음).
 - 새 Edge 컨텍스트 두 역할 16주, 390px·키보드·사건 재개 완전 일치·콘솔 오류 없음. 제작기 v1 가져오기·학년 수정·조건 편집·미리 보기·v2 내보내기 확인. 기본팩 왕복은 자동 검사에 포함한다.
 - 증거: `.artifacts/stage1-suite-final.log`, `stage1-build-final.log`, `stage1-runtime-30.log`, `stage1-weekend-compare.log`, `stage1-browser-report.json`, `stage1-editor-playtest.log`. 상세 한계와 구현 판단은 [1학년 계획 검증 기록](superpowers/plans/2026-10-01-first-year.md#검증-기록)에 남긴다.
+
+- 최종 독립 리뷰 후 구형 ZIP 사전 스키마 오류와 비선형 기반의 숙련 격차 반올림 오류를 각각 RED→GREEN으로 수정했다. **최종 168/168(232.892초)**, typecheck/build 통과. 300시즌 재측정 평균은 동일하고 두 역할 브라우저16주·v1 ZIP 제작기 가져오기도 재통과했다. `.artifacts/stage1-reviewed-suite.log`, `stage1-reviewed-runtime.log`, `stage1-reviewed-browser.log`, `stage1-editor-zip-playtest.log`. 미처리 리뷰 지적 없음.
