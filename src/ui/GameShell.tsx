@@ -17,12 +17,12 @@ function Gauge({label,value,kind}:{label:string;value:number;kind:'energy'|'stre
   return <div className={`hud-gauge ${kind} ${warn?'warn':''}`}><span>{label}</span><span className="hud-bar" role="meter" aria-label={label} aria-valuenow={value} aria-valuemin={0} aria-valuemax={100}><i style={{width:`${value}%`}}/></span><b>{value}</b>{warn&&<small>{kind==='energy'?'지침':'과부하'}</small>}</div>;
 }
 
-export function Hud({s,steps,step,onCalendar}:{s:GameState;steps:string[];step:number;onCalendar:()=>void}) {
+export function Hud({s,steps,step,onCalendar}:{s:GameState;steps:string[];step:number;onCalendar?:()=>void}) {
   const countdown=nextMatchCountdown(s),weeks=calendarMonth(s,s.month),ovr=overallOf(s);
   return <header className="hud" aria-label="현재 상태">
     <div className="hud-date"><small>1학년 · 청람고 야구부</small><strong>{s.month}월 {s.week}주{slotName(s)?` · ${slotName(s)}`:''}</strong>
       {countdown&&<span className="hud-dday">{countdown.weeks===0?`이번 주 토요일 · ${countdown.title}`:`${countdown.title}까지 ${countdown.weeks}주`}</span>}</div>
-    <button className="hud-weeks" onClick={onCalendar} aria-label={`${s.month}월 일정 · 달력 열기`}>{weeks.map(w=><span key={w.week} className={`hud-week ${w.state} ${w.match?'match':''}`}><b>{w.week}주</b><span>{w.match?w.match.result??w.match.opponent:w.state==='now'?'지금':w.title}</span></span>)}</button>
+    <button className="hud-weeks" onClick={onCalendar} disabled={!onCalendar} aria-label={onCalendar?`${s.month}월 일정 · 달력 열기`:`${s.month}월 일정 · 경기 중에는 달력을 열 수 없습니다`}>{weeks.map(w=><span key={w.week} className={`hud-week ${w.state} ${w.match?'match':''}`}><b>{w.week}주</b><span>{w.match?w.match.result??w.match.opponent:w.state==='now'?'지금':w.title}</span></span>)}</button>
     <div className="hud-gauges"><Gauge label="체력" value={s.energy} kind="energy"/><Gauge label="스트레스" value={s.stress} kind="stress"/></div>
     <div className="hud-ovr" title="종합 능력"><small>종합</small><b>{Math.round(ovr)}</b><em>{grade(ovr)}</em></div>
     {steps.length>0&&<ol className="hud-steps" aria-label="이번 주 진행">{steps.map((label,i)=><li key={label} className={step===i?'now':step>i?'done':''} aria-current={step===i?'step':undefined}>{label}</li>)}</ol>}

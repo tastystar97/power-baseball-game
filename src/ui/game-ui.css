@@ -179,7 +179,11 @@
 @media (max-width:760px){
   .hud{grid-template-columns:minmax(0,1fr) auto;gap:8px}
   .hud-weeks,.hud-gauges{grid-column:1/-1;max-width:none;min-width:0}
-  .hud-ovr{width:52px;height:52px}
+  .hud-ovr{width:52px;height:52px;grid-row:1;grid-column:2}
+  .hud-week{padding:2px 4px}
+  .hud-week span{font-size:.68rem}
+  .hud-gauges{gap:3px}
+  .hud-steps li{font-size:.66rem;padding:2px 6px}
   .app[data-layout="three"] .body{grid-template-columns:minmax(0,1fr)}
   .scene-stage{aspect-ratio:4/3}
   .scene-char{height:86%}
@@ -214,3 +218,5 @@
 .tile-face .card-avatar img{width:100%;height:100%;object-fit:cover}
 .tile-face.joint::after{content:"★";position:absolute;right:-5px;top:-7px;font-size:.7rem;color:var(--board-accent,#f2c14e);text-shadow:0 0 2px rgba(0,0,0,.7)}
 .scene-stage.crowd .scene-char{height:78%}
+.hud-weeks:disabled{cursor:default}.hud-weeks:disabled:hover .hud-week{border-color:var(--border)}
+.app .mobile-condition{display:none}

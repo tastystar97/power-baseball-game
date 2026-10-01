@@ -192,7 +192,7 @@ export default function App() {
   return <div className="app" data-layout={layout} data-mood={weekend?'weekend':'weekday'} data-phase={playing?game.phase:mode}>
     <header className="topbar"><span className="brand">마지막 여름</span>{playing&&<><span className="date">1학년 {game.month}월 {game.week}주차{game.phase==='weekday'?` · ${game.weekdayPart===1?'전반':'후반'}`:''}</span><span className="who">{game.name} · {roleName(game)}</span></>}<div className="right">{playing&&<><span className={`save-state ${saveOk?'':'warning'}`}>{saving?'저장 중…':saveOk?'자동 저장됨':'저장되지 않음'}</span>{(completed||layout!=='three'&&!match)&&<><button onClick={()=>{setStatusTab('능력');setStatusOpen(true);}}>상태창</button><button className="menu-button" onClick={()=>{setConfirmNew(false);setMode('menu');}}>처음 화면</button></>}</>}</div></header>
     {!saveOk&&<p className="notice warning" role="status">브라우저에 저장할 수 없습니다. 지금은 플레이할 수 있지만, 새로고침하거나 창을 닫으면 이번 진행을 잃을 수 있습니다.</p>}
-    {playing&&!completed&&game.phase!=='lineup'&&<Hud s={game} steps={steps} step={visibleStep} onCalendar={()=>setCalendarOpen(true)}/>}
+    {playing&&!completed&&game.phase!=='lineup'&&<Hud s={game} steps={steps} step={visibleStep} onCalendar={match&&!game.match?.over?undefined:()=>setCalendarOpen(true)}/>}
     <div className="body">
     {playing&&layout==='three'&&<aside className="side game-side"><PlayerCard s={game} onStatus={()=>{setStatusTab('능력');setStatusOpen(true);}}/><CompetitionPanel s={game}/><SupportPanel s={game}/></aside>}
     <main className="center" ref={main}>
@@ -208,7 +208,7 @@ export default function App() {
     {playing&&layout==='three'&&<LogPanel s={game} since={logSince}/>}
     </div>
     {playing&&!completed&&layout==='three'&&<div className="mobile-log"><LogPanel s={game} since={logSince} mobile/></div>}
-    {playing&&!completed&&<BottomMenu s={game} openStatus={t=>{setStatusTab(t);setStatusOpen(true);}} openCalendar={()=>setCalendarOpen(true)} toMenu={()=>{setConfirmNew(false);setMode('menu');}}/>}
+    {playing&&!completed&&!(match&&!game.match?.over)&&<BottomMenu s={game} openStatus={t=>{setStatusTab(t);setStatusOpen(true);}} openCalendar={()=>setCalendarOpen(true)} toMenu={()=>{setConfirmNew(false);setMode('menu');}}/>}
     {calendarOpen&&game&&<CalendarDialog s={game} onClose={()=>setCalendarOpen(false)}/>}
     {statusOpen&&game&&<StatusDialog s={game} send={send} initialTab={statusTab} onClose={()=>setStatusOpen(false)}/>}<footer>마지막 여름 · FIRST SUMMER</footer>
   </div>;
