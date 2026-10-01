@@ -24,8 +24,8 @@ test('roles get different meaningful stats and only role-appropriate training', 
     const s = createGame(' 새봄 ', role, 5);
     assert.equal(s.name, '새봄');
     assert.equal(s.week, 1);
-    assert.equal(activities(s).length, role === 'batter' ? 6 : 7);
-    assert.ok(s.stats[role === 'batter' ? 'contact' : 'control'] > 0);
+    assert.equal(activities(s).length, role === 'batter' ? 8 : 9);
+    assert.ok(s.proficiency[role === 'batter' ? 'contact' : 'control']! > 0);
     assert.equal(transition(s, { type: 'activity', id: role === 'batter' ? 'velocity' : 'batting', revision: 0 }), s);
   }
 });
@@ -36,12 +36,12 @@ test('name validation rejects empty and more than eight characters', () => {
 test('normal-condition training applies the activity table and logs actual changes', () => {
   const s = ready('여름', 'batter', 7);
   const after = act(s, { type: 'activity', id: 'batting' });
-  assert.equal(after.stats.contact, s.stats.contact + 7);
-  assert.equal(after.stats.eye, s.stats.eye + 2);
-  assert.equal(after.energy, s.energy - 28);
-  assert.equal(after.stress, s.stress + 10);
-  assert.equal(after.phase, 'event');
-  assert.equal(after.log[0].changes.contact, 7);
+  assert.equal(after.proficiency.contact, s.proficiency.contact! + 10);
+  assert.equal(after.proficiency.eye, s.proficiency.eye! + 2);
+  assert.equal(after.energy, s.energy - 18);
+  assert.equal(after.stress, s.stress + 6);
+  assert.ok(['weekday','supportEvent'].includes(after.phase));assert.equal(after.schedule[0].weekday2,'');
+  assert.equal(after.log[0].changes.proficiency_contact, 10);
 });
 test('stale input cannot consume a second action or duplicate an event reward', () => {
   const s = ready('여름', 'pitcher', 9);
@@ -52,11 +52,11 @@ test('stale input cannot consume a second action or duplicate an event reward', 
   const chosen = transition(after, choice);
   assert.equal(transition(chosen, choice), chosen);
 });
-test('stress reduces growth, rest recovers and values stay in bounds', () => {
+test('stress leaves learning intact, rest recovers and values stay in bounds', () => {
   const s = ready('여름', 'pitcher', 8);
   s.stress = 80;
   const p = previewActivity(s, 'control');
-  assert.ok(p && p.gains.control! < 7 && p.warning);
+  assert.ok(p && p.proficiency.control === 10);
   const rested = act({ ...s, energy: 90, stress: 3 }, { type: 'activity', id: 'rest' });
   assert.equal(rested.energy, 100);
   assert.equal(rested.stress, 0);
@@ -70,14 +70,14 @@ test('weekend practice rejects an unavailable target and consumes exactly one sl
   assert.equal(s.week, 2);
   assert.equal(s.phase, 'weekday');
 });
-test('both roles complete sixteen weekdays and weekends through the summer tournament', () => {
+test('both roles complete thirty-two weekday slots and sixteen weekends through the summer tournament', () => {
   for (const role of ['batter', 'pitcher'] as const) {
     const s = finishMonth(role);
     assert.equal(s.phase, 'complete');
     assert.equal(s.week, 4);
     assert.equal(s.schedule.length, 16);
-    assert.ok(s.schedule.every(w => w.weekday && w.weekend));
-    assert.equal(s.completedEvents.length+s.records.length,16);
+    assert.ok(s.schedule.every(w => w.weekday && w.weekday2 && w.weekend));
+    assert.equal(s.encounterHistory.length,32);
     assert.ok(s.records.every(r=>r.match.over));
     assert.ok(s.records.length>=4&&s.records.length<=6);
     assert.ok(s.records.every(r=>r.match.highlights<=3));

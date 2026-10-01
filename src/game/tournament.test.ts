@@ -5,7 +5,7 @@ import {createMatch,tactics,advanceMatch} from './match.ts';
 import {finishRound,pairings,matchPlan,tournamentResult,winner,weekTitle} from './season.ts';
 import {currentEvent} from '../content/events.ts';
 import {evaluateSelection} from './competition.ts';
-import {parseSave,saveGame,loadGame,SAVE_KEY,V2_BACKUP_KEY} from '../persistence/save.ts';
+import {parseSave,saveGame,loadGame,SAVE_KEY} from '../persistence/save.ts';
 import {readFileSync} from 'node:fs';
 import {defaultSupports} from '../content/supports.ts';
 import type {GameState,Action} from './types.ts';
@@ -41,14 +41,16 @@ test('future tournament weeks show advancement conditions until an actual loss i
   s.records.push({month:6,match:m});finishRound(s);
   assert.match(weekTitle(s,3),/탈락 후/);
 });
-test('efficient pitching delivers the stated one point with its required precision skill',()=>{
+test('efficient pitching replaces precision and clamps the remaining walk probability',()=>{
   const s=createGame('제구','pitcher',1);s.match=createMatch();s.skills=['precision'];
   const base=tactics(s).find(t=>t.id==='control')!;s.skills.push('efficient_pitch');
   const result=tactics(s).find(t=>t.id==='control')!;
-  assert.ok(Math.abs(base.probabilities[2]-result.probabilities[2]-.01)<1e-9);
+  // The base tactic has only 3.5% walks, so either tier transfers all of it on activation.
+  assert.ok(Math.abs(base.probabilities[2]-result.probabilities[2])<1e-9);
+  assert.ok(result.burden<base.burden);
   s.skills=['efficient_pitch'];
   const standalone=tactics(s).find(t=>t.id==='control')!;
-  assert.ok(Math.abs(standalone.probabilities[2]-.025)<1e-9);
+  assert.ok(Math.abs(standalone.probabilities[2]-(.035*.32))<1e-9);
 });
 test('every summer phase and each elimination outcome can resume with identical next action',()=>{
   const outcomes=new Set<string>();
@@ -72,11 +74,14 @@ test('corrupt, future, repeated and inconsistent tournament records are rejected
   for(const bad of [wrongPair,wrongScore,duplicate,missing])assert.throws(()=>parseSave(JSON.stringify(bad)));
   const early=createGame('대회','batter',1);early.tournament=s.tournament;assert.throws(()=>parseSave(JSON.stringify(early)));
 });
-test('May and June have their own baseball events, including after elimination',()=>{
-  const s=createGame('새달','pitcher',71);s.phase='event';s.month=5;
-  assert.match(currentEvent(s).title,/장점/);
-  s.month=6;s.week=1;assert.match(currentEvent(s).title,/대진/);
-  s.week=4;assert.match(currentEvent(s).title,/여름/);
+test('May and June use equipped card encounters and do not reintroduce scheduled club events',()=>{
+ let s=createGame('새달','pitcher',71),seen=0;
+ for(let n=0;n<350&&s.phase!=='complete';n++){
+  if(s.month>=5){assert.notEqual(s.phase,'event');assert.notEqual(s.phase,'eventResult');
+   if(s.phase==='supportEvent'){assert.ok(s.activeSupport&&s.supports.includes(s.activeSupport));assert.ok(currentEvent(s).choices.length);seen++;}}
+  s=auto(s);
+ }
+ assert.ok(seen>0);assert.equal(s.phase,'complete');
 });
 test('opponent strengths change real tactic probabilities and matching approaches soften them',()=>{
   for(const role of ['batter','pitcher'] as const){
@@ -97,14 +102,4 @@ test('later selection uses recent performance rather than only the March record'
   const s=createGame('평가','batter',1);s.month=5;
   const a=createMatch(),b=createMatch();a.id='m3-w4';b.id='m4-w4';a.batting.hits=0;b.batting.hits=4;b.batting.walks=2;
   s.records=[{month:3,match:a},{month:4,match:b}];assert.equal(evaluateSelection(s).performance,8);
-});
-test('v2 migration stays read-only and backs up exact original on first v3 write, including quota failure',()=>{
-  const raw=readFileSync(new URL('../persistence/fixtures/v2-pitcher-complete.json',import.meta.url),'utf8');
-  const items=new Map([[SAVE_KEY,raw]]),storage={getItem:(k:string)=>items.get(k)??null,setItem:(k:string,v:string)=>{items.set(k,v);}};
-  const loaded=loadGame(storage);assert.equal(loaded.kind,'ok');assert.equal(items.size,1);
-  if(loaded.kind!=='ok')throw Error('load');assert.equal(loaded.state.month,5);
-  assert.equal(saveGame(loaded.state,storage),true);assert.equal(items.get(V2_BACKUP_KEY),raw);
-  let overwritten=false;
-  assert.equal(saveGame(loaded.state,{getItem:k=>k===SAVE_KEY?raw:null,setItem:k=>{if(k===V2_BACKUP_KEY)throw Error('quota');overwritten=true;}}),false);
-  assert.equal(overwritten,false);
 });

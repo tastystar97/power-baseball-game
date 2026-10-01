@@ -15,7 +15,7 @@ test('reject malformed, unsupported, out-of-range and impossible phase states', 
 });
 test('missing role-specific stats are rejected', () => {
   const s = createGame('여름', 'pitcher', 9);
-  const raw = JSON.parse(JSON.stringify(s)); delete raw.stats.control;
+  const raw = JSON.parse(JSON.stringify(s)); delete raw.proficiency.control;
   assert.throws(() => parseSave(JSON.stringify(raw)));
 });
 test('saving failures are surfaced and corrupt data is not removed', () => {
@@ -29,7 +29,7 @@ test('event in progress resumes once with no duplicate reward', () => {
   const ready=transition(createGame('여름','batter',1),{type:'lineup',supports:defaultSupports('batter'),revision:0});
   const s = transition(ready, {type:'activity', id:'batting', revision:ready.revision});
   const resumed = parseSave(JSON.stringify(s));
-  assert.equal(resumed.phase, 'event');
+  assert.equal(resumed.phase, 'supportEvent');
   const action = {type:'choice', index:0, revision:s.revision} as const;
   const after = transition(resumed, action);
   assert.equal(transition(after, action), after);

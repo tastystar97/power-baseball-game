@@ -1,0 +1,310 @@
+{
+  "cards": [
+    {
+      "id": "classmate",
+      "name": "윤유진",
+      "title": "다음 하나부터",
+      "role": "반 친구",
+      "description": "작은 계획을 실천하는 친구. 지능과 멘탈을 챙기며 생활의 균형을 돕습니다.",
+      "color": "#987e41",
+      "specialty": "intelligence",
+      "training": {
+        "batter": [
+          "study",
+          "tactics"
+        ],
+        "pitcher": [
+          "study",
+          "tactics"
+        ]
+      },
+      "bonus": {
+        "energy": 0,
+        "stress": 0,
+        "jointEnergy": 0,
+        "gains": {
+          "mental": 1
+        }
+      },
+      "hints": {
+        "batter": "focus_plan",
+        "pitcher": "focus_plan"
+      },
+      "ultimates": {
+        "batter": "clear_plan",
+        "pitcher": "clear_plan"
+      }
+    }
+  ],
+  "skills": [
+    {
+      "id": "focus_plan",
+      "name": "승부 계획",
+      "description": "조건을 만족한 승부에서 발동합니다.",
+      "role": "both",
+      "cost": 14,
+      "family": "focus_plan",
+      "tier": "normal",
+      "requires": {},
+      "conditions": [
+        {
+          "kind": "score",
+          "value": "behind"
+        }
+      ],
+      "effects": [
+        {
+          "kind": "probability",
+          "from": "out",
+          "to": "single",
+          "amount": 0.02,
+          "role": "batter"
+        },
+        {
+          "kind": "probability",
+          "from": "single",
+          "to": "out",
+          "amount": 0.02,
+          "role": "pitcher"
+        }
+      ]
+    },
+    {
+      "id": "clear_plan",
+      "name": "흐름을 되찾는 계획",
+      "description": "서포트 고유 사건으로 개방하는 상위 스킬. 같은 계열 일반 스킬을 대체합니다.",
+      "role": "both",
+      "cost": 24,
+      "family": "focus_plan",
+      "tier": "advanced",
+      "prerequisite": "focus_plan",
+      "owner": "classmate",
+      "requires": {},
+      "conditions": [
+        {
+          "kind": "score",
+          "value": "behind"
+        }
+      ],
+      "effects": [
+        {
+          "kind": "probability",
+          "from": "out",
+          "to": "single",
+          "amount": 0.04,
+          "role": "batter"
+        },
+        {
+          "kind": "probability",
+          "from": "single",
+          "to": "out",
+          "amount": 0.04,
+          "role": "pitcher"
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "id": "classmate-daily-a",
+      "owner": "classmate",
+      "kind": "daily",
+      "bond": 0,
+      "title": "야구도 문제 풀이처럼",
+      "text": "“한꺼번에 고민하지 말고 다음 하나부터 정해 보자.” 유진이 메모지를 건넨다.",
+      "choices": [
+        {
+          "label": "함께 동작을 맞춰 본다",
+          "reply": "윤유진와 짧게 집중하며 다음 연습에 쓸 감각을 찾았다.",
+          "gains": {
+            "intelligence": 2
+          },
+          "energy": -4,
+          "stress": 0,
+          "points": 0,
+          "trust": 0,
+          "bond": 4,
+          "hints": [],
+          "unlocks": []
+        },
+        {
+          "label": "이야기를 들으며 잠시 쉰다",
+          "reply": "윤유진의 생각을 듣고 몸과 마음의 여유를 챙겼다.",
+          "gains": {},
+          "energy": 6,
+          "stress": -6,
+          "points": 0,
+          "trust": 0,
+          "bond": 4,
+          "hints": [],
+          "unlocks": []
+        }
+      ]
+    },
+    {
+      "id": "classmate-daily-b",
+      "owner": "classmate",
+      "kind": "daily",
+      "bond": 0,
+      "title": "작게 나누는 목표",
+      "text": "“한꺼번에 고민하지 말고 다음 하나부터 정해 보자.” 유진이 메모지를 건넨다.\n연습이 끝난 뒤 오늘 달라진 점을 함께 돌아보았다.",
+      "choices": [
+        {
+          "label": "다음에 해 볼 일을 적는다",
+          "reply": "느낌으로 알던 변화를 말로 정리했다.",
+          "gains": {
+            "intelligence": 1
+          },
+          "energy": 0,
+          "stress": 0,
+          "points": 2,
+          "trust": 0,
+          "bond": 4,
+          "hints": [],
+          "unlocks": []
+        },
+        {
+          "label": "잘된 점을 서로 알려 준다",
+          "reply": "작은 변화도 알아봐 주는 동료가 있다는 사실이 힘이 되었다.",
+          "gains": {
+            "mental": 1
+          },
+          "energy": 0,
+          "stress": -4,
+          "points": 0,
+          "trust": 0,
+          "bond": 4,
+          "hints": [],
+          "unlocks": []
+        }
+      ]
+    },
+    {
+      "id": "classmate-growth-1",
+      "owner": "classmate",
+      "kind": "growth",
+      "bond": 20,
+      "title": "세 줄의 계획",
+      "text": "“한꺼번에 고민하지 말고 다음 하나부터 정해 보자.” 유진이 메모지를 건넨다.",
+      "choices": [
+        {
+          "label": "내 연습에도 적용해 본다",
+          "reply": "계획대로 되지 않은 일 옆에 바로 할 수 있는 일을 썼다. 실패를 곱씹기보다 다음 행동을 준비했다.",
+          "gains": {
+            "intelligence": 2
+          },
+          "energy": 0,
+          "stress": 0,
+          "points": 0,
+          "trust": 0,
+          "bond": 4,
+          "hints": [
+            "focus_plan"
+          ],
+          "unlocks": []
+        },
+        {
+          "label": "내 생각을 이야기한다",
+          "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+          "gains": {},
+          "energy": 0,
+          "stress": -6,
+          "points": 0,
+          "trust": 0,
+          "bond": 4,
+          "hints": [
+            "focus_plan"
+          ],
+          "unlocks": []
+        }
+      ]
+    },
+    {
+      "id": "classmate-growth-2",
+      "owner": "classmate",
+      "kind": "growth",
+      "bond": 40,
+      "previous": "classmate-growth-1",
+      "title": "계획이 어긋난 날",
+      "text": "계획대로 되지 않은 일 옆에 바로 할 수 있는 일을 썼다. 실패를 곱씹기보다 다음 행동을 준비했다.",
+      "choices": [
+        {
+          "label": "내 연습에도 적용해 본다",
+          "reply": "유진과 만든 짧은 계획을 혼자 다시 적었다. 경기가 꼬여도 다음 승부를 차분히 고를 수 있을 것 같다.",
+          "gains": {
+            "intelligence": 2
+          },
+          "energy": 0,
+          "stress": 0,
+          "points": 0,
+          "trust": 1,
+          "bond": 4,
+          "hints": [],
+          "unlocks": []
+        },
+        {
+          "label": "내 생각을 이야기한다",
+          "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+          "gains": {
+            "mental": 1
+          },
+          "energy": 0,
+          "stress": -6,
+          "points": 0,
+          "trust": 0,
+          "bond": 4,
+          "hints": [],
+          "unlocks": []
+        }
+      ]
+    },
+    {
+      "id": "classmate-growth-3",
+      "owner": "classmate",
+      "kind": "growth",
+      "bond": 60,
+      "previous": "classmate-growth-2",
+      "title": "다음 하나부터",
+      "text": "유진과 만든 짧은 계획을 혼자 다시 적었다. 경기가 꼬여도 다음 승부를 차분히 고를 수 있을 것 같다.",
+      "choices": [
+        {
+          "label": "배운 것을 내 승부에 담는다",
+          "reply": "동료와 만든 경험을 내 야구로 이어갈 준비가 되었다.",
+          "gains": {},
+          "energy": 0,
+          "stress": 0,
+          "points": 2,
+          "trust": 0,
+          "bond": 4,
+          "hints": [],
+          "unlocks": [
+            "clear_plan"
+          ]
+        },
+        {
+          "label": "함께 만든 과정을 기억한다",
+          "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
+          "gains": {},
+          "energy": 0,
+          "stress": -6,
+          "points": 0,
+          "trust": 0,
+          "bond": 4,
+          "hints": [],
+          "unlocks": [
+            "clear_plan"
+          ]
+        }
+      ]
+    }
+  ],
+  "images": {},
+  "format": "last-summer-cardpack",
+  "version": 1,
+  "ruleset": "summer-7",
+  "id": "example-team",
+  "revision": 1,
+  "name": "예제 서포트 카드",
+  "author": "마지막 여름",
+  "description": "나만의 야구 파트너와 성장 이야기를 만들어 보세요."
+}

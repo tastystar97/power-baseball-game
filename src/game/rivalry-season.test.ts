@@ -9,7 +9,7 @@ import type {GameState,Action,Role} from './types.ts';
 import {competitorTrainingFeedback} from './rivalry.ts';
 
 function step(s:GameState,style='training'):GameState {
- const a:Omit<Action,'revision'>=s.phase==='lineup'?{type:'lineup',supports:style==='training'?[s.role==='batter'?'bat_senior':'pitch_senior','rival','catcher']:defaultSupports(s.role)}
+ const a:Omit<Action,'revision'>=s.phase==='lineup'?{type:'lineup',supports:defaultSupports(s.role)}
  :s.phase==='weekday'?{type:'activity',id:style==='study'?'study':s.energy<(style==='training'?65:80)?'rest':s.role==='batter'?'batting':'control'}
  :s.phase==='weekend'?{type:'activity',id:style==='study'?'selfstudy':style==='balanced'&&s.energy>65?'catch':'weekend_rest'}
  :['supportEvent','event','weekendEvent'].includes(s.phase)?{type:'choice',index:0}
@@ -20,7 +20,7 @@ test('weekend practice never repeats weekday competitor growth in training feedb
  let s=createGame('피드백','batter',1);s=step(s);
  s=transition(s,{type:'activity',id:'batting',revision:s.revision});
  const weekday=s.log.find(l=>l.training)!;
- assert.equal(competitorTrainingFeedback(s,weekday),s.competitor.weeks[0]);
+ assert.equal(competitorTrainingFeedback(s,weekday),null);assert.equal(s.competitor.weeks.length,0);
  while(s.phase!=='weekend')s=step(s);
  const before=structuredClone(s.competitor);
  s=transition(s,{type:'activity',id:'practice',target:'contact',revision:s.revision});
@@ -56,13 +56,6 @@ test('120 full seasons preserve every phase, actual haesol history and all rival
  }
  console.log('경쟁 분포:',JSON.stringify(report));
 });
-test('each migrated pending v3 stage continues to the season end under the new rules',()=>{
- for(const role of ['batter','pitcher'])for(const stage of ['start','weekday','event','support-event','selection','match','match-result','weekend']){
-  let s=parseSave(readFileSync(new URL(`../persistence/fixtures/v3-${role}-${stage}.json`,import.meta.url),'utf8'));
-  for(let i=0;i<350&&s.phase!=='complete';i++){s=step(s);assert.deepEqual(parseSave(JSON.stringify(s)),s);}
-  assert.equal(s.phase,'complete');assert.equal(s.competitor.weeks.length,16);
- }
-});
 test('save rejects invented rival growth, histories and impossible personal duels',()=>{
  let s=createGame('검증','batter',11);
  while(s.phase!=='selection')s=step(s);
@@ -78,12 +71,15 @@ test('shared training failure keeps only the rival weekly plan and success uses 
  for(const role of ['batter','pitcher'] as Role[])for(const energy of [0,100]){
   let s:GameState|undefined;
   for(let seed=1;seed<200;seed++){
-   let q=createGame('합동',role,seed);q=transition(q,{type:'lineup',supports:['rival','catcher','manager'],revision:q.revision});
+   let q=createGame('합동',role,seed);q=transition(q,{type:'lineup',supports:['rival','catcher','manager','bat_senior','pitch_senior','classmate'],revision:q.revision});
    if(activities(q).find(a=>a.id===q.placements.rival)?.training){s=q;break;}
   }
   assert.ok(s);s.energy=energy;const p=previewActivity(s,s.placements.rival)!;
-  const next=transition(s,{type:'activity',id:s.placements.rival,revision:s.revision});
+  let next=transition(s,{type:'activity',id:s.placements.rival,revision:s.revision});
   const failed=next.log.find(l=>l.training)?.training?.outcome==='failure';assert.equal(failed,energy===0);
+  assert.equal(next.competitor.weeks.length,0);
+  while(next.phase==='supportEvent'||next.phase==='supportResult')next=step(next);
+  next=transition(next,{type:'activity',id:'rest',revision:next.revision});
   assert.deepEqual(next.competitor.weeks[0].gains,failed?p.competitorGrowth!.failure:p.competitorGrowth!.success);
   assert.equal(next.competitor.weeks[0].sharedPrimary,failed?null:p.competitorGrowth!.sharedPrimary);
   assert.deepEqual(parseSave(JSON.stringify(next)),next);

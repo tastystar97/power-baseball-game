@@ -1,3 +1,8 @@
+import {describeSkill} from '../cards/description.ts';
+import {DeckBuilder,CardAvatar} from './DeckBuilder.tsx';
+import {primaryLabels} from '../game/types.ts';
+import {encounterContent} from '../content/encounters.ts';
+import {skillActivationChance} from '../game/skill-activation.ts';
 import {CompetitionComparison,RivalryPreview} from './RivalryPanel.tsx';
 import {useState} from 'react';
 import {activities} from '../content/activities.ts';
@@ -13,41 +18,22 @@ export type Send=(action:Omit<Action,'revision'>)=>void;
 
 export function SupportLineup({s,send}:{s:GameState;send:Send}) {
   const [draft,setDraft]=useState<SupportId[]>(s.supports.length?s.supports:defaultSupports(s.role));
-  const training=activities({...s,phase:'weekday'});
-  return <>
-    <Background id="ground" banner caption={`${s.month}월 · 새로운 한 달의 준비`}/>
-    <h1 className="screen-title" tabIndex={-1}>이번 달, 누구와 성장할까?</h1>
-    <p className="lead">연습 파트너 3명을 고르세요. 함께 훈련하면 인연과 스킬 포인트가 쌓이고, 인연이 높을수록 성장 보너스가 커집니다.</p>
-    <div className="lineup-summary"><strong>{draft.length} / 3명 선택</strong><span>{s.month}월 목표 · {monthGoal(s.month)}</span></div>
-    <div className="support-grid" role="group" aria-label="이번 달 서포트 편성">{supports.map(p=>{
-      const picked=draft.includes(p.id),hint=skills.find(k=>k.id===supportHint(s,p.id))!;
-      return <button key={p.id} className="card support-card" aria-pressed={picked} disabled={!picked&&draft.length===3} onClick={()=>setDraft(picked?draft.filter(id=>id!==p.id):[...draft,p.id])}>
-        <span className="support-heading"><span className="avatar lg" style={{background:p.color,color:'white'}}>{p.name.slice(1)}</span><span><strong>{p.name}</strong><span className="desc block">{p.role}</span></span><span className="selection-mark" aria-hidden="true">{picked?'✓':'+'}</span></span>
-        <span className="desc">{p.description}</span>
-        <span className="support-specialty">주요 활동 · {p.training[s.role].map(id=>training.find(a=>a.id===id)?.title).join(' / ')}</span>
-        <span className="bond-line">인연 {bond(s,p.id)} / 100 <span>{bond(s,p.id)>=40?'합동 훈련 가능':'40부터 합동 훈련'}</span></span>
-        <span className="bond-bonus-label">훈련 동행 시 인연 보너스 +{bondTrainingBonus(bond(s,p.id))}</span>
-        <span className="bar bond-bar"><span style={{width:`${bond(s,p.id)}%`}}/></span>
-        <span className="desc">조언 · {hint.name}{s.supportCompleted.includes(p.id)?' (만남 완료)':''}</span>
-      </button>;
-    })}</div>
-    <CompetitionComparison s={s}/><div className="panel gap-top"><p>첫 평일 활동을 시작하면 이번 달 편성이 고정됩니다. 다음 달에는 다시 고를 수 있고, 쌓은 인연과 배운 스킬은 유지됩니다.</p><p className="muted gap-top">편성에는 활동이나 포인트가 들지 않습니다. 선택된 인물을 한 번 더 누르면 자리가 비워집니다.</p><div className="actions"><button className="primary" disabled={draft.length!==3} onClick={()=>send({type:'lineup',supports:draft})}>{s.month}월 편성 완료</button></div></div>
-  </>;
+  return <><h1 className="screen-title">육성 덱 선택</h1><DeckBuilder content={s.content} role={s.role} selected={draft} onChange={setDraft}/><div className="actions"><button className="primary" disabled={draft.length!==6} onClick={()=>send({type:'lineup',supports:draft})}>이 덱으로 시작</button></div></>;
 }
 
 export function SupportPanel({s}:{s:GameState}) {
   const training=activities({...s,phase:'weekday'});
-  return <section className="panel"><h3>{s.month}월 연습 파트너</h3><ul className="support-list">{s.supports.map(id=>{
-    const p=supportById(id),value=bond(s,id);
-    return <li key={id}><div className="support-heading"><span className="avatar" style={{background:p.color,color:'white'}}>{p.name.slice(1)}</span><strong>{p.name}</strong><span className="sub">{value>=40?'합동 가능':`인연 ${value}`}</span></div><Meter label="인연" value={value}/><p className="reason">{s.phase==='weekday'?`이번 주 · ${training.find(a=>a.id===s.placements[id])?.title||'휴식 중'}`:p.role}</p></li>;
-  })}</ul><p className="reason gap-top">동행 활동마다 인연 +15. 주력 능력 보너스는 +1부터, 인연 20마다 +1씩 늘어 최대 +5입니다. 인연 40부터 합동 훈련의 추가 성장·스킬 포인트도 얻습니다.</p></section>;
+  return <section className="panel"><h3>나의 육성 덱</h3><ul className="support-list">{s.supports.map(id=>{
+    const p=supportById(id,s),value=bond(s,id);
+    return <li key={id}><div className="support-heading"><CardAvatar card={p} content={s.content}/><strong>{p.name}</strong><span className="sub">{value>=40?'합동 가능':`인연 ${value}`}</span></div><Meter label="인연" value={value}/><p className="reason">{s.phase==='weekday'?`${s.weekdayPart===1?'전반':'후반'} · ${training.find(a=>a.id===s.placements[id])?.title||'휴식 중'}`:p.role}</p></li>;
+  })}</ul><p className="reason gap-top">동행 활동마다 인연 +8. 전반·후반 활동 뒤에는 덱 카드의 인카운터가 각각 추첨됩니다. 인물별 전문 1차 능력에 동행 +1, 인연 40부터 합동 +1을 더합니다. 인연 보너스는 0~39에서 +1, 40~79에서 +2, 80부터 +3이며 성장 단계에 따라 줄어듭니다. 휴식과 실패에는 능력 보너스가 없습니다. 인연 40부터 합동 훈련의 추가 성장·스킬 포인트도 얻습니다.</p></section>;
 }
 
 export function SkillsPanel({s,send}:{s:GameState;send:Send}) {
   const canLearn=['lineup','weekday','weekend','selection'].includes(s.phase);
-  return <><DevelopmentPanel s={s} detail/><div className="skill-balance" role="status"><strong>스킬 포인트 {s.skillPoints} Pt</strong><span>{s.skills.length}개 습득</span></div><p className="muted">활동과 경기로 포인트를 모으고, 인물의 조언으로 습득 비용을 줄이세요. 습득에는 시간이 흐르지 않습니다.</p>{!canLearn&&<p className="reason gap-top">스킬은 활동 선택 화면이나 경기 전 출전 명단 화면에서 배울 수 있습니다.</p>}<div className="skill-grid gap-top">{availableSkills(s).map(k=>{
+  return <><DevelopmentPanel s={s} detail/><div className="skill-balance" role="status"><strong>스킬 포인트 {s.skillPoints} Pt</strong><span>{s.skills.length}개 습득</span></div><p className="notice">지능 {s.attributes.intelligence} · 조건을 만족한 각 스킬의 발동 확률 {Math.round(skillActivationChance(s.attributes.intelligence)*1000)/10}%. 선택 승부와 요약 승부 모두 타석마다 독립 판정합니다.</p><p className="muted">활동과 경기로 포인트를 모으고, 인물의 조언으로 습득 비용을 줄이세요. 상위 스킬은 같은 계열의 일반 스킬을 대체하며, 습득에는 시간이 흐르지 않습니다.</p>{!canLearn&&<p className="reason gap-top">스킬은 활동 선택 화면이나 경기 전 출전 명단 화면에서 배울 수 있습니다.</p>}<div className="skill-grid gap-top">{availableSkills(s).map(k=>{
     const learned=s.skills.includes(k.id),cost=skillCost(s,k.id),hint=s.hints.includes(k.id),requirements=skillRequirements(s,k.id),locked=requirements.some(r=>!r.met);
-    return <section className="panel skill-card" key={k.id}>{k.style&&<span className="chip joint">{k.style} 특화</span>}<h3>{k.name}</h3><p>{k.description}</p>{requirements.length>0&&<ul className="skill-requirements" aria-label="습득 조건">{requirements.map(r=><li key={r.label} className={r.met?'met':''}>{r.met?'✓':'○'} {r.label}</li>)}</ul>}{hint&&<span className="chip new">조언 힌트 · 비용 4 Pt 할인</span>}<button disabled={learned||locked||!canLearn||s.skillPoints<cost} onClick={()=>send({type:'learn',id:k.id})} aria-label={`${k.name} ${learned?'습득 완료':locked?'훈련 조건 미달':`${cost} Pt로 습득`}`}>{learned?'습득 완료':locked?`${cost} Pt · 훈련 조건 미달`:`${cost} Pt · 습득`}</button></section>;
+    return <section className="panel skill-card" key={k.id}>{k.tier==='advanced'&&<span className="chip new">서포트 고유 상위</span>}{k.style&&<span className="chip joint">{k.style} 특화</span>}<h3>{k.name}</h3><p>{k.description}</p><p className="reason">{describeSkill(k,s.role)}</p>{requirements.length>0&&<ul className="skill-requirements" aria-label="습득 조건">{requirements.map(r=><li key={r.label} className={r.met?'met':''}>{r.met?'✓':'○'} {r.label}</li>)}</ul>}{hint&&<span className="chip new">조언 힌트 · 비용 4 Pt 할인</span>}<button disabled={learned||locked||!canLearn||s.skillPoints<cost} onClick={()=>send({type:'learn',id:k.id})} aria-label={`${k.name} ${learned?'습득 완료':locked?'습득 조건 미달':`${cost} Pt로 습득`}`}>{learned?'습득 완료':locked?`${cost} Pt · 습득 조건 미달`:`${cost} Pt · 습득`}</button></section>;
   })}</div></>;
 }
 

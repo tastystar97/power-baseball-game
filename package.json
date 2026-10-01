@@ -1,16 +1,17 @@
 {
   "name": "last-summer-baseball",
   "private": true,
-  "version": "0.4.0",
+  "version": "0.7.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1",
-    "test": "node --experimental-strip-types --test src/game/*.test.ts src/persistence/*.test.ts",
+    "test": "node --experimental-strip-types --test src/game/*.test.ts src/persistence/*.test.ts src/cards/*.test.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "fflate": "0.8.3",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "zod": "4.6.5"
@@ -19,6 +20,7 @@
     "@types/node": "24.19.0",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
+    "fake-indexeddb": "6.2.5",
     "typescript": "5.9.3",
     "vite": "7.3.6"
   }

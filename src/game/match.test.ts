@@ -1,3 +1,4 @@
+import {primaryKeys} from './types.ts';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createMatch, applyOutcome, advanceMatch, chooseTactic, tactics } from './match.ts';
@@ -72,8 +73,8 @@ test('across seeds matches finish with consistent inning totals and limited high
 test('displayed tactic probabilities sum to one even at ability boundaries', () => {
   for(const role of ['batter','pitcher'] as const)for(const ability of [0,100]) {
     const s=createGame('여름',role,3);s.match=createMatch();
-    for(const key of Object.keys(s.stats) as (keyof typeof s.stats)[])s.stats[key]=ability;
-    if(role==='batter'){s.stats.contact=0;s.stats.power=100;s.energy=0;s.stress=100;}
+    for(const key of primaryKeys)s.attributes[key]=ability;for(const key of Object.keys(s.proficiency) as (keyof typeof s.proficiency)[])s.proficiency[key]=ability;
+    if(role==='batter'){s.proficiency.contact=0;s.proficiency.power=100;s.energy=0;s.stress=100;}
     for(const t of tactics(s)) {
       assert.ok(t.probabilities.every(p=>p>=0&&p<=1));
       assert.ok(Math.abs(t.probabilities.reduce((a,b)=>a+b,0)-1)<1e-9,`${role} ${t.id} probabilities must sum to one`);

@@ -27,11 +27,11 @@ test('duel summaries keep walks and sacrifices distinct from at bats and missing
  }
  assert.match(duelDialogue('batter',null),/세부 기록 없음/);assert.match(duelDialogue('batter',[]),/대결 없음/);
 });
-test('tracking actual manual and auto duels does not change game outcomes or random draws',()=>{
+test('actual manual and auto duels are reproducible with the same random state',()=>{
  let manual=0,auto=0;
  for(const role of ['batter','pitcher'] as const)for(const appearance of ['starter','substitute','reserve'] as const)for(let seed=1;seed<=8;seed++){
   const tracked=createGame('대결',role,seed);tracked.match={...createMatch(appearance),opponentId:'haesol'};
-  const old=structuredClone(tracked);old.match!.duels=null;
+  const old=structuredClone(tracked);
   for(const s of [tracked,old])for(let turn=0;turn<10&&!s.match!.over;turn++){
    advanceMatch(s);if(s.match!.awaiting)chooseTactic(s,role==='batter'?'contact':'control');
   }

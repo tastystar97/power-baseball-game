@@ -9,7 +9,7 @@ export function DevelopmentPanel({s,detail=false}:{s:GameState;detail?:boolean})
   return <section className="panel development"><p className="eyebrow">훈련으로 만드는 나의 야구</p><h3>{style.name}</h3>
     <div className="gap-top">{style.paths.map(p=><Meter key={p.name} label={p.name} value={p.score}/>)}</div>
     <p className="reason gap-top">현재 능력으로 본 성장 방향입니다. 두 방향의 스킬을 모두 배워 혼합형으로 키울 수 있습니다.</p>
-    {detail&&<><p className="reason gap-top">능력 60부터 훈련 성장이 완만해집니다. 60~79는 75%, 80~89는 50%, 90 이상은 25%이며 실제 성장량은 활동 카드에 반영됩니다.</p><div className="development-goals">{availableSkills(s).filter(k=>k.style).map(k=><div key={k.id}><strong>{k.style} · {k.name}</strong><p className="reason">{s.skills.includes(k.id)?'특화 스킬 습득 완료':skillRequirements(s,k.id).map(r=>`${r.met?'✓':'○'} ${r.label}`).join(' · ')}</p></div>)}</div></>}
+    {detail&&<><p className="reason gap-top">1차 능력과 숙련 각각 60부터 성장이 완만해집니다. 60~79는 75%, 80~89는 50%, 90 이상은 25%이며 숙련이 기반보다 10/20 넘게 높으면 추가로 성장 둔화가 적용됩니다. 실제 성장량은 활동 카드에 반영됩니다.</p><div className="development-goals">{availableSkills(s).filter(k=>k.style).map(k=><div key={k.id}><strong>{k.style} · {k.name}</strong><p className="reason">{s.skills.includes(k.id)?'특화 스킬 습득 완료':skillRequirements(s,k.id).map(r=>`${r.met?'✓':'○'} ${r.label}`).join(' · ')}</p></div>)}</div></>}
   </section>;
 }
 export function SeasonPanel({s}:{s:GameState}) {

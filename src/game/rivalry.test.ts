@@ -1,3 +1,4 @@
+import {derivedStats} from './abilities.ts';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {createCompetitor,growCompetitor,schoolRivalry,schoolDialogue,selectionDialogue} from './rivalry.ts';
@@ -6,28 +7,28 @@ import {createGame} from './engine.ts';
 import {createMatch} from './match.ts';
 test('rival grows once per weekday with explicit role plan and shared growth',()=>{
  const b=createCompetitor('batter');assert.equal(b.stats.contact,42);assert.equal(b.trust,25);
- const one=growCompetitor(b,'batter',1,null,'played');assert.equal(one.stats.power,44);assert.equal(one.trust,26);assert.equal(b.stats.power,40);
- const two=growCompetitor(one,'batter',2,null,'played');assert.equal(two.stats.contact,46);assert.equal(two.stats.field,39);assert.equal(two.trust,27);
- assert.equal(growCompetitor(two,'batter',2,'power','played'),two);
- assert.throws(()=>growCompetitor(two,'batter',4,null,'played'));
- const p=growCompetitor(createCompetitor('pitcher'),'pitcher',1,null,'played');assert.equal(p.stats.velocity,46);
- const p2=growCompetitor(p,'pitcher',2,null,'played');assert.equal(p2.stats.control,41);assert.equal(p2.stats.stamina,44);
- for(const [value,gain] of [[59,5],[60,3],[79,3],[80,2],[89,2],[90,1],[99,1],[100,0]]){
+ const one=growCompetitor(b,'batter',1,null,'v6');assert.equal(one.stats.power,45);assert.equal(one.trust,26);assert.equal(b.stats.power,40);
+ const two=growCompetitor(one,'batter',2,null,'v6');assert.equal(two.stats.contact,47);assert.equal(two.stats.field,39);assert.equal(two.trust,27);
+ assert.equal(growCompetitor(two,'batter',2,'power','v6'),two);
+ assert.throws(()=>growCompetitor(two,'batter',4,null,'v6'));
+ const p=growCompetitor(createCompetitor('pitcher'),'pitcher',1,null,'v6');assert.equal(p.stats.velocity,46);
+ const p2=growCompetitor(p,'pitcher',2,null,'v6');assert.equal(p2.stats.control,41);assert.equal(p2.stats.stamina,44);
+ for(const [value,gain] of [[59,6],[60,4],[79,4],[80,3],[89,3],[90,1],[99,1],[100,0]]){
   const c=createCompetitor('batter');c.stats.power=value;
-  assert.equal(growCompetitor(c,'batter',1,'power','played').stats.power-value,gain);
+  assert.equal(growCompetitor(c,'batter',1,'power','v6').stats.power-value,gain);
  }
- assert.throws(()=>growCompetitor(b,'batter',1,'power','migrated'));
+ assert.throws(()=>growCompetitor(b,'batter',1,'control','v6'));
 });
 test('competition thresholds and ties let training reclaim a place',()=>{
  for(const [a,b,prev,winner] of [[64,64,null,'other'],[65,64,null,'player'],[65,65,null,'player'],[65,65,'junseo','junseo'],[78,76,'junseo','player'],[72,75,'player','junseo'],[65,65,'other','player']] as const)
   assert.equal(decideStarter(a,b,prev).starter,winner);
- const s=createGame('경쟁','batter');s.stats.contact=60;s.stats.power=40;
+ const s=createGame('경쟁','batter');s.proficiency.contact=90;s.proficiency.power=48;
  const m=createMatch();m.batting.hits=2;m.batting.walks=1;m.batting.rbi=1;
- s.records=[{month:3,match:m}];const score=candidateScore(s.role,s.stats,s.trust,s.records);
+ s.records=[{month:3,match:m}];const score=candidateScore(s.role,derivedStats(s),s.trust,s.records);
  assert.equal(score.practice,10);assert.equal(score.performance,10);assert.equal(score.readinessSource,'practice');
- s.records.push({month:4,match:createMatch('reserve')});assert.equal(candidateScore(s.role,s.stats,s.trust,s.records).performance,10);
- s.records.push({month:5,match:createMatch()});assert.equal(candidateScore(s.role,s.stats,s.trust,s.records).performance,5);
- assert.equal(candidateScore(s.role,s.stats,s.trust,null).performance,null);
+ s.records.push({month:4,match:createMatch('reserve')});assert.equal(candidateScore(s.role,derivedStats(s),s.trust,s.records).performance,10);
+ s.records.push({month:5,match:createMatch()});assert.equal(candidateScore(s.role,derivedStats(s),s.trust,s.records).performance,5);
+ assert.equal(candidateScore(s.role,derivedStats(s),s.trust,null).performance,null);
  const comp=createCompetitor('batter');const initial=compareCandidates(s,comp,[],'test');
  assert.deepEqual(compareCandidates(s,comp,[initial],'test'),initial);
 });

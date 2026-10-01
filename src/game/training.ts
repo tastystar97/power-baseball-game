@@ -13,7 +13,7 @@ export function trainingFailureChance(energy:number):number {
   return 0;
 }
 export const growthMultiplier=(ability:number)=>ability>=90?.25:ability>=80?.5:ability>=60?.75:1;
-export function trainingGrowth(ability:number,raw:number,stress:number):number {
+export function trainingGrowth(ability:number,raw:number,_stress=0):number {
   if(raw<=0)return 0;
-  return Math.min(100-ability,Math.max(1,Math.floor(raw*growthMultiplier(ability)*(stress>=75?.5:1))));
+  return Math.min(100-ability,Math.max(1,Math.floor(raw*growthMultiplier(ability))));
 }

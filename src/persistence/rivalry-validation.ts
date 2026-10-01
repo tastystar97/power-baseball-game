@@ -2,10 +2,8 @@ import type {GameState,Match,StatKey} from '../game/types.ts';
 import type {CandidateScore,Starter} from '../game/rival-types.ts';
 import {createCompetitor,growCompetitor,summarizeDuels} from '../game/rivalry.ts';
 import {candidateScore,decideStarter} from '../game/competition.ts';
-import {evaluateSelection as legacyEvaluation} from './v3.ts';
 import {matchPlan,weekKey} from '../game/season.ts';
-import {activities} from '../content/activities.ts';
-import {weeklyPlacements} from '../game/support.ts';
+import {sharedTraining} from '../game/shared-training.ts';
 
 export const equalData=(a:unknown,b:unknown):boolean=>{
  if(a===b)return true;
@@ -36,21 +34,13 @@ function checkDuels(s:GameState,m:Match){
  }else {const p=m.pitching;if(t.ab+t.walks+t.sacrifices>m.faced||t.hits>p.hits||t.walks>p.walks||t.k>p.k||t.ab-t.hits+t.sacrifices>p.outs)fail('맞대결 투구 성적이 전체 성적을 넘습니다.');}
 }
 export function validateRivalryState(s:GameState):void {
- if(s.competitor.weeks.length!==s.schedule.filter(w=>w.weekday).length)fail('라이벌 성장 횟수가 주간 활동과 다릅니다.');
- let expected=createCompetitor(s.role),played=false;
+ if(s.competitor.weeks.length!==s.schedule.filter(w=>w.weekday2).length)fail('라이벌 성장 횟수가 주간 활동과 다릅니다.');
+ let expected=createCompetitor(s.role);
  const progress=new Map<number,typeof expected>();
  for(const [i,w] of s.competitor.weeks.entries()){
-  if(w.key!==i+1||played&&w.source==='migrated')fail('라이벌 성장 이력이 올바르지 않습니다.');
-  if(w.source==='played'){
-   played=true;const week=s.schedule[i],lineup=s.lineupHistory.find(h=>h.month===week.month)?.supports||[];
-   const available=activities({role:s.role,phase:'weekday'}),activity=available.find(a=>a.title===week.weekday);
-   const placements=weeklyPlacements({role:s.role,supports:lineup,trainingSeed:s.trainingSeed,month:week.month,week:week.week});
-   const failed=s.log.some(l=>l.month===week.month&&l.week===week.week&&l.title.startsWith(activity?.title||'\0')&&l.training?.outcome==='failure');
-   const primary=activity?Object.keys(activity.gains)[0] as StatKey|undefined:undefined;
-   const shared=primary&&lineup.includes('rival')&&placements.rival===activity?.id&&!failed?primary:null;
-   if(w.sharedPrimary!==shared)fail('함께한 훈련과 라이벌 보너스가 다릅니다.');
-  }
-  expected=growCompetitor(expected,s.role,w.key,w.sharedPrimary,w.source);progress.set(w.key,expected);
+  if(w.key!==i+1||w.source!=='v6')fail('라이벌 성장 이력이 올바르지 않습니다.');
+  if(w.sharedPrimary!==sharedTraining(s,i,1)||w.sharedSecondary!==sharedTraining(s,i,2))fail('전후반 공동 훈련 기록이 맞지 않습니다.');
+  expected=growCompetitor(expected,s.role,w.key,w.sharedPrimary,w.source,w.sharedSecondary);progress.set(w.key,expected);
  }
  if(!equalData(expected,s.competitor))fail('라이벌 능력과 성장 기록이 다릅니다.');
  const expectedIds=s.records.filter(r=>r.month>=4&&r.match.duels!==null).map(r=>r.match.id!);
@@ -71,13 +61,7 @@ export function validateRivalryState(s:GameState):void {
   previous=h.starter;
  }
  const e=s.evaluation;
- if(e?.basis==='legacy'){
-  if(e.competition!==null||s.match&&s.match.duels!==null)fail('이전 출전 기준의 경기 상태가 다릅니다.');
-  if(s.phase==='selection'){
-   const old=legacyEvaluation(s),{basis,competition,...saved}=e;
-   if(!equalData(old,saved))fail('이전 출전 평가 점수가 맞지 않습니다.');
-  }
- }else if(e){
+ if(e){
   const h=s.selectionHistory.find(h=>h.matchId===currentId);
   if(!h||!equalData(h,e.competition))fail('현재 명단과 경쟁 기록이 다릅니다.');
   const p=h.player;

@@ -1,3 +1,4 @@
+import {primaryKeys} from './types.ts';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -17,7 +18,7 @@ export function advanceSeason(s:GameState):GameState {
     :s.phase==='match'?{type:'tactic',id:s.role==='batter'?'contact':'control'}:{type:'continue'};
   return act(s,a);
 }
-test('both roles play sixteen weeks through summer with every weekend and monthly lineup intact',()=>{
+test('both roles play sixteen weeks through summer with every weekend and fixed deck intact',()=>{
   for(const role of ['batter','pitcher'] as const){
     let s=createGame('여름',role,71);
     for(let step=0;step<350&&s.phase!=='complete';step++){
@@ -25,29 +26,17 @@ test('both roles play sixteen weeks through summer with every weekend and monthl
     }
     assert.equal(s.phase,'complete');assert.equal(s.month,6);
     assert.equal(s.schedule.length,16);assert.ok(s.schedule.every(w=>w.weekday&&w.weekend));
-    assert.equal(s.lineupHistory.length,4);assert.ok(s.records.length>=4&&s.records.length<=6);
+    assert.equal(s.supports.length,6);assert.ok(s.records.length>=4&&s.records.length<=6);
     assert.equal(s.tournament.rounds.length,3);
     assert.equal(act(s,{type:'continue'}),s);
   }
 });
-test('v2 saves preserve abilities, RNG and pending games; April completion resumes at May lineup',()=>{
-  for(const role of ['batter','pitcher'])for(const stage of ['start','match','selection','complete']){
-    const raw=readFileSync(new URL(`../persistence/fixtures/v2-${role}-${stage}.json`,import.meta.url),'utf8');
-    const old=JSON.parse(raw),s=parseSave(raw);
-    assert.equal(s.version,4);assert.deepEqual(s.stats,old.stats);assert.equal(s.rng,old.rng);
-    assert.deepEqual(s.skills,old.skills);assert.deepEqual(s.bonds,old.bonds);
-    assert.equal(s.records.length,old.records.length);
-    if(stage==='complete'){assert.equal(s.month,5);assert.equal(s.week,1);assert.equal(s.phase,'lineup');assert.equal(s.schedule.length,9);}
-    else {assert.equal(s.phase,old.phase);assert.deepEqual(s.match?.last,old.match?.last);}
-    assert.deepEqual(parseSave(JSON.stringify(s)),s);
-  }
-});
 test('higher abilities grow gradually and success previews still match actual gains',()=>{
-  for(const [start,expected] of [[59,7],[60,5],[79,5],[80,3],[89,3],[90,1],[99,1],[100,0]]){
+  for(const [start,expected] of [[59,10],[60,7],[79,7],[80,5],[89,5],[90,2],[99,1],[100,0]]){
     const s=act(createGame('성장','pitcher',71),{type:'lineup',supports:defaultSupports('pitcher')});
-    s.placements={};s.stats.control=start;
-    assert.equal(previewActivity(s,'control')!.gains.control,expected,`control ${start}`);
-    assert.equal(act(s,{type:'activity',id:'control'}).stats.control-start,expected);
+    s.placements={};for(const k of primaryKeys)s.attributes[k]=100;s.proficiency.control=start;
+    assert.equal(previewActivity(s,'control')!.proficiency.control,expected,`control ${start}`);
+    assert.equal(act(s,{type:'activity',id:'control'}).proficiency.control!-start,expected);
   }
 });
 test('specialized skills unlock by training and prerequisite without a permanent class choice',()=>{
@@ -60,26 +49,26 @@ test('specialized skills unlock by training and prerequisite without a permanent
     const s=createGame('특화',role,9);s.skillPoints=100;
     assert.ok(availableSkills(s).some(k=>k.id===id));
     assert.equal(act(s,{type:'learn',id}),s);
-    Object.assign(s.stats,stats);assert.equal(act(s,{type:'learn',id}),s);
-    s.skills=[base];const n=act(s,{type:'learn',id});
+    for(const k of primaryKeys)s.attributes[k]=70;for(const k of Object.keys(s.proficiency) as (keyof typeof s.proficiency)[])s.proficiency[k]=70;assert.equal(act(s,{type:'learn',id}),s);
+    s.skills=[base];assert.equal(act(s,{type:'learn',id}),s);s.unlockedSkills=[id];const n=act(s,{type:'learn',id});
     assert.ok(n.skills.includes(id));assert.equal(n.skillPoints,76);
     assert.equal(act(n,{type:'learn',id}),n);assert.equal(n.week,s.week);
   }
   let mixed=createGame('혼합','batter',4);mixed.skillPoints=100;mixed.skills=['contact_focus','power_drive'];
-  Object.assign(mixed.stats,{contact:65,eye:55,power:65});
-  mixed=act(mixed,{type:'learn',id:'contact_master'});mixed=act(mixed,{type:'learn',id:'slugger'});
+  for(const k of primaryKeys)mixed.attributes[k]=70;for(const k of Object.keys(mixed.proficiency) as (keyof typeof mixed.proficiency)[])mixed.proficiency[k]=70;
+  mixed.unlockedSkills=['contact_master','slugger'];mixed=act(mixed,{type:'learn',id:'contact_master'});mixed=act(mixed,{type:'learn',id:'slugger'});
   assert.ok(mixed.skills.includes('contact_master')&&mixed.skills.includes('slugger'));
 });
 test('specialized skills change the matching tactic probabilities and real pitching burden',()=>{
   for(const [role,id,tactic,index,delta] of [
-    ['batter','contact_master','contact',3,.04],['batter','slugger','power',5,.04],
-    ['pitcher','power_finish','breaking',0,.05],['pitcher','efficient_pitch','control',2,-.01],
+    ['batter','contact_master','contact',3,.075*.68],['batter','slugger','power',5,.065*.68],
+    ['pitcher','power_finish','breaking',0,.08*.68],['pitcher','efficient_pitch','control',2,-.035*.68],
   ] as const){
     const s=createGame('특화',role,51);s.match=createMatch();s.match.awaiting=true;
     const base=tactics(s).find(t=>t.id===tactic)!;s.skills=[id];
     const t=tactics(s).find(t=>t.id===tactic)!;
     assert.ok(Math.abs(t.probabilities[index]-base.probabilities[index]-delta)<1e-9);
-    assert.match(t.reason,/적용 스킬/);
-    if(id==='efficient_pitch'){assert.equal(t.burden,3);chooseTactic(s,tactic);assert.equal(s.match.load,3);}
+    assert.match(t.reason,/발동 후보/);
+    if(id==='efficient_pitch'){assert.ok(Math.abs(t.burden-(5-3*.68))<1e-9);chooseTactic(s,tactic);assert.equal(s.match.load,s.match.skillChecks![0].active.includes('efficient_pitch')?2:5);}
   }
 });

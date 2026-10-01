@@ -1,26 +1,19 @@
-import { stateSchema, statKeys, supportIds } from '../game/types.ts';
+import {validateContent} from '../cards/pack.ts';
+import {catalogForDeck} from '../cards/catalog.ts';
+import {secondaryKeys} from '../game/abilities.ts';
+import {snapshot} from '../game/engine.ts';
+import { stateSchema } from '../game/types.ts';
 import type { GameState, Match } from '../game/types.ts';
-import {parseV3} from './v3.ts';
-import {createCompetitor,growCompetitor} from '../game/rivalry.ts';
+import {validateLoop,validateSkillChecks} from './loop-validation.ts';
 import {validateRivalryState,equalData} from './rivalry-validation.ts';
 import {matchPlan,pairings,weekKey} from '../game/season.ts';
-import { snapshot } from '../game/engine.ts';
 import { availableSkills } from '../content/skills.ts';
 import { weeklyPlacements } from '../game/support.ts';
 import { evaluateSelection } from '../game/competition.ts';
 
-// Keep the existing origin/key so existing players can continue their careers.
+// Keep the key to detect unsupported saves and require an explicit new game.
 export const SAVE_KEY='last-summer.save.v1';
-export const BACKUP_KEY='last-summer.backup.v1';
-export const V2_BACKUP_KEY='last-summer.backup.v2';
 export type LoadResult={kind:'ok';state:GameState;migrated?:boolean}|{kind:'empty'}|{kind:'invalid';message:string}|{kind:'unavailable';message:string};
-export const V3_BACKUP_KEY='last-summer.backup.v3';
-export function migrateToV4(raw:string):GameState {
- const old=parseV3(raw);let competitor=createCompetitor(old.role);
- for(let i=1;i<=old.schedule.filter(w=>w.weekday).length;i++)competitor=growCompetitor(competitor,old.role,i,null,'migrated');
- return {...old,version:4,competitor,selectionHistory:[],evaluation:old.evaluation?{...old.evaluation,basis:'legacy',competition:null}:null,
-   match:old.match?{...old.match,duels:null}:null,records:old.records.map(r=>({...r,match:{...r.match,duels:null}}))};
-}
 const unique=(items:unknown[])=>new Set(items).size===items.length;
 const same=equalData;
 function checkMatch(m:Match){
@@ -32,39 +25,39 @@ function checkMatch(m:Match){
 }
 export function parseSave(raw:string):GameState {
   const json=JSON.parse(raw);
-  const s=stateSchema.parse([1,2,3].includes(json?.version)?migrateToV4(raw):json);
+  if(json?.version!==7)throw Error('이전 버전 저장은 지원하지 않습니다. 새 게임을 시작해 주세요.');
+  const s=stateSchema.parse(json);
+  validateContent(s.content);
+  if(s.phase!=='lineup'&&!same(s.content,catalogForDeck(s.content,s.supports)))throw Error('육성 덱과 콘텐츠가 다릅니다.');
+  const bondIds=s.content.cards.map(c=>c.id).filter(id=>!['rival','catcher'].includes(id));
+  if(!same(Object.keys(s.bonds).sort(),bondIds.sort()))throw Error('카드의 인연 정보가 누락되었습니다.');
+  const required=secondaryKeys(s.role);
+  if(Object.keys(s.proficiency).length!==required.length||required.some(k=>s.proficiency[k]===undefined))throw Error('역할별 숙련이 올바르지 않습니다.');
   const count=(s.month-3)*4+s.week;
   if(s.schedule.length!==count||s.schedule.some((w,i)=>w.month!==3+Math.floor(i/4)||w.week!==i%4+1))throw Error('활동 기록이 올바르지 않습니다.');
-  const weekdayEmpty=['lineup','weekday'].includes(s.phase);
-  const weekendDone=['weekendEvent','weekendResult','complete'].includes(s.phase);
+  const weekendDone=s.phase==='complete';
   for(const [i,w] of s.schedule.entries()){
-    if(i<count-1&&(!w.weekday||!w.weekend))throw Error('이전 주 활동이 완료되지 않았습니다.');
-    if(i===count-1&&(Boolean(w.weekday)===weekdayEmpty||Boolean(w.weekend)!==weekendDone))throw Error('활동 슬롯과 진행 단계가 맞지 않습니다.');
+    if(i<count-1&&(!w.weekday||!w.weekday2||!w.weekend))throw Error('이전 주 활동이 완료되지 않았습니다.');
+    if(i===count-1&&Boolean(w.weekend)!==weekendDone)throw Error('활동 슬롯과 진행 단계가 맞지 않습니다.');
   }
-  if(s.phase==='lineup'&&s.week!==1)throw Error('월초에만 편성할 수 있습니다.');
+  if(s.phase==='lineup'&&(s.month!==3||s.week!==1||s.supports.length>0))throw Error('육성 시작에만 덱을 고를 수 있습니다.');
   if(s.phase==='complete'&&(s.month!==6||s.week!==4))throw Error('완료 시점이 아닙니다.');
   const plan=matchPlan(s);
-  if(['event','eventResult'].includes(s.phase)&&plan)throw Error('경기 주차에 일반 사건을 진행할 수 없습니다.');
-  const eventDone=!plan&&['eventResult','weekend','weekendEvent','weekendResult','complete'].includes(s.phase);
-  const expectedEvents=s.schedule.filter(w=>weekKey(w.month,w.week)<count&&!matchPlan({...s,month:w.month,week:w.week})).map(w=>weekKey(w.month,w.week));
-  if(eventDone)expectedEvents.push(count);
-  if(!same(s.completedEvents,expectedEvents))throw Error('사건 이력과 진행 단계가 맞지 않습니다.');
-  if(['weekendEvent','weekendResult'].includes(s.phase)&&s.schedule[count-1].weekend!=='동료와 캐치볼')throw Error('주말 사건의 선행 활동이 없습니다.');
-  if(!unique(s.supports)||(s.phase!=='lineup'&&s.supports.length!==3))throw Error('서포트 편성이 올바르지 않습니다.');
-  if(!unique(s.supportCompleted)||!unique(s.skills)||!unique(s.hints))throw Error('중복된 성장 이력이 있습니다.');
+  validateLoop(s);
+  if(!unique(s.supports)||(s.phase!=='lineup'&&s.supports.length!==6))throw Error('서포트 편성이 올바르지 않습니다.');
+  if(!unique(s.supportCompleted)||!unique(s.skills)||!unique(s.hints)||!unique(s.unlockedSkills))throw Error('중복된 성장 이력이 있습니다.');
   const validSkills=availableSkills(s).map(k=>k.id);
-  if([...s.skills,...s.hints].some(id=>!validSkills.includes(id)))throw Error('역할에 맞지 않는 스킬입니다.');
+  if([...s.skills,...s.hints,...s.unlockedSkills].some(id=>!validSkills.includes(id)))throw Error('역할에 맞지 않는 스킬입니다.');
   const isSupport=['supportEvent','supportResult'].includes(s.phase);
   if(Boolean(s.activeSupport)!==isSupport)throw Error('서포트 사건 처리 위치가 올바르지 않습니다.');
-  if(s.activeSupport&&(!s.supports.includes(s.activeSupport)||(s.phase==='supportEvent'&&s.supportCompleted.includes(s.activeSupport))||(s.phase==='supportResult'&&!s.supportCompleted.includes(s.activeSupport))))throw Error('서포트 사건 이력이 맞지 않습니다.');
+  if(s.activeSupport&&!s.supports.includes(s.activeSupport))throw Error('편성하지 않은 서포트의 사건입니다.');
   const expectedPlacements=s.phase==='lineup'?{}:weeklyPlacements(s);
   if(!same(s.placements,expectedPlacements))throw Error('주간 훈련 배치가 맞지 않습니다.');
-  const currentLocked=s.schedule[(s.month-3)*4].weekday!=='';
-  if(s.lineupHistory.length!==s.month-3+(currentLocked?1:0))throw Error('월별 편성 이력이 없습니다.');
-  for(const [i,h] of s.lineupHistory.entries())if(h.month!==i+3||!unique(h.supports)||h.supports.some(id=>!supportIds.includes(id))||(h.month===s.month&&!same(h.supports,s.supports)))throw Error('편성 이력이 올바르지 않습니다.');
-  const matchPhases=['match','matchResult','matchEnd','weekend','weekendEvent','weekendResult','complete'];
+  for(const id of s.skills){const skill=s.content.skills.find(k=>k.id===id)!;if(skill.tier==='advanced'&&(!s.unlockedSkills.includes(id)||!s.skills.includes(skill.prerequisite!)))throw Error('상위 스킬 습득 이력이 없습니다.');}
+  if(s.hints.some(id=>s.content.skills.find(k=>k.id===id)!.tier!=='normal'))throw Error('일반 스킬만 힌트를 받을 수 있습니다.');
+  const matchPhases=['match','matchResult','matchEnd','weekend','complete'];
   const matchExists=Boolean(plan)&&matchPhases.includes(s.phase);
-  const recorded=matchExists&&['matchEnd','weekend','weekendEvent','weekendResult','complete'].includes(s.phase);
+  const recorded=matchExists&&['matchEnd','weekend','complete'].includes(s.phase);
   if(Boolean(s.match)!==matchExists||s.matchRecorded!==recorded)throw Error('경기 이력과 진행 단계가 맞지 않습니다.');
   if(s.phase==='selection'&&(!plan||s.month===3))throw Error('출전 평가 시점이 아닙니다.');
   const evaluated=s.month>=4&&(s.phase==='selection'||matchExists);
@@ -72,7 +65,7 @@ export function parseSave(raw:string):GameState {
   // Before the match, no later trust award has changed the selection inputs.
   if(s.phase==='selection'&&s.evaluation?.basis==='rival'&&!same(s.evaluation,evaluateSelection(s)))throw Error('출전 평가 점수가 맞지 않습니다.');
   if(s.match){
-    const m=s.match;checkMatch(m);
+    const m=s.match;checkMatch(m);validateSkillChecks(s,m);
     if(m.id!==plan?.id||m.opponentId!==plan?.opponentId)throw Error('경기 상대와 일정이 다릅니다.');
     if(m.awaiting!==(s.phase==='match')||(recorded&&!m.over))throw Error('경기 처리 위치가 올바르지 않습니다.');
     if(m.appearance!==(s.month===3?'starter':s.evaluation!.rank))throw Error('출전 역할이 맞지 않습니다.');
@@ -84,7 +77,7 @@ export function parseSave(raw:string):GameState {
   if(recorded)expectedMatches.push(plan!);
   if(s.records.length!==expectedMatches.length)throw Error('누적 경기 기록이 맞지 않습니다.');
   for(const [i,r] of s.records.entries()){
-    const expected=expectedMatches[i];checkMatch(r.match);
+    const expected=expectedMatches[i];checkMatch(r.match);validateSkillChecks(s,r.match);
     if(r.month!==expected.month||r.match.id!==expected.id||r.match.opponentId!==expected.opponentId||!r.match.over||r.match.awaiting||r.match.score[0]===r.match.score[1])throw Error('완료 경기 이력이 올바르지 않습니다.');
     if(r.match.id===plan?.id&&!same(r.match,s.match))throw Error('현재 경기와 누적 기록이 다릅니다.');
   }
@@ -103,7 +96,7 @@ export function parseSave(raw:string):GameState {
       }
     }
   }
-  const keys=[...statKeys,'energy','stress','academics','trust','rival','catcher','skillPoints','bond_bat_senior','bond_pitch_senior','bond_manager','bond_classmate'];
+  const keys=Object.keys(snapshot(s));
   for(const base of [s.initial,s.weekStart,s.monthStart])for(const k of keys)if(!(k in base)||base[k]>(k==='skillPoints'?1000:100))throw Error('성장 비교 기준이 없습니다.');
   validateRivalryState(s);
   return s;
@@ -112,16 +105,13 @@ export function loadGame(storage:Pick<Storage,'getItem'>):LoadResult {
   let raw:string|null;
   try {raw=storage.getItem(SAVE_KEY);}catch{return {kind:'unavailable',message:'브라우저 저장소를 사용할 수 없습니다. 이번 플레이는 저장되지 않습니다.'};}
   if(raw===null)return {kind:'empty'};
-  try{return {kind:'ok',state:parseSave(raw),migrated:JSON.parse(raw).version!==4};}catch{return {kind:'invalid',message:'저장 데이터가 손상되었거나 지원하지 않는 형식입니다. 기존 데이터는 그대로 보존했습니다.'};}
+  try{return {kind:'ok',state:parseSave(raw)};}catch{
+    let old=false;try{old=[1,2,3,4,5,6].includes(JSON.parse(raw)?.version);}catch{}
+    return {kind:'invalid',message:old?'이전 테스트 버전의 저장입니다. 덱 육성 버전은 새 선수로 시작해 주세요. 기존 저장은 새 게임을 확정하기 전까지 보관됩니다.':'저장 데이터가 손상되었거나 지원하지 않는 형식입니다. 기존 데이터는 그대로 보존했습니다.'};
+  }
 }
 export function saveGame(state:GameState,storage:Pick<Storage,'setItem'>&Partial<Pick<Storage,'getItem'>>) {
   try{
-    const previous=storage.getItem?.(SAVE_KEY);
-    if(previous){
-      let version:number|undefined;try{version=JSON.parse(previous).version;}catch{/* Explicit new-game confirmation permits replacing invalid data. */}
-      const backup=version===1?BACKUP_KEY:version===2?V2_BACKUP_KEY:version===3?V3_BACKUP_KEY:null;
-      if(backup&&!storage.getItem?.(backup))storage.setItem(backup,previous);
-    }
     storage.setItem(SAVE_KEY,JSON.stringify(state));return true;
   }catch{return false;}
 }

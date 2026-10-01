@@ -1,0 +1,1055 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "cards": {
+      "minItems": 1,
+      "maxItems": 100,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 150,
+            "pattern": "^[a-z][a-z0-9_-]*(?:\\/[a-z][a-z0-9_-]*)?$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 30
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          },
+          "role": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 600
+          },
+          "color": {
+            "type": "string",
+            "pattern": "^#[0-9a-fA-F]{6}$"
+          },
+          "specialty": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "power",
+                  "endurance",
+                  "mental",
+                  "intelligence",
+                  "sense"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "training": {
+            "type": "object",
+            "properties": {
+              "batter": {
+                "minItems": 1,
+                "maxItems": 3,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "batting",
+                    "weights",
+                    "running",
+                    "fielding",
+                    "freebatting",
+                    "tactics",
+                    "study",
+                    "rest"
+                  ]
+                }
+              },
+              "pitcher": {
+                "minItems": 1,
+                "maxItems": 3,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "velocity",
+                    "weights",
+                    "running",
+                    "control",
+                    "breaking",
+                    "endurance",
+                    "tactics",
+                    "study",
+                    "rest"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "batter",
+              "pitcher"
+            ],
+            "additionalProperties": false
+          },
+          "bonus": {
+            "type": "object",
+            "properties": {
+              "energy": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 6
+              },
+              "stress": {
+                "type": "integer",
+                "minimum": -4,
+                "maximum": 0
+              },
+              "jointEnergy": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 6
+              },
+              "gains": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string",
+                  "enum": [
+                    "power",
+                    "endurance",
+                    "mental",
+                    "intelligence",
+                    "sense"
+                  ]
+                },
+                "additionalProperties": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 2
+                }
+              }
+            },
+            "required": [
+              "energy",
+              "stress",
+              "jointEnergy",
+              "gains"
+            ],
+            "additionalProperties": false
+          },
+          "hints": {
+            "type": "object",
+            "properties": {
+              "batter": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 150,
+                    "pattern": "^[a-z][a-z0-9_-]*(?:\\/[a-z][a-z0-9_-]*)?$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "pitcher": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 150,
+                    "pattern": "^[a-z][a-z0-9_-]*(?:\\/[a-z][a-z0-9_-]*)?$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "batter",
+              "pitcher"
+            ],
+            "additionalProperties": false
+          },
+          "ultimates": {
+            "type": "object",
+            "properties": {
+              "batter": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 150,
+                    "pattern": "^[a-z][a-z0-9_-]*(?:\\/[a-z][a-z0-9_-]*)?$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "pitcher": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 150,
+                    "pattern": "^[a-z][a-z0-9_-]*(?:\\/[a-z][a-z0-9_-]*)?$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "batter",
+              "pitcher"
+            ],
+            "additionalProperties": false
+          },
+          "portrait": {
+            "type": "string",
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "title",
+          "role",
+          "description",
+          "color",
+          "specialty",
+          "training",
+          "bonus",
+          "hints",
+          "ultimates"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "skills": {
+      "maxItems": 240,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 150,
+            "pattern": "^[a-z][a-z0-9_-]*(?:\\/[a-z][a-z0-9_-]*)?$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "batter",
+              "pitcher",
+              "both"
+            ]
+          },
+          "cost": {
+            "type": "integer",
+            "minimum": 6,
+            "maximum": 60
+          },
+          "family": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 150,
+            "pattern": "^[a-z][a-z0-9_-]*(?:\\/[a-z][a-z0-9_-]*)?$"
+          },
+          "tier": {
+            "type": "string",
+            "enum": [
+              "normal",
+              "advanced"
+            ]
+          },
+          "prerequisite": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 150,
+            "pattern": "^[a-z][a-z0-9_-]*(?:\\/[a-z][a-z0-9_-]*)?$"
+          },
+          "owner": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 150,
+            "pattern": "^[a-z][a-z0-9_-]*(?:\\/[a-z][a-z0-9_-]*)?$"
+          },
+          "requires": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string",
+              "enum": [
+                "contact",
+                "power",
+                "eye",
+                "speed",
+                "field",
+                "mental",
+                "velocity",
+                "control",
+                "breaking",
+                "stamina"
+              ]
+            },
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 95
+            }
+          },
+          "conditions": {
+            "maxItems": 5,
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "tactic"
+                    },
+                    "values": {
+                      "minItems": 1,
+                      "maxItems": 4,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "contact",
+                          "power",
+                          "patient",
+                          "bunt",
+                          "fastball",
+                          "breaking",
+                          "control",
+                          "chase"
+                        ]
+                      }
+                    },
+                    "role": {
+                      "type": "string",
+                      "enum": [
+                        "batter",
+                        "pitcher"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "values"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "inning"
+                    },
+                    "min": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 99
+                    },
+                    "max": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 99
+                    },
+                    "role": {
+                      "type": "string",
+                      "enum": [
+                        "batter",
+                        "pitcher"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "min",
+                    "max"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "outs"
+                    },
+                    "min": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 2
+                    },
+                    "max": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 2
+                    },
+                    "role": {
+                      "type": "string",
+                      "enum": [
+                        "batter",
+                        "pitcher"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "min",
+                    "max"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "energy"
+                    },
+                    "min": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "max": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "role": {
+                      "type": "string",
+                      "enum": [
+                        "batter",
+                        "pitcher"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "min",
+                    "max"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "stress"
+                    },
+                    "min": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "max": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "role": {
+                      "type": "string",
+                      "enum": [
+                        "batter",
+                        "pitcher"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "min",
+                    "max"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "runners"
+                    },
+                    "present": {
+                      "type": "boolean"
+                    },
+                    "role": {
+                      "type": "string",
+                      "enum": [
+                        "batter",
+                        "pitcher"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "present"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "score"
+                    },
+                    "value": {
+                      "type": "string",
+                      "enum": [
+                        "behind",
+                        "tied",
+                        "ahead"
+                      ]
+                    },
+                    "role": {
+                      "type": "string",
+                      "enum": [
+                        "batter",
+                        "pitcher"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "opponent"
+                    },
+                    "values": {
+                      "minItems": 1,
+                      "maxItems": 5,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "wild",
+                          "fast",
+                          "tired",
+                          "power",
+                          "patient"
+                        ]
+                      }
+                    },
+                    "role": {
+                      "type": "string",
+                      "enum": [
+                        "batter",
+                        "pitcher"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "values"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          },
+          "effects": {
+            "minItems": 1,
+            "maxItems": 2,
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "probability"
+                    },
+                    "from": {
+                      "type": "string",
+                      "enum": [
+                        "strikeout",
+                        "out",
+                        "walk",
+                        "single",
+                        "double",
+                        "homer",
+                        "sacrifice"
+                      ]
+                    },
+                    "to": {
+                      "type": "string",
+                      "enum": [
+                        "strikeout",
+                        "out",
+                        "walk",
+                        "single",
+                        "double",
+                        "homer",
+                        "sacrifice"
+                      ]
+                    },
+                    "amount": {
+                      "type": "number",
+                      "minimum": 0.001,
+                      "maximum": 0.08
+                    },
+                    "role": {
+                      "type": "string",
+                      "enum": [
+                        "batter",
+                        "pitcher"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "from",
+                    "to",
+                    "amount"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "burden"
+                    },
+                    "amount": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 3
+                    },
+                    "role": {
+                      "type": "string",
+                      "enum": [
+                        "batter",
+                        "pitcher"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "amount"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "fatigue"
+                    },
+                    "amount": {
+                      "type": "number",
+                      "minimum": 0.1,
+                      "maximum": 1
+                    },
+                    "role": {
+                      "type": "string",
+                      "enum": [
+                        "batter",
+                        "pitcher"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "amount"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          },
+          "style": {
+            "type": "string",
+            "maxLength": 30
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "role",
+          "cost",
+          "family",
+          "tier",
+          "requires",
+          "conditions",
+          "effects"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "events": {
+      "maxItems": 1000,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 150,
+            "pattern": "^[a-z][a-z0-9_-]*(?:\\/[a-z][a-z0-9_-]*)?$"
+          },
+          "owner": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 150,
+            "pattern": "^[a-z][a-z0-9_-]*(?:\\/[a-z][a-z0-9_-]*)?$"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "daily",
+              "growth"
+            ]
+          },
+          "bond": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "previous": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 150,
+            "pattern": "^[a-z][a-z0-9_-]*(?:\\/[a-z][a-z0-9_-]*)?$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2400
+          },
+          "choices": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "reply": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1200
+                  },
+                  "gains": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string",
+                      "enum": [
+                        "power",
+                        "endurance",
+                        "mental",
+                        "intelligence",
+                        "sense"
+                      ]
+                    },
+                    "additionalProperties": {
+                      "type": "integer",
+                      "minimum": -10,
+                      "maximum": 10
+                    }
+                  },
+                  "energy": {
+                    "type": "integer",
+                    "minimum": -15,
+                    "maximum": 16
+                  },
+                  "stress": {
+                    "type": "integer",
+                    "minimum": -16,
+                    "maximum": 10
+                  },
+                  "points": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 8
+                  },
+                  "trust": {
+                    "type": "integer",
+                    "minimum": -3,
+                    "maximum": 3
+                  },
+                  "bond": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 8
+                  },
+                  "hints": {
+                    "maxItems": 2,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 150,
+                      "pattern": "^[a-z][a-z0-9_-]*(?:\\/[a-z][a-z0-9_-]*)?$"
+                    }
+                  },
+                  "unlocks": {
+                    "maxItems": 2,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 150,
+                      "pattern": "^[a-z][a-z0-9_-]*(?:\\/[a-z][a-z0-9_-]*)?$"
+                    }
+                  }
+                },
+                "required": [
+                  "label",
+                  "reply",
+                  "gains",
+                  "energy",
+                  "stress",
+                  "points",
+                  "trust",
+                  "bond",
+                  "hints",
+                  "unlocks"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "reply": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1200
+                  },
+                  "gains": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string",
+                      "enum": [
+                        "power",
+                        "endurance",
+                        "mental",
+                        "intelligence",
+                        "sense"
+                      ]
+                    },
+                    "additionalProperties": {
+                      "type": "integer",
+                      "minimum": -10,
+                      "maximum": 10
+                    }
+                  },
+                  "energy": {
+                    "type": "integer",
+                    "minimum": -15,
+                    "maximum": 16
+                  },
+                  "stress": {
+                    "type": "integer",
+                    "minimum": -16,
+                    "maximum": 10
+                  },
+                  "points": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 8
+                  },
+                  "trust": {
+                    "type": "integer",
+                    "minimum": -3,
+                    "maximum": 3
+                  },
+                  "bond": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 8
+                  },
+                  "hints": {
+                    "maxItems": 2,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 150,
+                      "pattern": "^[a-z][a-z0-9_-]*(?:\\/[a-z][a-z0-9_-]*)?$"
+                    }
+                  },
+                  "unlocks": {
+                    "maxItems": 2,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 150,
+                      "pattern": "^[a-z][a-z0-9_-]*(?:\\/[a-z][a-z0-9_-]*)?$"
+                    }
+                  }
+                },
+                "required": [
+                  "label",
+                  "reply",
+                  "gains",
+                  "energy",
+                  "stress",
+                  "points",
+                  "trust",
+                  "bond",
+                  "hints",
+                  "unlocks"
+                ],
+                "additionalProperties": false
+              }
+            ],
+            "items": false,
+            "minItems": 2,
+            "maxItems": 2
+          }
+        },
+        "required": [
+          "id",
+          "owner",
+          "kind",
+          "bond",
+          "title",
+          "text",
+          "choices"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "images": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "mime": {
+            "type": "string",
+            "enum": [
+              "image/png",
+              "image/jpeg",
+              "image/webp"
+            ]
+          },
+          "data": {
+            "type": "string",
+            "maxLength": 2800000,
+            "pattern": "^[A-Za-z0-9+/]+={0,2}$"
+          }
+        },
+        "required": [
+          "mime",
+          "data"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "format": {
+      "type": "string",
+      "const": "last-summer-cardpack"
+    },
+    "version": {
+      "type": "number",
+      "const": 1
+    },
+    "ruleset": {
+      "type": "string",
+      "const": "summer-7"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 64,
+      "pattern": "^[a-z][a-z0-9_-]*$"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1000000
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "author": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000
+    }
+  },
+  "required": [
+    "cards",
+    "skills",
+    "events",
+    "images",
+    "format",
+    "version",
+    "ruleset",
+    "id",
+    "revision",
+    "name",
+    "author",
+    "description"
+  ],
+  "additionalProperties": false,
+  "title": "마지막 여름 CardPack v1 (summer-7)"
+}

@@ -1,7 +1,7 @@
 import type {Gains,Stats,StatKey,Outcome} from './types.ts';
 export type Starter='player'|'junseo'|'other';
 export type NamedRivalId='taeo'|'jihwan';
-export type RivalWeek={key:number;gains:Gains;trustDelta:number;sharedPrimary:StatKey|null;source:'played'|'migrated'};
+export type RivalWeek={key:number;gains:Gains;trustDelta:number;sharedPrimary:StatKey|null;source:'v6';sharedSecondary?:StatKey|null};
 export type RivalProgress={stats:Stats;trust:number;weeks:RivalWeek[]};
 export type CandidateScore={ability:number;practice:number;performance:number|null;readiness:number;readinessSource:'practice'|'match';trust:number;total:number};
 export type CompetitionSnapshot={matchId:string;month:number;week:number;player:CandidateScore;junseo:CandidateScore;starter:Starter;previous:Starter|null;reason:'lead'|'incumbent'|'first_chance'|'below_threshold'};

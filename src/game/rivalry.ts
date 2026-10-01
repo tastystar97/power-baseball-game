@@ -1,26 +1,29 @@
 import type {GameState,Role,Match,StatKey,Outcome,Stats,Gains} from './types.ts';
 import {statKeys,roleStats} from './types.ts';
 import type {RivalProgress,NamedRivalId,DuelEntry,DuelSummary,SchoolRivalry,CompetitionSnapshot} from './rival-types.ts';
-import {competitorInitial,rivalTraining,rivalryLines} from '../content/rivals.ts';
+import {competitorInitial,rivalTraining,rivalryLines,rivalGrowthScale} from '../content/rivals.ts';
 import {trainingGrowth} from './training.ts';
 
 export function createCompetitor(role:Role):RivalProgress {
  return {stats:{...Object.fromEntries(statKeys.map(k=>[k,0])),...competitorInitial[role]} as Stats,trust:25,weeks:[]};
 }
-export function growCompetitor(current:RivalProgress,role:Role,key:number,sharedPrimary:StatKey|null,source:'played'|'migrated'):RivalProgress {
+export function growCompetitor(current:RivalProgress,role:Role,key:number,sharedPrimary:StatKey|null,source:'v6',sharedSecondary:StatKey|null=null):RivalProgress {
  if(current.weeks.some(w=>w.key===key))return current;
  if(key!==current.weeks.length+1||key>16)throw Error('라이벌 훈련 주차가 올바르지 않습니다.');
- if(sharedPrimary&&(!roleStats(role).includes(sharedPrimary)||source==='migrated'))throw Error('함께한 훈련 기록이 올바르지 않습니다.');
+ if(sharedPrimary&&(!roleStats(role).includes(sharedPrimary)))throw Error('함께한 훈련 기록이 올바르지 않습니다.');
  const next=structuredClone(current),raw=rivalTraining(role,key),gains:Gains={};
+ if(source==='v6')for(const k of Object.keys(raw) as StatKey[])raw[k]=Math.round(raw[k]!*rivalGrowthScale[role]);
+ if(sharedSecondary)raw[sharedSecondary]=(raw[sharedSecondary]||0)+1;
  if(sharedPrimary)raw[sharedPrimary]=(raw[sharedPrimary]||0)+1;
  for(const [k,n] of Object.entries(raw)){const stat=k as StatKey;gains[stat]=trainingGrowth(current.stats[stat],n,0);next.stats[stat]+=gains[stat]!;}
  const trustDelta=Math.min(1,100-current.trust);next.trust+=trustDelta;
- next.weeks.push({key,gains,trustDelta,sharedPrimary,source});return next;
+ next.weeks.push({key,gains,trustDelta,sharedPrimary,source,...(source==='v6'?{sharedSecondary}:{})});return next;
 }
 export function competitorTrainingFeedback(s:GameState,entry:GameState['log'][number]) {
- const weekday=s.schedule.find(w=>w.month===entry.month&&w.week===entry.week)?.weekday;
+ const weekday=s.schedule.find(w=>w.month===entry.month&&w.week===entry.week)?.weekday2;
+ if(entry.slot!=='second')return null;
  if(!entry.training||!weekday||!(entry.title===weekday||entry.title.startsWith(weekday+' · ')))return null;
- return s.competitor.weeks.find(w=>w.key===(entry.month-3)*4+entry.week&&w.source==='played')??null;
+ return s.competitor.weeks.find(w=>w.key===(entry.month-3)*4+entry.week&&w.source==='v6')??null;
 }
 export function identifyDuel(role:Role,m:Match,playerTurn:boolean):NamedRivalId|null {
  if(!playerTurn||m.opponentId!=='haesol'||m.appearance==='reserve'||m.over||(m.appearance==='substitute'&&m.inning<7))return null;

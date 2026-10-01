@@ -1,3 +1,4 @@
+import {derivedStats} from './abilities.ts';
 import {matchPlan} from './season.ts';
 import type { GameState } from './types.ts';
 export const selectionThresholds={starter:65,substitute:52};
@@ -28,8 +29,8 @@ export function decideStarter(a:number,b:number,previous:Starter|null):{starter:
  if(a===b)return previous==='player'||previous==='junseo'?{starter:previous,reason:'incumbent'}:{starter:'player',reason:'first_chance'};
  return {starter:a>b?'player':'junseo',reason:'lead'};
 }
-export function compareCandidates(s:Pick<GameState,'role'|'stats'|'trust'|'records'|'month'|'week'>,competitor:RivalProgress,history:CompetitionSnapshot[],matchId:string):CompetitionSnapshot {
- const player=candidateScore(s.role,s.stats,s.trust,s.records.filter(r=>r.match.id!==matchId));
+export function compareCandidates(s:Pick<GameState,'role'|'attributes'|'proficiency'|'stress'|'trust'|'records'|'month'|'week'>,competitor:RivalProgress,history:CompetitionSnapshot[],matchId:string):CompetitionSnapshot {
+ const player=candidateScore(s.role,derivedStats(s),s.trust,s.records.filter(r=>r.match.id!==matchId));
  const junseo=candidateScore(s.role,competitor.stats,competitor.trust,null),previous=history.filter(h=>h.matchId!==matchId).at(-1)?.starter??null;
  return {matchId,month:s.month,week:s.week,player,junseo,previous,...decideStarter(player.total,junseo.total,previous)};
 }
