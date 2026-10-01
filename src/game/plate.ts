@@ -13,7 +13,8 @@ export interface PlateContext {
 }
 export interface PlatePath {outcome:PlateOutcome;ball:Ball|null;direction:Direction|null;fielder:{id:string;name:string;position:string}|null;probability:number;}
 export interface Distribution {paths:PlatePath[];probabilities:Record<PlateOutcome,number>;disabled:boolean;burden:number;}
-export interface PlayEvent extends Omit<PlatePath,'probability'> {
+export interface PlayEvent extends Omit<PlatePath,'probability'|'outcome'> {
+ outcome:PlateOutcome|'stolenBase'|'caughtStealing';
  kind:'plate'|'steal';inning:number;half:0|1;order:number;batter:{id:string;name:string};pitcher:{id:string;name:string};
  playerBatter:boolean;playerPitcher:boolean;tactic:string;source:'manual'|'auto';burden:number;
  moves:RunnerMove[];outs:number;runs:number;rbi:number;before:{outs:number;bases:PlateContext['bases'];score:[number,number]};
