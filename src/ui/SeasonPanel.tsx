@@ -16,7 +16,7 @@ export function DevelopmentPanel({s,detail=false}:{s:GameState;detail?:boolean})
         <span className="style-side right"><b>{b.name}</b><small>{grade(b.score)}</small></span>
       </div>;})()}
     <p className="reason gap-top">현재 능력으로 본 성장 방향입니다. 두 방향의 스킬을 모두 배워 혼합형으로 키울 수 있습니다.</p>
-    {detail&&<><p className="reason gap-top">1차 능력이 800에 이르면 성장이 완만해지며 1학년 상한은 1000입니다. 같은 훈련만 반복하기보다 몸과 기술을 함께 키워 보세요. 실제 성장량은 활동 카드에 반영합니다.</p><div className="development-goals">{availableSkills(s).filter(k=>k.style).map(k=><div key={k.id}><strong>{k.style} · {k.name}</strong><p className="reason">{s.skills.includes(k.id)?'특화 스킬 습득 완료':skillRequirements(s,k.id).map(r=>`${r.met?'✓':'○'} ${r.label}`).join(' · ')}</p></div>)}</div></>}
+    {detail&&<><p className="reason gap-top">1차 능력이 800에 이르면 성장이 완만해집니다. 같은 훈련만 반복하기보다 몸과 기술을 함께 키워 보세요. 실제 성장량은 활동 카드에 반영합니다.</p><div className="development-goals">{availableSkills(s).filter(k=>k.style).map(k=><div key={k.id}><strong>{k.style} · {k.name}</strong><p className="reason">{s.skills.includes(k.id)?'특화 스킬 습득 완료':skillRequirements(s,k.id).map(r=>`${r.met?'✓':'○'} ${r.label}`).join(' · ')}</p></div>)}</div></>}
   </section>;
 }
 export function SeasonPanel({s}:{s:GameState}) {
