@@ -1,5 +1,6 @@
+import {grade} from './types.ts';
 import type {GameState} from './types.ts';
-import {derivedStats} from './abilities.ts';
+import {resolveGrowth,derivedStats} from './abilities.ts';
 import {roleChoiceLabels} from '../content/career-events.ts';
 export type RoleEventId='bat_six'|'bat_path'|'bat_cleanup'|'pitch_role';
 export type RoleChoiceId=keyof typeof roleChoiceLabels;
@@ -23,12 +24,12 @@ export function pendingRoleEvent(s:GameState):RoleEventId|null {
 export function roleChoices(s:GameState){
  const id=s.career.pending,apt=aptitudes(s),games=recent(s),reach=games.reduce((n,m)=>n+m.batting.hits+m.batting.walks+m.batting.hbp+m.batting.errors,0),rbi=games.reduce((n,m)=>n+m.batting.rbi,0);
  const ids:RoleChoiceId[]=id==='bat_six'?['six']:id==='bat_path'?['leadoff','center']:id==='bat_cleanup'?['cleanup']:id==='pitch_role'?['starter','closer']:[];
- return [...ids,'stay' as const].map(id=>{const aptitude=id in apt?apt[id as keyof typeof apt]:null;const disabled=aptitude!==null&&(aptitude<55||id==='leadoff'&&reach<4||id==='center'&&reach<4&&rbi<3);return {id,label:roleChoiceLabels[id],disabled,hint:id==='stay'?'멘탈 +2 · 다음 경기 후 다시 검토':aptitude!==null?`적성 ${aptitude.toFixed(1)} / 55${disabled?' · 제안 조건 미달':''}`:'타순 승격 · 동료 타순은 순서를 유지'};});
+ return [...ids,'stay' as const].map(id=>{const aptitude=id in apt?apt[id as keyof typeof apt]:null;const disabled=aptitude!==null&&(aptitude<55||id==='leadoff'&&reach<4||id==='center'&&reach<4&&rbi<3);return {id,label:roleChoiceLabels[id],disabled,hint:id==='stay'?'멘탈 +17 · 다음 경기 후 다시 검토':aptitude!==null?`적성 ${grade(aptitude)}${disabled?' · 제안 조건 미달':''}`:'타순 승격 · 동료 타순은 순서를 유지'};});
 }
 export function applyRoleChoice(s:GameState,choice:string):boolean {
  const event=s.career.pending;if(!event||pendingRoleEvent(s)!==event)return false;
  const option=roleChoices(s).find(c=>c.id===choice);if(!option||option.disabled)return false;
- if(choice==='stay')s.attributes.mental=Math.min(100,s.attributes.mental+2);
+ if(choice==='stay')s.attributes.mental+=resolveGrowth(s,{mental:17}).gains.mental??0;
  else{
   if(choice==='six')s.career.battingOrder=6;
   if(choice==='leadoff'){s.career.battingOrder=1;s.career.battingPath='leadoff';}

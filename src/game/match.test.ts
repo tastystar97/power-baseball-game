@@ -7,7 +7,7 @@ test('displayed tactic probabilities sum to one even at ability boundaries', () 
   for(const role of ['batter','pitcher'] as const)for(const ability of [0,100]) {
     const s=createGame('여름',role,3);s.match=createMatch();s.match.pitchingRole='starter';s.match.half=role==='batter'?1:0;s.match.order[1]=7;
     for(const key of primaryKeys)s.attributes[key]=ability;for(const key of Object.keys(s.proficiency) as (keyof typeof s.proficiency)[])s.proficiency[key]=ability;
-    if(role==='batter'){s.proficiency.contact=0;s.proficiency.power=100;s.energy=0;s.stress=100;}
+    if(role==='batter'){s.proficiency.contact=0;s.proficiency.power=1000;s.energy=0;s.stress=100;}
     for(const t of tactics(s)) {
       assert.ok(t.probabilities.every(p=>p>=0&&p<=1));
       assert.ok(Math.abs(t.probabilities.reduce((a,b)=>a+b,0)-1)<1e-9,`${role} ${t.id} probabilities must sum to one`);

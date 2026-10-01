@@ -1,8 +1,9 @@
 import {clamp,random} from './random.ts';
+import {convertPrimary} from './abilities.ts';
 import {availableSkills} from '../content/skills.ts';
 import type {GameState,SkillId} from './types.ts';
 import type {SkillCondition} from '../cards/schema.ts';
-export const skillActivationChance=(intelligence:number)=>(500+clamp(intelligence)*4)/1000;
+export const skillActivationChance=(intelligence:number)=>(500+clamp(convertPrimary(intelligence))*4)/1000;
 export const opponentType=(s:GameState)=>{
  const m=s.match!;
  if(!m.rosters)return s.role==='batter'?'wild':'patient';

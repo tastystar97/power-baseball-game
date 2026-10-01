@@ -14,7 +14,7 @@ test('dice shows the resolved outcome from the player perspective without changi
   assert.equal(resultFace({...event,outcome,runs:1,playerBatter:false,playerPitcher:true}),'✕');
  }
  assert.equal(resultFace({...event,outcome:'strikeout',runs:0}),'✕');
- assert.equal(resultFace({...event,outcome:'strikeout',runs:0,playerBatter:false,playerPitcher:true}),'★');
+ assert.equal(resultFace({...event,outcome:'strikeout',outs:1,runs:0,playerBatter:false,playerPitcher:true}),'★');
  assert.equal(resultFace({...event,outcome:'sacrificeBunt',runs:0}),'●');
  assert.equal(resultEffect({...event,outcome:'hitByPitch'}).label,'사구');
  for(let i=0;i<s.match.feed.length;i++){presentationAt(s.match,i);presentationAt(s.match,i,true);}

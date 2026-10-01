@@ -11,7 +11,7 @@ import { defaultSupports } from '../content/supports.ts';
 test('reject conflicting event, consumed slot and missing snapshot saves', () => {
   const start=createGame('여름','pitcher',17);
   const ready=transition(start,{type:'lineup',supports:defaultSupports('pitcher'),revision:0});
-  const event=transition(ready,{type:'activity',id:'control',revision:ready.revision});
+  const event=transition(ready,{type:'activity',id:'train_sense',revision:ready.revision});
   assert.throws(()=>parseSave(JSON.stringify({...event,completedEvents:[1]})),'completed event cannot await a choice');
   assert.throws(()=>parseSave(JSON.stringify({...event,phase:'weekday'})),'consumed weekday cannot be played again');
   const missing=structuredClone(start);delete missing.initial.energy;
@@ -33,14 +33,14 @@ test('reject a retired pitcher or wrong half awaiting a tactic',()=>{
   assert.throws(()=>parseSave(JSON.stringify(s)),/선수가 선택할 수 없는 경기 상태|플레이 재생과 경기 half/);
 });
 test('every phase resumes identically across both roles and three raising styles', () => {
-  for(const role of ['batter','pitcher'] as const)for(const style of ['training','balanced','study']) {
+  for(const role of ['batter','pitcher'] as const)for(const style of ['training','balanced','train_intelligence']) {
     let state=createGame('여름',role,712);
     for(let step=0;step<350&&state.phase!=='complete';step++) {
       const resumed=parseSave(JSON.stringify(state));
       let a:Omit<Action,'revision'>;
       if(state.phase==='lineup')a={type:'lineup',supports:defaultSupports(role)};
-      else if(state.phase==='weekday')a={type:'activity',id:style==='study'?'study':style==='balanced'&&state.week%2===0?'rest':role==='batter'?'batting':'control'};
-      else if(state.phase==='weekend')a={type:'activity',id:style==='training'?'practice':style==='balanced'?'catch':'selfstudy',...(style==='training'?{target:role==='batter'?'power' as const:'breaking' as const}:{})};
+      else if(state.phase==='weekday')a={type:'activity',id:style==='train_intelligence'?'train_intelligence':style==='balanced'&&state.week%2===0?'rest':role==='batter'?'train_sense':'train_sense'};
+      else if(state.phase==='weekend')a={type:'activity',id:style==='training'?'practice':style==='balanced'?'catch':'selfstudy',...(style==='training'?{target:'primary_power' as const}:{})};
       else if(['event','weekendEvent','supportEvent'].includes(state.phase))a={type:'choice',index:state.week%2};
       else if(state.phase==='roleEvent')a={type:'choice',id:'stay'};
       else if(state.phase==='match'&&state.match!.awaiting)a={type:'tactic',id:role==='batter'?'power':'breaking'};

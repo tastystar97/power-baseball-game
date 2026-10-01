@@ -20,6 +20,8 @@ import { evaluateSelection } from './competition.ts';
 import {matchPlan,finishRound,weekKey,monthGoal} from './season.ts';
 import {createCompetitor,growCompetitor} from './rivalry.ts';
 import {teamName} from '../content/teams.ts';
+import {SUPPORT_BONUS,APPEARANCE_SENSE} from '../content/development-rules.ts';
+import {trainingScene} from '../content/training-scenes.ts';
 
 export function snapshot(s:Pick<GameState,'attributes'|'proficiency'|'energy'|'stress'|'trust'|'rival'|'catcher'|'skillPoints'|'bonds'>):Record<string,number> {
   return {...growthChanges(s.attributes,s.proficiency),energy:s.energy,stress:s.stress,trust:s.trust,rival:s.rival,catcher:s.catcher,
@@ -31,7 +33,7 @@ export function createGame(rawName:string,role:Role,seed=42,content:CardContent=
   const name=rawName.trim();
   if(!name||[...name].length>8||!['batter','pitcher'].includes(role))throw new Error('이름은 1~8자로 입력하고 타자 또는 투수를 선택해 주세요.');
   const frozen=deck?catalogForDeck(content,deck):structuredClone(content);
-  const state:GameState={version:8,career:initialCareer(),content:frozen,weekdayPart:1,activeEncounter:null,encounterHistory:[],competitor:createCompetitor(role),selectionHistory:[],name,role,month:3,week:1,phase:deck?'weekday':'lineup',revision:0,rng:(seed>>>0)||1,attributes:initialAttributes(),proficiency:initialProficiency(role),
+  const state:GameState={version:9,career:initialCareer(),content:frozen,weekdayPart:1,activeEncounter:null,encounterHistory:[],competitor:createCompetitor(role),selectionHistory:[],name,role,month:3,week:1,phase:deck?'weekday':'lineup',revision:0,rng:(seed>>>0)||1,attributes:initialAttributes(),proficiency:initialProficiency(role),
     energy:80,stress:15,trust:20,rival:10,catcher:10,
     log:[],schedule:[{month:3,week:1,weekday:'',weekday2:'',weekend:''}],initial:{},weekStart:{},monthStart:{},
     notice:'함께 성장할 연습 파트너를 골라 보자.',eventReply:'',match:null,matchRecorded:false,
@@ -43,7 +45,7 @@ export function createGame(rawName:string,role:Role,seed=42,content:CardContent=
 }
 export function previewActivity(s:GameState,id:string,target?:TrainingTarget,partner?:SupportId) {
   if(!['weekday','weekend'].includes(s.phase))return null;
-  if(id==='partner'&&!target)target=s.role==='batter'?'contact':'control';
+  if(id==='partner'&&!target)target='primary_sense';
   if(['practice','partner'].includes(id)&&(!target||!trainingTargets(s.role,id==='partner').includes(target)))return null;
   const a=activities(s,target).find(a=>a.id===id);if(!a)return null;
   const selected=partner||[...s.supports].sort((a,b)=>bond(s,b)-bond(s,a))[0];
@@ -56,10 +58,10 @@ export function previewActivity(s:GameState,id:string,target?:TrainingTarget,par
   for(const p of present){
     const card=supportById(p,s);
     energy+=card.bonus.energy+(joint.includes(p)?card.bonus.jointEnergy:0);stress+=card.bonus.stress;
-    if(!resting)for(const key of primaryKeys)if(card.bonus.gains[key])gains[key]=(gains[key]||0)+card.bonus.gains[key]!;
     const stat=card.specialty;
     if(!resting&&stat){
-      gains[stat]=(gains[stat]||0)+1+(joint.includes(p)?1:0);
+      const main=id.startsWith('train_')?id.slice(6):target?.slice(8);
+      gains[stat]=(gains[stat]||0)+SUPPORT_BONUS.attendance+(main===stat?SUPPORT_BONUS.specialty:0);
       bondPartners.push({id:p,stat,bond:bond(s,p),amount:bondTrainingBonus(bond(s,p))});
     }
     if(!resting)points+=1+(joint.includes(p)?2:0);
@@ -72,7 +74,7 @@ export function previewActivity(s:GameState,id:string,target?:TrainingTarget,par
     return [{stat:`primary_${stat}`,partners,potential:partners.reduce((sum,p)=>sum+p.amount,0),amount:(resolved.gains[stat]||0)-(withoutBond.gains[stat]||0)}];
   });
   const failureChance=a.training?trainingFailureChance(s.energy):0;
-  const failure:(Activity&{points:number})|null=a.training?{...a,gains:{mental:clamp(s.attributes.mental-failurePenalty.mental)-s.attributes.mental},proficiency:{},
+  const failure:(Activity&{points:number})|null=a.training?{...a,gains:{mental:clamp(s.attributes.mental-failurePenalty.mental,0,1500)-s.attributes.mental},proficiency:{},
     energy:clamp(s.energy+energy-failurePenalty.energy)-s.energy,stress:clamp(s.stress+stress+failurePenalty.stress)-s.stress,points:0}:null;
   const warning=failureChance>=40?'무리하면 훈련을 마치지 못할 수 있습니다. 회복으로 실패 위험을 낮출 수 있습니다.':s.energy+energy<45?'활동 후 체력이 45 미만입니다. 경기 전에 회복을 고려하세요.':'';
   const sharedPrimary=s.phase==='weekday'&&present.includes('rival')?a.rivalTrainingStat||null:null;
@@ -93,14 +95,14 @@ function logChange(s:GameState,before:Record<string,number>,title:string,text:st
   const now=snapshot(s),changes:Record<string,number>={};
   for(const key of Object.keys(now))if(now[key]!==before[key])changes[key]=now[key]-before[key];
   s.log.push({month:s.month,week:s.week,title,text,changes,...(s.phase==='weekday'?{slot:s.weekdayPart===1?'first' as const:'second' as const}:s.phase==='weekend'?{slot:'weekend' as const}:{})});
-  s.notice=`${title} · ${Object.entries(changes).map(([k,v])=>`${changeLabel(s,k,labels[k])} ${v>0?'+':''}${v}`).join(' · ')||text}`;
+  s.notice=`${title} · ${Object.entries(changes).filter(([k])=>!k.startsWith('proficiency_')).map(([k,v])=>`${changeLabel(s,k,labels[k])} ${v>0?'+':''}${v}`).join(' · ')||text}`;
 }
 function apply(s:GameState,effect:Partial<Choice>,title:string,text:string){
   const before=snapshot(s);
   for(const [key,value] of Object.entries(effect.gains||{})){
-    const k=key as PrimaryKey;s.attributes[k]=clamp(s.attributes[k]+value);
+    const k=key as PrimaryKey;s.attributes[k]=clamp(s.attributes[k]+value,0,1500);
   }
-  for(const k of secondaryKeys(s.role))s.proficiency[k]=clamp((s.proficiency[k]||0)+(effect.proficiency?.[k]||0));
+  for(const k of secondaryKeys(s.role))s.proficiency[k]=clamp((s.proficiency[k]||0)+(effect.proficiency?.[k]||0),0,1000);
   for(const key of ['energy','stress','trust','rival','catcher'] as const)s[key]=clamp(s[key]+(effect[key]||0));
   logChange(s,before,title,text);
 }
@@ -119,7 +121,7 @@ function recordMatch(s:GameState){
   if(s.matchRecorded||!s.match?.over)return;
   const m=s.match,won=m.score[1]>m.score[0],played=s.role==='pitcher'?m.faced>0:m.skillChecks.length>0;
   const achievement=s.role==='batter'?m.batting.hits*2+m.batting.rbi:m.pitching.k+Math.max(0,3-m.pitching.runs);
-  apply(s,{...resolveGrowth(s,played?{sense:m.appearance==='starter'?2:1}:{}),energy:played?(s.role==='pitcher'?-Math.ceil(m.load/4):-8):0,stress:won?-5:5,trust:played?clamp(2+achievement-(won?0:1),1,10):1},matchPlan(s)!.title,
+  apply(s,{...resolveGrowth(s,played?{sense:APPEARANCE_SENSE[m.appearance]}:{}),energy:played?(s.role==='pitcher'?-Math.ceil(m.load/4):-8):0,stress:won?-5:5,trust:played?clamp(2+achievement-(won?0:1),1,10):1},matchPlan(s)!.title,
     `청람고 ${m.score[1]} : ${m.score[0]} ${teamName(m.opponentId)} · ${won?'승리':'패배'}. 감독: “${!played?'오늘은 동료들의 승부를 배워 두자. 다음 기회를 향해 준비해.':achievement>=4?'연습한 것이 보이는구나. 오늘의 감각을 기억해.':'오늘 찾은 과제를 다음 훈련에 가져가자.'}”`);
   const before=snapshot(s);s.skillPoints=Math.min(1000,s.skillPoints+(played?8:2));
   logChange(s,before,'경기에서 배운 것',played?'승부를 돌아보며 스킬 포인트를 얻었다.':'동료의 플레이를 관찰하며 스킬 포인트를 얻었다.');
@@ -161,13 +163,14 @@ export function transition(previous:GameState,action:Action):GameState {
     const failed=effect.failureChance>0&&random(s)<effect.failureChance/100;
     const resolved=failed?effect.failure!:effect;
     const title=effect.title+(action.target?` · ${labels[action.target]}`:'')+(effect.training?(failed?' · 훈련 실패':' · 훈련 성공'):'')+(!failed&&effect.joint.length?' · 합동 훈련':'');
-    apply(s,resolved,title,effect.training?`시작 체력 ${activityBefore.energy} · 실패 확률 ${effect.failureChance}%. ${failed?'몸이 따라주지 않아 연습을 끝내지 못했다. 능력 성장과 스킬 포인트를 얻지 못하고 컨디션이 나빠졌다.':'끝까지 연습을 마쳐 준비한 성장을 얻었다.'}`:effect.description);
+    const sceneKey=effect.id.startsWith('train_')?effect.id.slice(6):action.target?.slice(8);
+    apply(s,resolved,title,failed?'몸이 따라주지 않아 연습을 끝내지 못했다. 성장 없이 컨디션이 나빠졌다.':sceneKey?trainingScene(s.role,sceneKey as PrimaryKey,effect.present.map(id=>supportById(id,s).name)):effect.description);
     if(effect.training)s.log.at(-1)!.training={outcome:failed?'failure':'success',energyBefore:activityBefore.energy,failureChance:effect.failureChance,points:resolved.points};
     const before=snapshot(s);s.skillPoints+=resolved.points;
     for(const id of effect.present)addBond(s,id,8);
     const bonusText=effect.bondBonuses.length?(failed?' 훈련 실패로 인연 보너스 없음.':` 인연 보너스 · ${effect.bondBonuses.map(b=>`${labels[b.stat]} +${b.amount}`).join(', ')} 포함.`):'';
     if(resolved.points||effect.present.length)logChange(s,before,'함께 쌓은 연습',effect.present.length?`함께한 파트너: ${effect.present.map(id=>supportById(id,s).name).join(', ')}.${failed?' 결과는 아쉬워도 함께한 인연은 남았다.':''}${bonusText}`:'오늘의 경험이 스킬 포인트로 쌓였다.');
-    s.notice=`${title} · ${Object.entries(snapshot(s)).filter(([k,v])=>v!==activityBefore[k]).map(([k,v])=>`${changeLabel(s,k,labels[k])} ${v>activityBefore[k]?'+':''}${v-activityBefore[k]}`).join(' · ')}`;
+    s.notice=`${title} · ${Object.entries(snapshot(s)).filter(([k,v])=>v!==activityBefore[k]&&!k.startsWith('proficiency_')).map(([k,v])=>`${changeLabel(s,k,labels[k])} ${v>activityBefore[k]?'+':''}${v-activityBefore[k]}`).join(' · ')}`;
     s.schedule[scheduleIndex(s)][weekday?(s.weekdayPart===1?'weekday':'weekday2'):'weekend']=effect.title+(action.target?` · ${labels[action.target]}`:'');
     if(weekday){
       if(s.weekdayPart===1){drawEncounter(s);if(!s.activeEncounter)beginSecond(s);}
@@ -217,6 +220,6 @@ export function transition(previous:GameState,action:Action):GameState {
 }
 export function effectChips(a:Activity){
   return [...Object.entries(growthChanges(a.gains,a.proficiency)),['catcher',a.catcher||0],['energy',a.energy],['stress',a.stress]]
-    .filter(([,v])=>v!==0).map(([key,v])=>({key:String(key),value:Number(v),label:`${labels[String(key)]} ${Number(v)>0?'+':''}${v}`}));
+    .filter(([k,v])=>v!==0&&!String(k).startsWith('proficiency_')).map(([key,v])=>({key:String(key),value:Number(v),label:`${labels[String(key)]} ${Number(v)>0?'+':''}${v}`}));
 }
 

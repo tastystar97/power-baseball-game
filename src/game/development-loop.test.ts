@@ -7,7 +7,7 @@ import type {GameState,Action} from './types.ts';
 
 export function playStep(s:GameState):GameState {
  const a:Omit<Action,'revision'>=s.phase==='lineup'?{type:'lineup',supports:['bat_senior','pitch_senior','rival','catcher','manager','classmate']}:
- s.phase==='weekday'?{type:'activity',id:s.energy<65?'rest':s.role==='batter'?'batting':'control'}:
+ s.phase==='weekday'?{type:'activity',id:s.energy<65?'rest':s.role==='batter'?'train_sense':'train_sense'}:
  s.phase==='weekend'?{type:'activity',id:s.stress>=30?'outing':'weekend_rest'}:
  ['event','supportEvent','weekendEvent'].includes(s.phase)?{type:'choice',index:0}:
  s.phase==='roleEvent'?{type:'choice',id:'stay'}:s.phase==='match'&&s.match!.awaiting?{type:'tactic',id:s.role==='batter'?'contact':'control'}:{type:'continue'};
@@ -15,7 +15,7 @@ export function playStep(s:GameState):GameState {
 }
 test('intelligence replaces academics and every week has two distinct weekday activities',()=>{
  let s=createGame('새로운 봄','batter',7);
- assert.equal(s.version,8);assert.equal(s.attributes.intelligence,45);assert.equal('academics' in s,false);
+ assert.equal(s.version,9);assert.equal(s.attributes.intelligence,290);assert.equal('academics' in s,false);
  s=playStep(s);s=playStep(s);
  while(s.phase==='supportEvent'||s.phase==='supportResult')s=playStep(s);
  assert.equal(s.phase,'weekday');assert.equal(s.weekdayPart,2);assert.equal(s.week,1);
@@ -28,14 +28,14 @@ test('walking has a clear mental recovery reward and weekend offers seven choice
  while(s.phase!=='weekend')s=playStep(s);
  s.energy=30;s.stress=60;
  const walk=previewActivity(s,'outing')!,rest=previewActivity(s,'weekend_rest')!;
- assert.equal(walk.stress,-40);assert.equal(walk.gains.mental,2);assert.ok(rest.energy>walk.energy);
- assert.ok(previewActivity(s,'watch'));assert.ok(previewActivity(s,'partner','control'));
+ assert.equal(walk.stress,-40);assert.equal(walk.gains.mental,17);assert.ok(rest.energy>walk.energy);
+ assert.ok(previewActivity(s,'watch'));assert.ok(previewActivity(s,'partner','primary_sense'));
 });
 test('skill previews do not consume random state and real decisions retain their skill checks',()=>{
  const s=createGame('스킬','batter',19);s.skills=['contact_focus','contact_master'];s.match=createMatch();s.match.awaiting=true;s.match.half=1;s.match.order[1]=7;
  const rng=s.rng,view=tactics(s);assert.equal(s.rng,rng);assert.deepEqual(tactics(s),view);
  assert.ok(chooseTactic(s,'contact'));assert.equal(s.match.skillChecks?.length,1);
- const check=s.match.skillChecks![0];assert.deepEqual(check.eligible,['contact_master']);assert.equal(check.intelligence,45);
+ const check=s.match.skillChecks![0];assert.deepEqual(check.eligible,['contact_master']);assert.equal(check.intelligence,290);
  assert.ok(check.active.every(id=>check.eligible.includes(id)));assert.equal(check.order,7);
 });
 test('both roles complete 32 weekday choices and 16 weekends with exact save resume',()=>{

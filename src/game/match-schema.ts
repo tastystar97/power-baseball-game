@@ -27,7 +27,7 @@ export const matchSchema=z.object({
  substitutions:z.array(z.object({team:half,slot:count.max(8),previous:player,nextId:z.string(),feedIndex:count.max(4000)}).strict()).max(1),
  battingOrder:z.union([z.literal(1),z.literal(3),z.literal(4),z.literal(6),z.literal(8)]),pitchingRole:z.enum(['starter','middle','closer']),
  feed:z.array(playSchema).max(4000),playbackIndex:count.max(4000),summary:z.boolean(),
- skillChecks:z.array(z.object({half,order:count,inning:count.min(1).max(99),tactic:z.string(),source:z.enum(['manual','auto']),intelligence:rating,eligible:z.array(z.string()).max(32),active:z.array(z.string()).max(32)})).max(1000),
+ skillChecks:z.array(z.object({half,order:count,inning:count.min(1).max(99),tactic:z.string(),source:z.enum(['manual','auto']),intelligence:count.max(1500),eligible:z.array(z.string()).max(32),active:z.array(z.string()).max(32)})).max(1000),
  duels:z.array(z.object({half,order:count,inning:count.min(1).max(99),opponent:z.enum(['taeo','jihwan']),tactic:z.string(),source:z.enum(['manual','auto']),outcome:z.enum(outcomes)})).max(1000),
  recent:z.array(z.string().max(250)).max(12),last:z.object({title:z.string(),text:z.string(),reasons:z.array(z.string()),runs:count}).nullable(),
 }).strict();

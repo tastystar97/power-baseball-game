@@ -10,9 +10,9 @@ test('selection uses role-specific ability and crosses both public thresholds ex
   for(const role of ['batter','pitcher'] as const){
     const s=createGame('봄',role,9);
     for(const key of primaryKeys)s.attributes[key]=0;for(const key of Object.keys(s.proficiency) as (keyof typeof s.proficiency)[])s.proficiency[key]=0;
-    s.proficiency[role==='batter'?'contact':'control']=100;
+    s.proficiency[role==='batter'?'contact':'control']=1000;
     const low=evaluateSelection(s);assert.equal(low.ability,20);assert.equal(low.rank,'reserve');
-    for(const key of primaryKeys)s.attributes[key]=60;for(const key of Object.keys(s.proficiency) as (keyof typeof s.proficiency)[])s.proficiency[key]=60;
+    for(const key of primaryKeys)s.attributes[key]=494;for(const key of Object.keys(s.proficiency) as (keyof typeof s.proficiency)[])s.proficiency[key]=600;
     assert.equal(evaluateSelection(s).rank,'starter');
     const m=createMatch();m.batting.hits=2;m.batting.walks=1;m.batting.rbi=1;m.pitching.outs=6;m.pitching.k=3;m.pitching.runs=1;
     m.batting.pa=5;m.batting.ab=4;m.faced=9;s.records=[{month:3,match:m}];const after=evaluateSelection(s);assert.ok(after.performance>=0&&after.performance<=20);
@@ -42,11 +42,11 @@ test('starter, substitute and reserve assignments produce different real appeara
 
 test('learned skills change actual tactic probability and explain their activation',()=>{
   const cases:[SkillId,'batter'|'pitcher',string,number,number][]=[
-    ['contact_focus','batter','contact',3,.05*.68],['power_drive','batter','power',5,.035*.68],['patient_eye','batter','patient',2,.05*.68],
-    ['fastball_edge','pitcher','fastball',0,.055*.68],['precision','pitcher','control',2,-.035*.68],['breaking_read','pitcher','breaking',3,-.035*.68],
+    ['contact_focus','batter','contact',3,.05*.9],['power_drive','batter','power',5,.035*.9],['patient_eye','batter','patient',2,.05*.9],
+    ['fastball_edge','pitcher','fastball',0,.055*.9],['precision','pitcher','control',2,-.035*.9],['breaking_read','pitcher','breaking',3,-.035*.9],
   ];
   for(const [skill,role,tactic,index,delta] of cases){
-    const s=createGame('봄',role,2);s.match=createMatch();s.match.pitchingRole='starter';s.match.half=role==='batter'?1:0;s.match.order[1]=7;
+    const s=createGame('봄',role,2);s.attributes.intelligence=1500;s.match=createMatch();s.match.pitchingRole='starter';s.match.half=role==='batter'?1:0;s.match.order[1]=7;
     const base=tactics(s).find(t=>t.id===tactic)!;
     s.skills=[skill];const changed=tactics(s).find(t=>t.id===tactic)!;
     assert.ok(Math.abs(changed.probabilities[index]-base.probabilities[index]-delta)<1e-9);

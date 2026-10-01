@@ -25,9 +25,9 @@ test('roles get different meaningful stats and only role-appropriate training', 
     const s = createGame(' 새봄 ', role, 5);
     assert.equal(s.name, '새봄');
     assert.equal(s.week, 1);
-    assert.equal(activities(s).length, role === 'batter' ? 8 : 9);
+    assert.equal(activities(s).length, 6);
     assert.ok(s.proficiency[role === 'batter' ? 'contact' : 'control']! > 0);
-    assert.equal(transition(s, { type: 'activity', id: role === 'batter' ? 'velocity' : 'batting', revision: 0 }), s);
+    assert.equal(transition(s, { type: 'activity', id: role === 'batter' ? 'velocity' : 'train_sense', revision: 0 }), s);
   }
 });
 test('name validation rejects empty and more than eight characters', () => {
@@ -36,17 +36,17 @@ test('name validation rejects empty and more than eight characters', () => {
 });
 test('normal-condition training applies the activity table and logs actual changes', () => {
   const s = ready('여름', 'batter', 7);
-  const after = act(s, { type: 'activity', id: 'batting' });
-  assert.equal(after.proficiency.contact, s.proficiency.contact! + 10);
-  assert.equal(after.proficiency.eye, s.proficiency.eye! + 2);
+  const after = act(s, { type: 'activity', id: 'train_sense' });
+  assert.equal(after.proficiency.contact, s.proficiency.contact! + 70);
+  assert.equal(after.proficiency.eye, s.proficiency.eye!);
   assert.equal(after.energy, s.energy - 18);
   assert.equal(after.stress, s.stress + 6);
   assert.ok(['weekday','supportEvent'].includes(after.phase));assert.equal(after.schedule[0].weekday2,'');
-  assert.equal(after.log[0].changes.proficiency_contact, 10);
+  assert.equal(after.log[0].changes.proficiency_contact, 70);
 });
 test('stale input cannot consume a second action or duplicate an event reward', () => {
   const s = ready('여름', 'pitcher', 9);
-  const action = { type: 'activity', id: 'control', revision: s.revision } as const;
+  const action = { type: 'activity', id: 'train_sense', revision: s.revision } as const;
   const after = transition(s, action);
   assert.equal(transition(after, action), after);
   const choice = { type: 'choice', index: 0, revision: after.revision } as const;
@@ -56,8 +56,8 @@ test('stale input cannot consume a second action or duplicate an event reward', 
 test('stress leaves learning intact, rest recovers and values stay in bounds', () => {
   const s = ready('여름', 'pitcher', 8);
   s.stress = 80;
-  const p = previewActivity(s, 'control');
-  assert.ok(p && p.proficiency.control === 10);
+  const p = previewActivity(s, 'train_sense');
+  assert.ok(p && p.proficiency.control === 40);
   const rested = act({ ...s, energy: 90, stress: 3 }, { type: 'activity', id: 'rest' });
   assert.equal(rested.energy, 100);
   assert.equal(rested.stress, 0);
@@ -67,7 +67,7 @@ test('weekend practice rejects an unavailable target and consumes exactly one sl
   let s = createGame('여름', 'pitcher', 8);
   s.phase = 'weekend';
   assert.equal(act(s, { type: 'activity', id: 'practice', target: 'power' }), s);
-  s = act(s, { type: 'activity', id: 'practice', target: 'control' });
+  s = act(s, { type: 'activity', id: 'practice', target: 'primary_sense' });
   assert.equal(s.week, 2);
   assert.equal(s.phase, 'weekday');
 });
@@ -89,6 +89,6 @@ test('same seed and actions reproduce state without mutating previous state', ()
   assert.deepEqual(finishMonth('pitcher'), finishMonth('pitcher'));
   const s = createGame('여름', 'pitcher', 12);
   const before = JSON.stringify(s);
-  act(s, { type: 'activity', id: 'control' });
+  act(s, { type: 'activity', id: 'train_sense' });
   assert.equal(JSON.stringify(s), before);
 });

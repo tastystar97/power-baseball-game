@@ -27,7 +27,7 @@ test('saving failures are surfaced and corrupt data is not removed', () => {
 });
 test('event in progress resumes once with no duplicate reward', () => {
   const ready=transition(createGame('여름','batter',1),{type:'lineup',supports:defaultSupports('batter'),revision:0});
-  const s = transition(ready, {type:'activity', id:'batting', revision:ready.revision});
+  const s = transition(ready, {type:'activity', id:'train_sense', revision:ready.revision});
   const resumed = parseSave(JSON.stringify(s));
   assert.equal(resumed.phase, 'supportEvent');
   const action = {type:'choice', index:0, revision:s.revision} as const;

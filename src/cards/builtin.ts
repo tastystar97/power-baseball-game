@@ -1,9 +1,11 @@
 import type {CardPack,SupportCard} from './schema.ts';
 import {builtinSkills} from './builtin-skills.ts';
 import {cardEvents} from './stories.ts';
+import {upgradeTraining} from './upgrade.ts';
+import {REWARD_SCALE} from '../content/development-rules.ts';
 type Pair=[string|null,string|null];
-function card(id:string,name:string,title:string,role:string,description:string,specialty:SupportCard['specialty'],batter:SupportCard['training']['batter'],pitcher:SupportCard['training']['pitcher'],hints:Pair,uppers:Pair,color:string):SupportCard {
-  return {id,name,title,role,description,specialty,color,training:{batter,pitcher},hints:{batter:hints[0],pitcher:hints[1]},ultimates:{batter:uppers[0],pitcher:uppers[1]},bonus:{energy:0,stress:0,jointEnergy:0,gains:{}}};
+function card(id:string,name:string,title:string,role:string,description:string,specialty:SupportCard['specialty'],batter:string[],pitcher:string[],hints:Pair,uppers:Pair,color:string):SupportCard {
+  return {id,name,title,role,description,specialty,color,grade:['bat_senior','sua','seoa'].includes(id)?3:['rival','catcher','manager','classmate','narin','dohee','jian'].includes(id)?1:2,training:{batter:upgradeTraining(batter) as SupportCard['training']['batter'],pitcher:upgradeTraining(pitcher) as SupportCard['training']['pitcher']},hints:{batter:hints[0],pitcher:hints[1]},ultimates:{batter:uppers[0],pitcher:uppers[1]},bonus:{energy:0,stress:0,jointEnergy:0,gains:{}}};
 }
 const cards:SupportCard[]=[
   card('bat_senior','강민재','반복 끝의 감각','타격 전문 선배','스윙을 잘게 나눠 설명하는 차분한 선배. 기본기를 끝까지 함께 다듬습니다.','sense',['batting','freebatting'],['endurance','tactics'],['contact_focus','calm'],['contact_master','batter_read'],'#b47532'),
@@ -26,7 +28,7 @@ const cards:SupportCard[]=[
   card('jian','이지안','좋은 장면부터','1학년 · 영상 담당','말보다 영상으로 응원하는 기록 담당. 실수 앞뒤에 남은 성장을 찾아냅니다.',null,['rest','study'],['rest','study'],['reset_mind','reset_mind'],['next_space','next_space'],'#818eac'),
 ];
 cards.find(c=>c.id==='manager')!.bonus={energy:5,stress:-2,jointEnergy:6,gains:{}};
-cards.find(c=>c.id==='classmate')!.bonus.gains={mental:1};
+
 cards.find(c=>c.id==='jiwoo')!.bonus={energy:4,stress:-2,jointEnergy:4,gains:{}};
 cards.find(c=>c.id==='jian')!.bonus={energy:2,stress:-4,jointEnergy:3,gains:{}};
-export const builtinPack:CardPack={format:'last-summer-cardpack',version:1,ruleset:'summer-7',id:'core',revision:1,name:'청람고 · 첫 여름',author:'마지막 여름',description:'기본 서포트 18명과 첫 여름의 동행 이야기',cards,skills:builtinSkills,events:cards.flatMap(cardEvents),images:{}};
+export const builtinPack:CardPack={format:'last-summer-cardpack',version:2,ruleset:'first-year-1',id:'core',revision:2,name:'청람고 · 첫 여름',author:'마지막 여름',description:'기본 서포트 18명과 첫 여름의 동행 이야기',cards,skills:builtinSkills,events:cards.flatMap(cardEvents).map(e=>({...e,choices:e.choices.map(c=>({...c,gains:Object.fromEntries(Object.entries(c.gains).map(([k,v])=>[k,Math.round(v!*REWARD_SCALE)]))})) as typeof e.choices})),images:{}};

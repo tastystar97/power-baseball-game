@@ -1,4 +1,5 @@
 import type {SkillDefinition,SkillCondition,SkillEffect} from './schema.ts';
+import {upgradeRequirements} from './upgrade.ts';
 const tactic=(...values:('contact'|'power'|'patient'|'bunt'|'fastball'|'breaking'|'control'|'chase')[]):SkillCondition=>({kind:'tactic',values});
 const move=(from:'out'|'walk'|'single'|'homer',to:'out'|'walk'|'single'|'homer'|'strikeout',amount:number,role?:'batter'|'pitcher'):SkillEffect=>({kind:'probability',from,to,amount,...(role?{role}:{})});
 const success=(n:number):SkillEffect[]=>[move('out','single',n,'batter'),move('single','out',n,'pitcher')];
@@ -27,8 +28,8 @@ const base:SkillDefinition[]=[
   normal('routine','준비 루틴','both',[{kind:'energy',min:0,max:44}],[{kind:'fatigue',amount:.4}],14),
   normal('reset_mind','마음 정리','both',[{kind:'stress',min:70,max:100}],success(.005),14),
 ];
-const advanced=(id:string,name:string,parent:string,owner:string,effects:SkillEffect[],requires:SkillDefinition['requires']={},style?:string):SkillDefinition=>{
-  const b=base.find(k=>k.id===parent)!;return {...b,id,name,tier:'advanced',owner,prerequisite:parent,cost:24,effects,requires,...(style?{style}:{}),description:'서포트 고유 사건으로 개방하는 상위 스킬. 같은 계열 일반 스킬을 대체합니다.'};
+const advanced=(id:string,name:string,parent:string,owner:string,effects:SkillEffect[],requires:Record<string,number>={},style?:string):SkillDefinition=>{
+  const b=base.find(k=>k.id===parent)!;return {...b,id,name,tier:'advanced',owner,prerequisite:parent,cost:24,effects,requires:upgradeRequirements(requires),...(style?{style}:{}),description:'서포트 고유 사건으로 개방하는 상위 스킬. 같은 계열 일반 스킬을 대체합니다.'};
 };
 export const builtinSkills:SkillDefinition[]=[...base,
   advanced('contact_master','정교한 배트','contact_focus','bat_senior',[move('out','single',.075)],{contact:60,eye:50},'교타형'),

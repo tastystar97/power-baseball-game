@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import type {CardContent,SupportCard} from '../cards/schema.ts';
-import type {Role,StatKey} from '../game/types.ts';
-import {primaryLabels,primaryKeys,labels} from '../game/types.ts';
+import type {Role,PrimaryKey} from '../game/types.ts';
+import {primaryLabels,primaryKeys} from '../game/types.ts';
 import {activities} from '../content/activities.ts';
 export const recommendedDeck=(role:Role)=>role==='batter'?['bat_senior','sera','narin','yerin','sumin','manager']:['pitch_senior','chaerin','sua','dohee','rina','manager'];
 export function CardAvatar({card,content}:{card:SupportCard;content:Pick<CardContent,'images'>}){
@@ -19,7 +19,7 @@ export function DeckBuilder({content,role,selected,onChange}:{content:CardConten
  <div className="deck-grid" role="group" aria-label="서포트 카드 선택">{filtered.map(c=>{
  const picked=selected.includes(c.id),hint=content.skills.find(k=>k.id===c.hints[role]),upper=content.skills.find(k=>k.id===c.ultimates[role]);
  const bonds=[...new Set(content.events.filter(e=>e.owner===c.id&&e.kind==='growth').map(e=>e.bond))].sort((a,b)=>a-b);
- const requirements=upper?Object.entries(upper.requires).filter(([,value])=>value).map(([key,value])=>`${labels[key as StatKey]} ${value}`).join(' · '):'';
+ const requirements=upper?Object.entries(upper.requires).filter(([,value])=>value).map(([key,value])=>`${key==='overall'?'종합 능력':primaryLabels[key as PrimaryKey]} ${value}`).join(' · '):'';
  return <button type="button" className="card deck-card" key={c.id} aria-pressed={picked} disabled={!picked&&selected.length===6} onClick={()=>onChange(picked?selected.filter(id=>id!==c.id):[...selected,c.id])}><span className="support-heading"><CardAvatar card={c} content={content}/><span><strong>{c.name}</strong><span className="desc block">{c.title}</span><span className="chip">{c.specialty?primaryLabels[c.specialty]:'회복'} 전문</span></span><span className="selection-mark">{picked?'✓':'+'}</span></span><span className="desc">{c.description}</span><span className="reason">동행 · {c.training[role].map(id=>training.find(a=>a.id===id)?.title).join(' / ')}</span><span className="reward-caption">{hint?`${hint.name} → ${upper?.name||'일반 스킬 조언'}`:'현재 역할은 훈련·회복 지원'}</span><span className="reason">{upper?`인연 ${bonds.join(' / ')} 성장 사건 · 고유 상위 개방`:'사건과 인연에 따른 성장 보너스'}</span>{upper&&<span className="reason">습득 · 선행 일반 스킬{requirements?` · ${requirements}`:''} · {upper.cost} Pt (힌트 할인 전)</span>}</button>;
  })}</div>{!filtered.length&&<p className="notice">조건에 맞는 카드가 없습니다.</p>}</section>;
 }

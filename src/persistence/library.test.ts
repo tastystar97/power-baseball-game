@@ -5,7 +5,7 @@ import {createDatabase} from './database.ts';
 import {builtinPack} from '../cards/builtin.ts';
 import {catalogFromPacks} from '../cards/catalog.ts';
 import {createGame} from '../game/engine.ts';
-const pack=()=>({...structuredClone(builtinPack),id:'testcards',name:'별빛 학교'});
+const pack=()=>({...structuredClone(builtinPack),id:'testcards',name:'별빛 학교',revision:1});
 test('카드팩 등록·중복·충돌·명시적 개정을 원자적으로 처리한다',async()=>{
  const db=createDatabase(new IDBFactory(),'library');const p=pack();
  assert.equal(await db.importPack(p),'added');assert.equal(await db.importPack(p),'duplicate');

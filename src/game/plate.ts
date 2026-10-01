@@ -36,12 +36,11 @@ export function plateDistribution(ctx:PlateContext,tactic:string):Distribution {
  const relief=Math.max(0,...ctx.effects.filter(e=>e.kind==='fatigue').map(e=>e.amount));
  const fatigue=ctx.energy<45?.035*(1-relief):0;
  const wear=Math.max(0,ctx.load-(70+p.stamina*.55))*.0015;
- const mental=(b.mental-p.mental)*.0003;
- let k=clamp(.205+(p.velocity-b.contact)*.0015+(p.breaking-b.eye)*.0006-mental-wear+(ctx.playerBatter?fatigue:-fatigue),.06,.43);
+ let k=clamp(.205+(p.velocity-b.contact)*.0015+(p.breaking-b.eye)*.0006-wear+(ctx.playerBatter?fatigue:-fatigue),.06,.43);
  let walk=clamp(rules.walkBase+(b.eye-p.control)*.0011+wear+(ctx.playerPitcher?fatigue:0),.02,.20);
  const hbp=clamp(.006+(50-p.control)*.00008,.002,.012);
  let ground=.46+(b.contact-b.power)*.001, line=.20+(b.contact-50)*.0005;
- let hitBonus=(b.contact-p.control)*.0007+mental+wear+(ctx.playerPitcher?fatigue:ctx.playerBatter?-fatigue:0);
+ let hitBonus=(b.contact-p.control)*.0007+wear+(ctx.playerPitcher?fatigue:ctx.playerBatter?-fatigue:0);
  let homerBonus=(b.power-50)*.0008;
  switch(tactic){
  case 'contact':k-=.025;ground+=.03;line+=.015;hitBonus+=.008;homerBonus-=.007;break;

@@ -5,7 +5,7 @@ import {defaultSupports} from '../content/supports.ts';
 import type {Action,GameState} from '../game/types.ts';
 import {parseSave,loadGame,SAVE_KEY} from './save.ts';
 function next(s:GameState):GameState{
- const action:Omit<Action,'revision'>=s.phase==='lineup'?{type:'lineup',supports:defaultSupports(s.role)}:s.phase==='weekday'?{type:'activity',id:s.energy<60?'rest':s.role==='batter'?'batting':'control'}:s.phase==='weekend'?{type:'activity',id:'weekend_rest'}:s.phase==='supportEvent'?{type:'choice',index:0}:s.phase==='roleEvent'?{type:'choice',id:'stay'}:s.phase==='match'&&s.match!.awaiting?{type:'delegate'}:{type:'continue'};
+ const action:Omit<Action,'revision'>=s.phase==='lineup'?{type:'lineup',supports:defaultSupports(s.role)}:s.phase==='weekday'?{type:'activity',id:s.energy<60?'rest':s.role==='batter'?'train_sense':'train_sense'}:s.phase==='weekend'?{type:'activity',id:'weekend_rest'}:s.phase==='supportEvent'?{type:'choice',index:0}:s.phase==='roleEvent'?{type:'choice',id:'stay'}:s.phase==='match'&&s.match!.awaiting?{type:'delegate'}:{type:'continue'};
  return transition(s,{...action,revision:s.revision});
 }
 test('v8는 모든 경기 단계의 이벤트와 난수·기록을 그대로 왕복한다',()=>{
@@ -14,7 +14,7 @@ test('v8는 모든 경기 단계의 이벤트와 난수·기록을 그대로 왕
   const restored=parseSave(JSON.stringify(s));assert.deepEqual(restored,s);phases.add(s.phase);
   const a=next(s),b=next(restored);assert.deepEqual(a,b);assert.notEqual(a,s,`${role} ${s.phase}`);s=a;
  }
- assert.equal(s.phase,'complete');assert.equal(s.version,8);assert.deepEqual(parseSave(JSON.stringify(s)),s);
+ assert.equal(s.phase,'complete');assert.equal(s.version,9);assert.deepEqual(parseSave(JSON.stringify(s)),s);
  assert.ok(s.records.every(r=>r.match.summary&&r.match.feed.every(e=>e.playerBatter||e.playerPitcher)));
  assert.ok(JSON.stringify(s).length<600000);
  }

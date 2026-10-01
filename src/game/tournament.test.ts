@@ -11,7 +11,7 @@ import {defaultSupports} from '../content/supports.ts';
 import type {GameState,Action} from './types.ts';
 
 function auto(s:GameState){
-  const a:Omit<Action,'revision'>=s.phase==='lineup'?{type:'lineup',supports:defaultSupports(s.role)}:s.phase==='weekday'?{type:'activity',id:s.energy<65?'rest':s.role==='batter'?'batting':'control'}:s.phase==='weekend'?{type:'activity',id:'weekend_rest'}:['event','weekendEvent','supportEvent'].includes(s.phase)?{type:'choice',index:0}:s.phase==='roleEvent'?{type:'choice',id:'stay'}:s.phase==='match'&&s.match!.awaiting?{type:'tactic',id:s.role==='batter'?'contact':'control'}:{type:'continue'};
+  const a:Omit<Action,'revision'>=s.phase==='lineup'?{type:'lineup',supports:defaultSupports(s.role)}:s.phase==='weekday'?{type:'activity',id:s.energy<65?'rest':s.role==='batter'?'train_sense':'train_sense'}:s.phase==='weekend'?{type:'activity',id:'weekend_rest'}:['event','weekendEvent','supportEvent'].includes(s.phase)?{type:'choice',index:0}:s.phase==='roleEvent'?{type:'choice',id:'stay'}:s.phase==='match'&&s.match!.awaiting?{type:'tactic',id:s.role==='batter'?'contact':'control'}:{type:'continue'};
   return transition(s,{...a,revision:s.revision});
 }
 test('bracket advancement uses actual results, eliminates once, and completes all other games without consuming play RNG',()=>{
@@ -53,7 +53,7 @@ test('efficient pitching replaces precision and clamps the remaining walk probab
 });
 test('every summer phase and each elimination outcome can resume with identical next action',()=>{
   const outcomes=new Set<string>();
-  for(const seed of [...Array.from({length:32},(_,i)=>i+1),36]){
+  for(const seed of [...Array.from({length:32},(_,i)=>i+1),38]){
     let s=createGame('대회','pitcher',seed);
     for(let step=0;step<350&&s.phase!=='complete';step++){
       if(s.month===6){assert.deepEqual(parseSave(JSON.stringify(s)),s);assert.deepEqual(auto(parseSave(JSON.stringify(s))),auto(s));}

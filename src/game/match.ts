@@ -93,7 +93,7 @@ export function tactics(s:GameState):Tactic[]{
   const effects=eligible.map(id=>getSkills(s).find(k=>k.id===id)!.effects.filter(e=>!e.role||e.role===s.role));
   const base=previewExpectation(ctx,id,effects,chance),{probabilities,burden,success}=base;
   const disabled=base.disabled||(s.role==='pitcher'&&s.match!.retired);
-  return {id,title:titles[id][0],description:titles[id][1],disabled,burden,probabilities,outlook:disabled?'선택 불가':success>(s.role==='batter'?.35:.70)?'유리':success<(s.role==='batter'?.25:.55)?'불리':'보통',reason:disabled?'진루할 주자가 있고 2아웃 미만이어야 합니다.':`${base.estimated?'스킬 조합 평균 근사 · ':''}${teamName(s.match!.opponentId)} · 체력 ${s.energy} · 유효 멘탈 ${derivedStats(s).mental} · ${s.role==='batter'?'출루':'아웃'} 평균 전망 ${Math.round(success*100)}%${eligible.length?` · 지능 ${s.attributes.intelligence}: 각 스킬 발동 ${Math.round(chance*100)}% · 발동 후보: ${eligible.map(id=>getSkills(s).find(k=>k.id===id)!.name).join(', ')}`:''}`};
+  return {id,title:titles[id][0],description:titles[id][1],disabled,burden,probabilities,outlook:disabled?'선택 불가':success>(s.role==='batter'?.35:.70)?'유리':success<(s.role==='batter'?.25:.55)?'불리':'보통',reason:disabled?'진루할 주자가 있고 2아웃 미만이어야 합니다.':`${base.estimated?'스킬 조합 평균 근사 · ':''}${teamName(s.match!.opponentId)} · ${s.energy<45?'피로에 주의':'컨디션 양호'}${eligible.length?` · 발동 후보: ${eligible.map(id=>getSkills(s).find(k=>k.id===id)!.name).join(', ')}`:''}`};
  });
 }
 function note(m:Match,text:string){m.recent.push(text);m.recent=m.recent.slice(-12);}

@@ -10,20 +10,20 @@ import {competitorTrainingFeedback} from './rivalry.ts';
 
 function step(s:GameState,style='training'):GameState {
  const a:Omit<Action,'revision'>=s.phase==='lineup'?{type:'lineup',supports:defaultSupports(s.role)}
- :s.phase==='weekday'?{type:'activity',id:style==='study'?'study':s.energy<(style==='training'?65:80)?'rest':s.role==='batter'?'batting':'control'}
- :s.phase==='weekend'?{type:'activity',id:style==='study'?'selfstudy':style==='balanced'&&s.energy>65?'catch':'weekend_rest'}
+ :s.phase==='weekday'?{type:'activity',id:style==='train_intelligence'?'train_intelligence':s.energy<(style==='training'?65:80)?'rest':s.role==='batter'?'train_sense':'train_sense'}
+ :s.phase==='weekend'?{type:'activity',id:style==='train_intelligence'?'selfstudy':style==='balanced'&&s.energy>65?'catch':'weekend_rest'}
  :['supportEvent','event','weekendEvent'].includes(s.phase)?{type:'choice',index:0}
  :s.phase==='roleEvent'?{type:'choice',id:'stay'}:s.phase==='match'&&s.match!.awaiting?{type:'tactic',id:s.role==='batter'?'contact':'control'}:{type:'continue'};
  return transition(s,{...a,revision:s.revision});
 }
 test('weekend practice never repeats weekday competitor growth in training feedback',()=>{
  let s=createGame('피드백','batter',1);s=step(s);
- s=transition(s,{type:'activity',id:'batting',revision:s.revision});
+ s=transition(s,{type:'activity',id:'train_sense',revision:s.revision});
  const weekday=s.log.find(l=>l.training)!;
  assert.equal(competitorTrainingFeedback(s,weekday),null);assert.equal(s.competitor.weeks.length,0);
  while(s.phase!=='weekend')s=step(s);
  const before=structuredClone(s.competitor);
- s=transition(s,{type:'activity',id:'practice',target:'contact',revision:s.revision});
+ s=transition(s,{type:'activity',id:'practice',target:'primary_sense',revision:s.revision});
  const weekend=[...s.log].reverse().find(l=>l.training)!;
  assert.notEqual(weekday.title,weekend.title);assert.deepEqual(s.competitor,before);
  assert.equal(competitorTrainingFeedback(s,weekend),null);
@@ -33,7 +33,7 @@ test('switching from study to training can reclaim a starter place for both role
   let reclaimed=0;
   for(let seed=1;seed<=20;seed++){
    let s=createGame('재도전',role,seed);
-   while(s.phase!=='complete')s=step(s,s.month<=4?'study':'training');
+   while(s.phase!=='complete')s=step(s,s.month<=4?'train_intelligence':'training');
    if(s.selectionHistory.some(h=>h.previous==='junseo'&&h.starter==='player'))reclaimed++;
   }
   console.log(`${role} 학업→훈련 선발 탈환: ${reclaimed}/20`);assert.ok(reclaimed>0);
@@ -41,7 +41,7 @@ test('switching from study to training can reclaim a starter place for both role
 });
 test('120 full seasons preserve every phase, actual haesol history and all rival weeks',()=>{
  const report:Record<string,{starter:number;substitute:number;reserve:number;changes:number;minGap:number;maxGap:number}>={};
- for(const role of ['batter','pitcher'] as const)for(const style of ['training','balanced','study'])for(let seed=1;seed<=20;seed++){
+ for(const role of ['batter','pitcher'] as const)for(const style of ['training','balanced','train_intelligence'])for(let seed=1;seed<=20;seed++){
   let s=createGame('라이벌',role,seed);const key=`${role}/${style}`;
   const r=report[key]??={starter:0,substitute:0,reserve:0,changes:0,minGap:999,maxGap:-999};
   for(let i=0;i<350&&s.phase!=='complete';i++){
