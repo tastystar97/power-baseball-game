@@ -53,7 +53,7 @@ test('efficient pitching replaces precision and clamps the remaining walk probab
 });
 test('every summer phase and each elimination outcome can resume with identical next action',()=>{
   const outcomes=new Set<string>();
-  for(let seed=1;seed<=32;seed++){
+  for(const seed of [...Array.from({length:32},(_,i)=>i+1),36]){
     let s=createGame('대회','pitcher',seed);
     for(let step=0;step<350&&s.phase!=='complete';step++){
       if(s.month===6){assert.deepEqual(parseSave(JSON.stringify(s)),s);assert.deepEqual(auto(parseSave(JSON.stringify(s))),auto(s));}

@@ -23,7 +23,7 @@ export function Records({s,match=s.match}:{s:GameState;match?:Match|null}) {
   if(!match)return <p className="muted">아직 출전 기록이 없습니다. 3월 4주차 토요일에 첫 연습경기가 열립니다.</p>;
   const m=match;
   const rows=s.role==='batter'
-    ? [['타수',m.batting.ab],['안타',m.batting.hits],['홈런',m.batting.hr],['타점',m.batting.rbi],['볼넷',m.batting.walks],['삼진',m.batting.k]]
-    : [['이닝',`${Math.floor(m.pitching.outs/3)}${m.pitching.outs%3?` ${m.pitching.outs%3}/3`:''}`],['탈삼진',m.pitching.k],['피안타',m.pitching.hits],['볼넷',m.pitching.walks],['실점',m.pitching.runs],['투구 부담',m.load]];
+    ? [['타수',m.batting.ab],['안타',m.batting.hits],['홈런',m.batting.hr],['타점',m.batting.rbi],['볼넷',m.batting.walks],['사구',m.batting.hbp],['2루타',m.batting.doubles],['3루타',m.batting.triples],['희생플라이',m.batting.sf],['삼진',m.batting.k]]
+    : [['이닝',`${Math.floor(m.pitching.outs/3)}${m.pitching.outs%3?` ${m.pitching.outs%3}/3`:''}`],['탈삼진',m.pitching.k],['피안타',m.pitching.hits],['볼넷',m.pitching.walks],['실점',m.pitching.runs],['피홈런',m.pitching.hr],['사구',m.pitching.hbp],['세이브',m.pitching.sv],['홀드',m.pitching.hold],['블론',m.pitching.bs],['투구 부담',Math.round(m.load*10)/10]];
   return <><p className="record-score">{teamName(m.opponentId)} {m.score[0]} : {m.score[1]} 청람고 <span className="muted">{m.over?'경기 종료':'진행 중'}</span></p>{m.appearance==='reserve'&&<p className="muted gap-top">벤치 대기 · 이번 경기에는 출전하지 않았습니다.</p>}<div className="record-grid">{rows.map(([k,v])=><div key={k}><span>{k}</span><strong>{v}</strong></div>)}</div></>;
 }

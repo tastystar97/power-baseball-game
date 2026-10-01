@@ -592,3 +592,66 @@ input[type=checkbox] {width:18px;height:18px;accent-color:var(--grass);flex:none
 
 .editor-toolbar .save-state {display:block;}
 .card-filters input:not([type=checkbox]) {min-height:44px;padding:8px;border:1px solid var(--border);border-radius:6px;font:inherit;max-width:100%;}
+/* v0.8 · 경기의 중심을 야구장에 둔다. */
+.app[data-layout="match"] { max-width:1080px; }
+.app[data-layout="match"] .body { display:block; }
+.app[data-layout="match"] .center { padding:20px 26px; }
+.app[data-layout="match"] .steps,.app[data-layout="match"] .training-feedback { display:none; }
+.live-match { --live-green:#254d3d; --live-gold:#e7b64c; }
+.match-heading { display:flex; justify-content:space-between; gap:16px; align-items:center; margin-bottom:12px; }
+.match-heading h1 { font-size:24px; letter-spacing:-.8px; }
+.match-heading h1 span { color:var(--navy-soft); font-size:15px; margin:0 8px; }
+.eyebrow { text-transform:uppercase; letter-spacing:1.8px; font-size:11px; font-weight:800; color:var(--navy-soft); }
+.role-tag { text-align:right; font-size:14px; font-weight:800; }.role-tag small { display:block; font-weight:400;color:var(--navy-soft); }
+.live-board { background:#203c32; color:#f8ecd0; border-radius:12px 12px 0 0; padding:10px 18px 0; font-variant-numeric:tabular-nums; }
+.live-board table { width:100%; border-collapse:collapse; text-align:center; font-size:13px; }
+.live-board th { padding:3px 7px; color:#e7dcc2; font-size:11px; font-weight:500; }
+.live-board tbody th { text-align:left; min-width:65px; font-size:14px; font-weight:700; }
+.live-board td { padding:3px 6px; }.live-board .r { color:var(--live-gold); font-weight:800; }.live-board .cur { background:#ffffff19; border-radius:3px; }
+.board-status { border-top:1px solid #ffffff26;display:flex;justify-content:space-between; gap:10px; padding:8px 0; font-size:12px; }
+.board-status i { display:inline-block; width:7px;height:7px; margin-left:4px;border:1px solid #b8b59f;border-radius:50%; }.board-status i.on { background:#e6b04b; border-color:#e6b04b; }
+.live-board.scored .r { animation:score-light .7s ease-out; }
+.ballpark { position:relative; background:#4c7f55; overflow:hidden; border-left:1px solid #254d3d;border-right:1px solid #254d3d; }
+.ballpark svg { display:block; width:100%; max-height:460px; }.ballpark.decision { box-shadow:inset 0 0 0 3px var(--live-gold); }
+.play-banner { position:absolute;left:0;right:0;top:36%;text-align:center;font:italic 900 clamp(30px,5vw,54px)/1.2 Georgia,serif;letter-spacing:3px;color:#fff7d8;text-shadow:0 3px 0 #284a3d,0 0 18px #203c3280;pointer-events:none;animation:play-announcement .3s ease-out; }
+.decision-ribbon { position:absolute;top:13px;left:50%;transform:translateX(-50%);white-space:nowrap;background:#f1c863;color:#263b36;box-shadow:0 3px 14px #193e3240;padding:7px 18px;border-radius:5px;font-size:12px;font-weight:800;letter-spacing:1px; }
+.live-commentary { display:flex;gap:14px;align-items:center;min-height:48px;background:#203c32;color:#fff5dc;padding:10px 18px;border-radius:0 0 10px 10px;font-size:14px; }.live-commentary>span:first-child { font-size:10px;letter-spacing:1px;color:#e7b64c;flex-shrink:0; }
+.playback-controls { display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;align-items:flex-start;margin:12px 0; }.playback-controls>div { display:flex;gap:5px;flex-wrap:wrap; }.playback-controls>div:last-child { justify-content:flex-end; }.playback-controls button { font-size:12px;min-height:36px;border:1px solid #c2bda8;padding:5px 10px;border-radius:5px; }.playback-controls button[aria-pressed="true"] { background:var(--navy);color:var(--paper);border-color:var(--navy); }.playback-controls small { flex-basis:100%;text-align:right;color:var(--navy-soft);font-size:11px; }
+.live-matchup { display:grid;grid-template-columns:1fr auto 1fr;gap:14px;background:#eee6d4;border:1px solid var(--border);padding:12px 20px;border-radius:8px;align-items:start; }.live-matchup>div { display:flex;flex-direction:column; }.live-matchup>div:last-child { text-align:right; }.live-matchup strong { font-size:19px; }.live-matchup small { font-size:11px;color:var(--navy-soft); }.live-matchup span { font-size:13px; }.live-matchup .is-player strong:after { content:' ★';color:var(--gold); }.versus { font:italic 16px Georgia,serif;color:#9b8b64;align-self:center; }
+.live-load { font-size:11px;display:flex;align-items:center;gap:8px;justify-content:flex-end; }.live-load progress { width:85px;height:5px;accent-color:var(--gold); }
+.decision-panel { margin-top:16px;border-top:2px solid #dfba65;padding-top:12px; }.decision-heading { display:flex;align-items:center;justify-content:space-between;gap:10px; }.decision-heading h2 { font-size:18px; }.decision-heading button { font-size:13px;min-height:36px; }.live-tactics { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:10px; }.live-tactics .card { padding:12px;gap:5px;min-height:100px; }.live-tactics .card .reason { font-size:11px;line-height:1.45; }.live-tactics .card strong { font-size:15px; }.live-tactics .card .desc { font-size:12px; }
+.match-history { margin-top:14px;font-size:13px;border-top:1px solid var(--border);padding-top:10px; }.match-history summary { cursor:pointer;padding:6px 0; }.match-history ol { max-height:260px;overflow:auto;line-height:1.9;padding-left:24px; }
+.match-final { padding:22px 0 10px;text-align:center; }.match-final h2 { font-size:28px;margin:4px 0; }.final-score { margin:8px 0 18px; }.final-score b { margin:0 12px;font-size:30px; }.match-final .actions { justify-content:center;margin-top:20px; }
+@keyframes score-light { 0% { background:#e7b64c;color:#203c32; }100% { background:transparent; } }
+@keyframes play-announcement { from { opacity:0;transform:scale(.86); }to { opacity:1;transform:scale(1); } }
+@media(max-width:650px) {
+ .app[data-layout="match"] .center { padding:10px; }.match-heading { gap:8px;margin-bottom:8px; }.match-heading h1 { font-size:18px; }.match-heading h1 span { margin:0 3px;font-size:12px; }.eyebrow { font-size:10px;letter-spacing:.5px; }.role-tag { font-size:11px; }.role-tag small { font-size:10px; }
+ .live-board { padding:7px 9px 0; }.live-board table { min-width:420px;font-size:11px; }.live-board th { padding:2px 4px; }.live-board td { padding:2px 4px; }.live-board tbody th { font-size:12px;min-width:52px; }.board-status { font-size:10px;padding:6px 0; }
+ .ballpark svg { max-height:290px; }.live-commentary { padding:8px 10px;font-size:12px;gap:8px;min-height:44px; }.decision-ribbon { top:8px;font-size:10px;padding:4px 10px; }
+ .playback-controls { margin:8px 0;gap:6px; }.playback-controls button { min-height:38px;padding:5px 8px;font-size:11px; }.playback-controls>div:last-child { flex:1; }.playback-controls small { font-size:10px; }
+ .live-matchup { padding:9px 12px;gap:8px; }.live-matchup strong { font-size:16px; }.live-matchup span { font-size:11px; }.live-matchup small { font-size:10px; }.live-matchup .live-load { font-size:10px; }.live-load progress { width:50px; }
+ .decision-panel { margin-top:12px;padding-top:8px; }.decision-heading h2 { font-size:16px; }.live-tactics { gap:7px; }.live-tactics .card { padding:10px;min-height:115px; }.live-tactics .card strong { font-size:13px; }.live-tactics .outlook { font-size:10px; }.live-tactics .card .reason { font-size:10px; }
+}
+@media(prefers-reduced-motion:reduce) { .live-board.scored .r,.play-banner { animation:none; } }
+.match-stage { position:relative; }
+.dice-reveal { position:absolute;bottom:16px;left:50%;transform:translateX(-50%);z-index:2;min-width:240px;max-width:95%;padding:12px 18px;border:1px solid #e0bf70;border-radius:12px;background:#17372fee;color:#fff3ce;box-shadow:0 8px 30px #10291e66;text-align:center; }
+.dice-skip,.dice-skip:disabled { display:flex;align-items:center;gap:15px;background:none;border:0;color:inherit;padding:0;opacity:1;text-align:left;min-height:56px; }
+.dice-skip:disabled { cursor:default; }.dice-skip small { display:block;font-size:10px;font-weight:400;color:#d8d1b8;margin-top:3px; }
+.dice-cube { display:block;width:52px;height:52px;overflow:hidden;text-align:center;font:800 34px/52px Georgia,serif;border-radius:10px;background:#fff1cb;color:#765119;box-shadow:inset -4px -5px 0 #b69c6180,0 4px 0 #75613c; }
+.dice-strip { display:block;animation:dice-spin .24s linear infinite; }.dice-outlook { display:block;margin-top:9px;font-size:11px;letter-spacing:2px; }
+.dice-reveal.good .dice-cube { background:#ffd465;box-shadow:0 0 23px #f6cd5e88; }.dice-reveal.bad { background:#26372fee;border-color:#a5a99b; }.dice-reveal.bad .dice-cube { background:#d6d9d0;color:#3e4945; }
+.dice-skills { margin-top:10px;display:flex;flex-wrap:wrap;gap:5px;justify-content:center; }.dice-skills span { border-radius:4px;padding:4px 7px;background:#f0c76c;color:#243b30;font-size:11px;font-weight:700;animation:skill-shine .7s ease-out; }
+.play-banner { font-family:inherit;letter-spacing:-1px;font-size:32px; }.play-banner small { display:block;font:700 15px/2 Georgia,serif;letter-spacing:3px; }.minor-play .play-banner { top:10%;font-size:17px; }.bad .play-banner { font-size:25px;color:#dde3db;text-shadow:0 2px 4px #1b362c; }.good .play-banner { color:#ffe08a;text-shadow:0 3px 0 #465037,0 0 24px #ffcf7666; }.play-banner.homer-banner { top:30%;background:#203c32cc;border-block:2px solid #ffe08a;padding:15px;font-size:46px; }
+.hit-burst { animation:hit-flash .7s ease-out;transform-box:fill-box;transform-origin:center; }.bad .hit-burst { opacity:.4; }.glove-catch { animation:catch-flash .5s ease-out; }.double-play-line { animation:catch-flash .6s ease-out; }.paused * { animation-play-state:paused!important; }
+@keyframes dice-spin { to { transform:translateY(-156px); } }
+@keyframes skill-shine { from { filter:brightness(1.8);box-shadow:0 0 20px #f7cb55; }to { filter:brightness(1); } }
+@keyframes hit-flash { from { opacity:0; }30% { opacity:1; }to { opacity:.6; } }
+@keyframes catch-flash { from { opacity:.2; }to { opacity:1; } }
+@media(max-width:650px) {
+ .live-match { display:flex;flex-direction:column; }
+ .live-board table { min-width:0;table-layout:fixed;font-size:10px; }.live-board table th,.live-board table td { padding:2px 0; }.live-board table th:first-child { width:47px;min-width:0;font-size:10px; }
+ .live-match[data-decision=true] .ballpark svg { max-height:170px; }.live-match[data-decision=true] .playback-controls { order:8; }.live-matchup { margin-top:8px; }.live-match[data-decision=true] .live-matchup { padding:6px 10px; }.live-matchup strong { font-size:15px; }
+ .match-history { order:9; }.live-tactics .card { min-height:82px;padding:8px; }.live-tactics .card .desc { font-size:11px; }.decision-panel>.reason { font-size:11px; }.decision-heading h2 { font-size:14px; }.decision-heading button { min-height:44px; }.live-load { display:none; }
+ .dice-reveal { bottom:10px;min-width:215px;padding:10px 14px; }.dice-cube { width:44px;height:44px;font-size:28px;line-height:44px; }.dice-strip { line-height:52px; }.dice-skip { font-size:13px;gap:10px; }.play-banner { top:20%;font-size:24px; }.bad .play-banner { font-size:21px; }.play-banner.homer-banner { font-size:30px; }
+}
+@media(prefers-reduced-motion:reduce) { .dice-strip,.hit-burst,.glove-catch,.double-play-line,.dice-skills span { animation:none; } }
