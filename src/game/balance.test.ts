@@ -8,7 +8,7 @@ import {plateContext,initializeMatch} from './match.ts';
 import {plateDistribution,resolvePlate} from './plate.ts';
 import {random} from './random.ts';
 function simulate(seed:number,role:'batter'|'pitcher',duty:'starter'|'middle'|'closer',opponentId:TeamId,order:1|8=8){
- const s=createGame('측정',role,Math.imul(seed,2654435761)>>>0);for(const k of Object.keys(s.attributes) as (keyof typeof s.attributes)[])s.attributes[k]=60;for(const k of Object.keys(s.proficiency) as (keyof typeof s.proficiency)[])s.proficiency[k]=50;s.energy=90;
+ const s=createGame('측정',role,Math.imul(seed,2654435761)>>>0);for(const k of Object.keys(s.attributes) as (keyof typeof s.attributes)[])s.attributes[k]=494;for(const k of Object.keys(s.proficiency) as (keyof typeof s.proficiency)[])s.proficiency[k]=500;s.energy=90;
  s.match={...createMatch(),pitchingRole:duty,opponentId,battingOrder:order};let stops=0;
  for(let n=0;n<300&&!s.match.over;n++){advanceMatch(s);if(s.match.awaiting){stops++;chooseTactic(s,role==='batter'?'contact':'control');}}
  assert.ok(s.match.over);return {m:s.match,stops};

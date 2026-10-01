@@ -50,7 +50,8 @@ export interface SceneInput {
 }
 
 export function stagingFor(activity:string|undefined):Staging|undefined {
-  return activity?staging[activity]:undefined;
+  // First-year trainings are `train_<primary>`; the staging table is keyed by the primary.
+  return activity?staging[activity]??staging[activity.replace(/^train_/,'')]:undefined;
 }
 
 function timeFor(place:Place,input:SceneInput):TimeOfDay {

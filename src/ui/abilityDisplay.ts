@@ -1,14 +1,10 @@
-import {derivedStats,secondaryKeys} from '../game/abilities.ts';
+import {derivedStats,secondaryKeys,overall} from '../game/abilities.ts';
 import type {AbilityState} from '../game/abilities.ts';
 import type {StatKey} from '../game/types.ts';
+import {PRIMARY_MAX} from '../content/development-rules.ts';
 
-// Merge note: the first-year data work moves primaries to 0-1500 with PRIMARY_MAX in
-// content/development-rules.ts and adds abilities.overall(). Point these two at them then.
-export const primaryMax=100;
-export function overallOf(s:AbilityState):number {
-  const stats=derivedStats(s);
-  return secondaryKeys(s.role).reduce((n,k)=>n+stats[k],0)/secondaryKeys(s.role).length;
-}
+export const primaryMax=PRIMARY_MAX;
+export const overallOf=(s:AbilityState):number=>overall(s);
 
 const primaryGrades:[number,string][]=[[.867,'S'],[.733,'A'],[.6,'B'],[.467,'C'],[.333,'D'],[.2,'E'],[.1,'F'],[0,'G']];
 /** Letter grade of a primary attribute relative to its scale. */

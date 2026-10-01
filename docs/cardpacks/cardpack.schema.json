@@ -56,6 +56,23 @@
               }
             ]
           },
+          "grade": {
+            "default": 2,
+            "anyOf": [
+              {
+                "type": "number",
+                "const": 1
+              },
+              {
+                "type": "number",
+                "const": 2
+              },
+              {
+                "type": "number",
+                "const": 3
+              }
+            ]
+          },
           "training": {
             "type": "object",
             "properties": {
@@ -66,13 +83,11 @@
                 "items": {
                   "type": "string",
                   "enum": [
-                    "batting",
-                    "weights",
-                    "running",
-                    "fielding",
-                    "freebatting",
-                    "tactics",
-                    "study",
+                    "train_power",
+                    "train_endurance",
+                    "train_mental",
+                    "train_intelligence",
+                    "train_sense",
                     "rest"
                   ]
                 }
@@ -84,14 +99,11 @@
                 "items": {
                   "type": "string",
                   "enum": [
-                    "velocity",
-                    "weights",
-                    "running",
-                    "control",
-                    "breaking",
-                    "endurance",
-                    "tactics",
-                    "study",
+                    "train_power",
+                    "train_endurance",
+                    "train_mental",
+                    "train_intelligence",
+                    "train_sense",
                     "rest"
                   ]
                 }
@@ -134,9 +146,8 @@
                   ]
                 },
                 "additionalProperties": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "maximum": 2
+                  "type": "number",
+                  "const": 0
                 }
               }
             },
@@ -233,6 +244,7 @@
           "description",
           "color",
           "specialty",
+          "grade",
           "training",
           "bonus",
           "hints",
@@ -303,26 +315,39 @@
           },
           "requires": {
             "type": "object",
-            "propertyNames": {
-              "type": "string",
-              "enum": [
-                "contact",
-                "power",
-                "eye",
-                "speed",
-                "field",
-                "mental",
-                "velocity",
-                "control",
-                "breaking",
-                "stamina"
-              ]
+            "properties": {
+              "power": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1500
+              },
+              "endurance": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1500
+              },
+              "mental": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1500
+              },
+              "intelligence": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1500
+              },
+              "sense": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1500
+              },
+              "overall": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100
+              }
             },
-            "additionalProperties": {
-              "type": "integer",
-              "minimum": 0,
-              "maximum": 95
-            }
+            "additionalProperties": false
           },
           "conditions": {
             "maxItems": 5,
@@ -797,8 +822,8 @@
                     },
                     "additionalProperties": {
                       "type": "integer",
-                      "minimum": -10,
-                      "maximum": 10
+                      "minimum": -85,
+                      "maximum": 85
                     }
                   },
                   "energy": {
@@ -888,8 +913,8 @@
                     },
                     "additionalProperties": {
                       "type": "integer",
-                      "minimum": -10,
-                      "maximum": 10
+                      "minimum": -85,
+                      "maximum": 85
                     }
                   },
                   "energy": {
@@ -1005,11 +1030,11 @@
     },
     "version": {
       "type": "number",
-      "const": 1
+      "const": 2
     },
     "ruleset": {
       "type": "string",
-      "const": "summer-7"
+      "const": "first-year-1"
     },
     "id": {
       "type": "string",
@@ -1050,6 +1075,5 @@
     "author",
     "description"
   ],
-  "additionalProperties": false,
-  "title": "마지막 여름 CardPack v1 (summer-7)"
+  "additionalProperties": false
 }

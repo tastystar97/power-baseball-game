@@ -7,10 +7,10 @@ import {readFileSync} from 'node:fs';
 import {parseSave} from '../persistence/save.ts';
 
 test('intelligence changes activation from 50 to 90 percent and improves activation contribution as well as the derived ability',()=>{
- assert.equal(skillActivationChance(0),.5);assert.equal(skillActivationChance(45),.68);assert.equal(skillActivationChance(100),.9);
+ assert.equal(skillActivationChance(0),.5);assert.equal(skillActivationChance(1500),.9);
  const s=createGame('지능','batter',345);s.skills=['contact_focus'];s.match=createMatch();s.match.half=1;s.match.order[1]=7;
- s.attributes.intelligence=0;const low=tactics(s)[0];s.attributes.intelligence=100;const high=tactics(s)[0];
- s.skills=[];s.attributes.intelligence=0;const lowBase=tactics(s)[0];s.attributes.intelligence=100;const highBase=tactics(s)[0];assert.ok(Math.abs((high.probabilities[3]-highBase.probabilities[3])-(low.probabilities[3]-lowBase.probabilities[3])-.02)<1e-9);assert.ok(highBase.probabilities[3]>lowBase.probabilities[3]);
+ s.attributes.intelligence=0;const low=tactics(s)[0];s.attributes.intelligence=1500;const high=tactics(s)[0];
+ s.skills=[];s.attributes.intelligence=0;const lowBase=tactics(s)[0];s.attributes.intelligence=1500;const highBase=tactics(s)[0];assert.ok(Math.abs((high.probabilities[3]-highBase.probabilities[3])-(low.probabilities[3]-lowBase.probabilities[3])-.02)<1e-9);assert.ok(highBase.probabilities[3]>lowBase.probabilities[3]);
  const before=structuredClone(s);for(let i=0;i<10;i++)tactics(s);assert.deepEqual(s,before);
 });
 test('each eligible skill rolls independently before one actual manual or automatic appearance',()=>{

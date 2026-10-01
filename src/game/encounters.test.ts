@@ -37,11 +37,11 @@ test('two dry slots guarantee an encounter and the saved growth choice pays only
 
 test('weekend partner training requires an equipped bonded partner and consumes one weekend',()=>{
  const s=createGame('특훈','pitcher');s.phase='weekend';s.supports=['rival','classmate','manager','bat_senior','pitch_senior','catcher'];
- assert.ok(previewActivity(s,'partner','control')!.disabledReason);
- s.rival=60;assert.equal(previewActivity(s,'partner','control','rival')!.disabledReason,'');
- assert.ok(previewActivity(s,'partner','control','sera')!.disabledReason);
- const before=structuredClone(s),p=previewActivity(s,'partner','control','rival')!;
- const a={type:'activity' as const,id:'partner',target:'control' as const,partner:'rival' as const,revision:s.revision};
+ assert.ok(previewActivity(s,'partner','primary_sense')!.disabledReason);
+ s.rival=60;assert.equal(previewActivity(s,'partner','primary_sense','rival')!.disabledReason,'');
+ assert.ok(previewActivity(s,'partner','primary_sense','sera')!.disabledReason);
+ const before=structuredClone(s),p=previewActivity(s,'partner','primary_sense','rival')!;
+ const a={type:'activity' as const,id:'partner',target:'primary_sense' as const,partner:'rival' as const,revision:s.revision};
  const n=transition(s,a);assert.equal(n.proficiency.control!-before.proficiency.control!,p.proficiency.control);
  assert.equal(n.rival,68);assert.equal(n.week,2);assert.equal(n.weekdayPart,1);assert.equal(transition(n,a),n);
 });

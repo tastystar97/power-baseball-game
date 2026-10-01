@@ -11,6 +11,6 @@ export function describeSkill(k:SkillDefinition,role?:Role){
  c.kind==='runners'?(c.present?'주자 있음':'주자 없음'):c.kind==='score'?({behind:'팀이 지는 중',tied:'동점',ahead:'팀이 이기는 중'}[c.value]):`상대 유형 ${c.values.map(v=>({wild:'제구 불안',fast:'직구 위주',tired:'피로 누적',power:'장타형',patient:'선구형'}[v])).join('/')}`;
  return prefix+text;
  });
- const effects=k.effects.filter(e=>!role||!e.role||e.role===role).map(e=>(!role&&e.role?(e.role==='batter'?'타자 ':'투수 '):'')+(e.kind==='probability'?`${resultLabels[e.from]} → ${resultLabels[e.to]} 최대 ${+(e.amount*100).toFixed(2)}%p`:e.kind==='burden'?`투구 부담 -${e.amount} (최소 1)`:`체력 45 미만 불이익 ${Math.round(e.amount*100)}% 완화`));
+ const effects=k.effects.filter(e=>!role||!e.role||e.role===role).map(e=>(!role&&e.role?(e.role==='batter'?'타자 ':'투수 '):'')+(e.kind==='probability'?`${resultLabels[e.from]} → ${resultLabels[e.to]} 전환에 유리`:e.kind==='burden'?`투구 부담 완화`:`체력이 낮을 때 불이익 완화`));
  return `${conditions.length?conditions.join(' · '):'모든 승부'} → 발동 시 ${effects.join(' · ')}`;
 }

@@ -1,5 +1,7 @@
 import {strFromU8,strToU8,zipSync,unzipSync} from 'fflate';
-import {packSchema,contentSchema,roleAbilityNames} from './schema.ts';
+import {packSchema,contentSchema,requirementNames} from './schema.ts';
+import {contentSchema as legacyContentSchema} from './legacy-schema.ts';
+import {upgradePack} from './upgrade.ts';
 import type {CardPack,CardContent} from './schema.ts';
 
 export const PACK_LIMIT=20*1024*1024;
@@ -27,7 +29,7 @@ export function validateContent(input:unknown):CardContent {
   }
   for(const s of p.skills){
     for(const role of s.role==='both'?['batter','pitcher'] as const:[s.role]){
-      const allowed:readonly string[]=roleAbilityNames[role];
+      const allowed:readonly string[]=requirementNames;
       if(Object.entries(s.requires).some(([key,value])=>value!>0&&!allowed.includes(key)))fail(`${s.name}: ${role} 역할에서 달성할 수 없는 능력 조건입니다.`);
       const conditions=s.conditions.filter(c=>!c.role||c.role===role);
       let tactics:string[]=role==='batter'?['contact','power','patient','bunt']:['fastball','breaking','control','chase'];
@@ -83,7 +85,7 @@ export function validateContent(input:unknown):CardContent {
   return p;
 }
 export function validatePack(input:unknown):CardPack {
-  const result=packSchema.safeParse(input);
+  const result=packSchema.safeParse(upgradePack(input));
   if(!result.success)fail(result.error.issues.map(i=>`${i.path.join('.')} · ${i.message}`).join('\n'));
   const p=result.data!;
   for(const item of [...p.cards,...p.skills,...p.events])if(item.id.includes('/'))fail('팩 내부 ID에는 /를 사용할 수 없습니다.');
@@ -118,7 +120,8 @@ export function decodePack(bytes:Uint8Array):CardPack {
     const data=files[`assets/${name}`]||fail(`이미지 파일이 없습니다: ${name}`);images[name]={mime:mime as CardPack['images'][string]['mime'],data:base64(data)};
   }
   if(Object.keys(files).length!==Object.keys(images).length+2)fail('목록에 없는 이미지 파일이 있습니다.');
-  const content=contentSchema.omit({images:true}).parse(JSON.parse(strFromU8(files['content.json'])));
+  const schema=meta.version===1?legacyContentSchema:contentSchema;
+  const content=schema.omit({images:true}).parse(JSON.parse(strFromU8(files['content.json'])));
   return validatePack({...meta,...content,images});
 }
 export function subsetPack(input:CardPack,ids:string[]):CardPack {

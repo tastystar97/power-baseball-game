@@ -2,14 +2,15 @@ import {developmentStyle,availableSkills,skillRequirements} from '../content/ski
 import {teams,teamName} from '../content/teams.ts';
 import {championName,monthGoal,nextMatch,pairings,roundNames,tournamentResult,winner} from '../game/season.ts';
 import type {GameState} from '../game/types.ts';
+import {grade} from '../game/types.ts';
 import {Meter} from './common.tsx';
 
 export function DevelopmentPanel({s,detail=false}:{s:GameState;detail?:boolean}) {
   const style=developmentStyle(s);
   return <section className="panel development"><p className="eyebrow">훈련으로 만드는 나의 야구</p><h3>{style.name}</h3>
-    <div className="gap-top">{style.paths.map(p=><Meter key={p.name} label={p.name} value={p.score}/>)}</div>
+    <div className="gap-top">{style.paths.map(p=><p key={p.name}>{p.name} · {grade(p.score)}</p>)}</div>
     <p className="reason gap-top">현재 능력으로 본 성장 방향입니다. 두 방향의 스킬을 모두 배워 혼합형으로 키울 수 있습니다.</p>
-    {detail&&<><p className="reason gap-top">1차 능력과 숙련 각각 60부터 성장이 완만해집니다. 60~79는 75%, 80~89는 50%, 90 이상은 25%이며 숙련이 기반보다 10/20 넘게 높으면 추가로 성장 둔화가 적용됩니다. 실제 성장량은 활동 카드에 반영됩니다.</p><div className="development-goals">{availableSkills(s).filter(k=>k.style).map(k=><div key={k.id}><strong>{k.style} · {k.name}</strong><p className="reason">{s.skills.includes(k.id)?'특화 스킬 습득 완료':skillRequirements(s,k.id).map(r=>`${r.met?'✓':'○'} ${r.label}`).join(' · ')}</p></div>)}</div></>}
+    {detail&&<><p className="reason gap-top">1차 능력이 800에 이르면 성장이 완만해지며 1학년 상한은 1000입니다. 같은 훈련만 반복하기보다 몸과 기술을 함께 키워 보세요. 실제 성장량은 활동 카드에 반영합니다.</p><div className="development-goals">{availableSkills(s).filter(k=>k.style).map(k=><div key={k.id}><strong>{k.style} · {k.name}</strong><p className="reason">{s.skills.includes(k.id)?'특화 스킬 습득 완료':skillRequirements(s,k.id).map(r=>`${r.met?'✓':'○'} ${r.label}`).join(' · ')}</p></div>)}</div></>}
   </section>;
 }
 export function SeasonPanel({s}:{s:GameState}) {

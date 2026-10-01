@@ -10,18 +10,18 @@ test('8번 승격에는 최근 두 선발 경기와 신뢰 경계가 필요하�
  s.trust=29;assert.equal(pendingRoleEvent(s),null);s.trust=30;s.records[0].match.appearance='substitute';assert.equal(pendingRoleEvent(s),null);
 });
 test('여섯 경기 안에 단계별 한 경기 경험을 쌓고 경로를 고정한다',()=>{
- const s=createGame('중심','batter');s.trust=70;for(const k of Object.keys(s.attributes) as (keyof typeof s.attributes)[])s.attributes[k]=85;s.proficiency.power=65;
+ const s=createGame('중심','batter');s.trust=70;for(const k of Object.keys(s.attributes) as (keyof typeof s.attributes)[])s.attributes[k]=1054;s.proficiency.power=650;
  result(s);result(s);s.career.pending=pendingRoleEvent(s);assert.ok(applyRoleChoice(s,'six'));assert.equal(s.career.battingOrder,6);assert.equal(pendingRoleEvent(s),null);
  result(s,6);s.career.pending=pendingRoleEvent(s);assert.equal(s.career.pending,'bat_path');assert.ok(roleChoices(s).some(c=>c.id==='leadoff'&&!c.disabled));assert.ok(applyRoleChoice(s,'center'));assert.equal(s.career.battingOrder,3);
  result(s,3);s.records.at(-1)!.match.batting.doubles=2;s.career.pending=pendingRoleEvent(s);assert.ok(applyRoleChoice(s,'cleanup'));assert.equal(s.career.battingOrder,4);assert.equal(s.career.history.length,3);assert.equal(pendingRoleEvent(s),null);
 });
 test('거절 보상은 같은 경기에서 반복할 수 없고 다음 경기 후 다시 제안한다',()=>{
  const s=createGame('계속','batter');s.trust=40;result(s);result(s);s.career.pending=pendingRoleEvent(s);const before=s.attributes.mental;
- assert.ok(applyRoleChoice(s,'stay'));assert.equal(s.attributes.mental,before+2);assert.equal(applyRoleChoice(s,'stay'),false);assert.equal(pendingRoleEvent(s),null);
+ assert.ok(applyRoleChoice(s,'stay'));assert.equal(s.attributes.mental,before+17);assert.equal(applyRoleChoice(s,'stay'),false);assert.equal(pendingRoleEvent(s),null);
  result(s);assert.equal(pendingRoleEvent(s),'bat_six');
 });
 test('중계 두 경기의 비율 성적과 적성으로 보직을 제안하고 시즌 동안 유지한다',()=>{
- const s=createGame('보직','pitcher');s.trust=45;for(const k of Object.keys(s.attributes) as (keyof typeof s.attributes)[])s.attributes[k]=75;
+ const s=createGame('보직','pitcher');s.trust=45;for(const k of Object.keys(s.attributes) as (keyof typeof s.attributes)[])s.attributes[k]=803;
  result(s);assert.equal(pendingRoleEvent(s),null);result(s);s.career.pending=pendingRoleEvent(s);assert.equal(s.career.pending,'pitch_role');assert.ok(roleChoices(s).filter(c=>!c.disabled).length===3);
  assert.ok(applyRoleChoice(s,'closer'));assert.equal(s.career.pitchingRole,'closer');result(s);assert.equal(pendingRoleEvent(s),null);
 });

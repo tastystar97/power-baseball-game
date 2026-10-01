@@ -11,7 +11,7 @@ const act=(s:GameState,a:Omit<Action,'revision'>)=>transition(s,{...a,revision:s
 function ready(role:Role='batter') {return act(createGame('봄',role,71),{type:'lineup',supports:defaultSupports(role)});}
 function auto(s:GameState) {
   if(s.phase==='lineup')return act(s,{type:'lineup',supports:defaultSupports(s.role)});
-  if(s.phase==='weekday')return act(s,{type:'activity',id:s.role==='batter'?'batting':'control'});
+  if(s.phase==='weekday')return act(s,{type:'activity',id:s.role==='batter'?'train_sense':'train_sense'});
   if(s.phase==='weekend')return act(s,{type:'activity',id:'catch'});
   if(['event','weekendEvent','supportEvent'].includes(s.phase))return act(s,{type:'choice',index:0});
   if(s.phase==='roleEvent')return act(s,{type:'choice',id:'stay'});
@@ -22,56 +22,56 @@ test('six unique support people are required before starting; lineup costs no ac
   const s=createGame('봄','batter',1);
   assert.equal(s.phase,'lineup');
   assert.equal(act(s,{type:'lineup',supports:['catcher','catcher','rival']}),s);
-  assert.equal(act(s,{type:'activity',id:'batting'}),s);
+  assert.equal(act(s,{type:'activity',id:'train_sense'}),s);
   const n=act(s,{type:'lineup',supports:['bat_senior','manager','classmate','pitch_senior','rival','catcher']});
   assert.equal(n.phase,'weekday');assert.equal(n.energy,s.energy);assert.equal(n.schedule[0].weekday,'');
 });
 test('the initial deck stays fixed before and after the first activity',()=>{
  let s=ready();assert.equal(act(s,{type:'editLineup'}),s);
- s=act(s,{type:'activity',id:'batting'});assert.equal(act(s,{type:'editLineup'}),s);assert.equal(s.supports.length,6);
+ s=act(s,{type:'activity',id:'train_sense'});assert.equal(act(s,{type:'editLineup'}),s);assert.equal(s.supports.length,6);
 });
 
 test('support specialties affect primary abilities, never proficiency, using pre-action bond tiers',()=>{
- for(const [value,bonus,total] of [[0,1,2],[19,1,2],[20,1,2],[39,1,2],[40,2,4],[59,2,4],[60,2,4],[79,2,4],[80,3,5],[100,3,5]]){
-  const s=ready('pitcher');s.placements={catcher:'control'};s.catcher=value;
-  const p=previewActivity(s,'control')!;
-  assert.equal(p.proficiency.control,10);assert.equal(p.gains.mental,total);
+ for(const [value,bonus,total] of [[0,0,5],[39,0,5],[40,0,5],[59,0,5],[60,5,10],[79,5,10],[80,5,10],[100,5,10]]){
+  const s=ready('pitcher');s.placements={catcher:'train_sense'};s.catcher=value;
+  const p=previewActivity(s,'train_sense')!;
+  assert.equal(p.proficiency.control,40);assert.equal(p.gains.mental,total);
   assert.equal(p.bondBonuses[0].amount,bonus);assert.equal(p.bondBonuses[0].stat,'primary_mental');
-  const n=act(s,{type:'activity',id:'control'});
+  const n=act(s,{type:'activity',id:'train_sense'});
   assert.equal(n.attributes.mental-s.attributes.mental,total);assert.equal(n.catcher,Math.min(100,value+8));
  }
 });
 
 test('different specialties stack once and are independent of lineup ordering',()=>{
- const s=ready();s.supports=['bat_senior','catcher','classmate','pitch_senior','rival','manager'];s.placements={bat_senior:'batting',catcher:'batting',classmate:'batting'};
+ const s=ready();s.supports=['bat_senior','catcher','classmate','pitch_senior','rival','manager'];s.placements={bat_senior:'train_sense',catcher:'train_sense',classmate:'train_sense'};
  s.bonds.bat_senior=80;s.catcher=40;s.bonds.classmate=40;
- const p=previewActivity(s,'batting')!;
- assert.deepEqual(p.gains,{sense:6,mental:5,intelligence:4});assert.deepEqual(p.proficiency,{contact:10,eye:2});
- assert.deepEqual(previewActivity({...s,supports:[...s.supports].reverse()},'batting')!.gains,p.gains);
- const n=act(s,{type:'activity',id:'batting'});
- assert.equal(n.attributes.sense,41);assert.equal(n.proficiency.contact,52);assert.equal(n.bonds.bat_senior,88);
- assert.match(n.notice,/센스/);assert.match(n.notice,/컨택 숙련/);
+ const p=previewActivity(s,'train_sense')!;
+ assert.deepEqual(p.gains,{sense:32,mental:5,intelligence:5});assert.deepEqual(p.proficiency,{contact:70,field:30});
+ assert.deepEqual(previewActivity({...s,supports:[...s.supports].reverse()},'train_sense')!.gains,p.gains);
+ const n=act(s,{type:'activity',id:'train_sense'});
+ assert.equal(n.attributes.sense,262);assert.equal(n.proficiency.contact,490);assert.equal(n.bonds.bat_senior,88);
+ assert.match(n.notice,/센스/);assert.doesNotMatch(n.notice,/숙련/);
 });
 
 test('bond growth is capped by primary level, but stress cannot halve learning',()=>{
- const s=ready();s.placements={bat_senior:'batting'};s.bonds.bat_senior=80;
- const p=previewActivity(s,'batting')!;s.stress=100;
- assert.deepEqual(previewActivity(s,'batting')!.gains,p.gains);
- assert.deepEqual(previewActivity(s,'batting')!.proficiency,p.proficiency);
- s.attributes.sense=99;const capped=previewActivity(s,'batting')!;
+ const s=ready();s.placements={bat_senior:'train_sense'};s.bonds.bat_senior=80;
+ const p=previewActivity(s,'train_sense')!;s.stress=100;
+ assert.deepEqual(previewActivity(s,'train_sense')!.gains,p.gains);
+ assert.deepEqual(previewActivity(s,'train_sense')!.proficiency,p.proficiency);
+ s.attributes.sense=999;const capped=previewActivity(s,'train_sense')!;
  assert.equal(capped.gains.sense,1);assert.equal(capped.bondBonuses[0].amount,0);
- s.attributes.sense=100;assert.equal(previewActivity(s,'batting')!.gains.sense,0);
+ s.attributes.sense=1000;assert.equal(previewActivity(s,'train_sense')!.gains.sense,0);
 });
 
 test('rest has no growth or points even with partners; failed training preserves only friendship',()=>{
  const s=ready('pitcher');s.supports=['catcher','classmate','manager','bat_senior','pitch_senior','rival'];s.catcher=80;s.bonds.classmate=80;s.bonds.manager=80;
  s.placements={catcher:'rest',classmate:'rest',manager:'rest'};
  const rest=previewActivity(s,'rest')!;assert.deepEqual(rest.gains,{});assert.equal(rest.points,0);assert.deepEqual(rest.bondBonuses,[]);
- s.placements={catcher:'study'};assert.equal(previewActivity(s,'study')!.gains.mental,5);
- s.placements={catcher:'control',classmate:'control',manager:'control'};s.energy=40;s.rng=1;
- const n=act(s,{type:'activity',id:'control'});
+ s.placements={catcher:'train_intelligence'};assert.equal(previewActivity(s,'train_intelligence')!.gains.mental,10);
+ s.placements={catcher:'train_sense',classmate:'train_sense',manager:'train_sense'};s.energy=40;s.rng=1;
+ const n=act(s,{type:'activity',id:'train_sense'});
  assert.deepEqual(n.proficiency,s.proficiency);assert.equal(n.attributes.intelligence,s.attributes.intelligence);
- assert.equal(n.attributes.mental,s.attributes.mental-2);assert.equal(n.skillPoints,s.skillPoints);assert.equal(n.catcher,88);
+ assert.equal(n.attributes.mental,s.attributes.mental-17);assert.equal(n.skillPoints,s.skillPoints);assert.equal(n.catcher,88);
  assert.match(n.log.at(-1)!.text,/인연 보너스 없음/);
 });
 
@@ -100,7 +100,7 @@ test('the same support lineup gives the same rewards regardless of selection ord
   const b=act(start,{type:'lineup',supports:['bat_senior','classmate','manager','pitch_senior','rival','catcher']});
   assert.deepEqual(a.placements,b.placements);
   for(const state of [a,b]){state.bonds.classmate=40;state.bonds.bat_senior=40;}
-  const pa=previewActivity(a,'study')!,pb=previewActivity(b,'study')!;
+  const pa=previewActivity(a,'train_intelligence')!,pb=previewActivity(b,'train_intelligence')!;
   assert.deepEqual(pa.gains,pb.gains);assert.equal(pa.energy,pb.energy);assert.equal(pa.gains.intelligence,pb.gains.intelligence);assert.equal(pa.points,pb.points);
 });
 test('skills require enough points and correct role; learning is once without consuming week or rerolling',()=>{

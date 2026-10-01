@@ -42,3 +42,9 @@ test('unknown activities fall back to a sensible place instead of failing', () =
   assert.equal(sceneFor({...base,phase:'weekend'}).place,'riverside');
   assert.equal(sceneFor({...base,role:'pitcher'}).cast[0].id,'player_pitcher');
 });
+
+test('first-year training ids (train_<primary>) use the staging of their primary', () => {
+  assert.equal(sceneFor({...base,activity:'train_power',outcome:'success'}).cast[0].bubble,'fire');
+  assert.equal(sceneFor({...base,activity:'train_intelligence'}).place,'classroom');
+  assert.equal(sceneFor({...base,activity:'train_sense'}).place,'batting');
+});

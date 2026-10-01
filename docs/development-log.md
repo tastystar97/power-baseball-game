@@ -325,3 +325,14 @@
 - 수정 빌드의 타자seed3(8→6),선발seed1(5월면담→6월선발),마무리seed3(5월면담→6월9회등판) 세 시즌도 완료했다. 새로그 `.artifacts/v8-reviewed-browser.log`. 미검증: 모든 스킬 조합의 실제 브라우저 조작, 터치 기기 실기, 실제 사람의 판단 시간을 포함한 재미/3분 체감. 관련 규칙·상한은 자동검사했고 모바일은Edge390px로 확인했다.
 
 - 도루 수정까지 포함한 최종 기본 속도 재측정: 타자106.5초(3선택),선발137.5초(12선택). 사람의 선택 대기 시간 제외. `.artifacts/v8-final-timing-report.json` 정상 완료.
+
+
+## 2026-10-01 — v0.9 능력 기반 재구성 (규칙 부분)
+
+- 단계 1의 규칙 1.1/1.2/1.4와 기존 화면의 최소 연결을 구현했다. 사용자가 시안을 따로 만들기로 하여 화면 재구성·상시 로그·훈련/사건 주사위·꼬리표·달력·공용 팝업은 보류한다. 프로토타입 변경을 포함하지 않는다.
+- 1500 스케일·상한1000·A안 훈련·소수 숙련·서포트 최대15·주말 배율0.7/1.2, 스킬 조건·카드팩v2·학년, 저장v9. 2차 숫자·숙련·확률은 기존 플레이 화면에서도 숨긴다.
+- `npm test`166/166(276.157초), `npm run typecheck`/`npm run build` 통과. 실제 16주300시즌과 배율 대안120시즌, 설계 근사300시드 재현. 혼합의 6월 능력 점수70.33/71.10(최소65, 목표68~69보다 높음).
+- 새 Edge 컨텍스트 두 역할 16주, 390px·키보드·사건 재개 완전 일치·콘솔 오류 없음. 제작기 v1 가져오기·학년 수정·조건 편집·미리 보기·v2 내보내기 확인. 기본팩 왕복은 자동 검사에 포함한다.
+- 증거: `.artifacts/stage1-suite-final.log`, `stage1-build-final.log`, `stage1-runtime-30.log`, `stage1-weekend-compare.log`, `stage1-browser-report.json`, `stage1-editor-playtest.log`. 상세 한계와 구현 판단은 [1학년 계획 검증 기록](superpowers/plans/2026-10-01-first-year.md#검증-기록)에 남긴다.
+
+- 최종 독립 리뷰 후 구형 ZIP 사전 스키마 오류와 비선형 기반의 숙련 격차 반올림 오류를 각각 RED→GREEN으로 수정했다. **최종 168/168(232.892초)**, typecheck/build 통과. 300시즌 재측정 평균은 동일하고 두 역할 브라우저16주·v1 ZIP 제작기 가져오기도 재통과했다. `.artifacts/stage1-reviewed-suite.log`, `stage1-reviewed-runtime.log`, `stage1-reviewed-browser.log`, `stage1-editor-zip-playtest.log`. 미처리 리뷰 지적 없음.

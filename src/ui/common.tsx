@@ -16,8 +16,8 @@ export function Portrait({id,size=''}:{id:string;size?:string}) {
     {src?<img src={src} alt="" onError={()=>setFailed(true)}/>:<><svg viewBox="0 0 120 150"><circle cx="60" cy="43" r="22" fill="#bbc2bf"/><path d="M17 146v-33c0-31 86-31 86 0v33" fill="#cdd2cb"/><path d="M40 92l20 16 20-16" fill="none" stroke="#f7f1e1" strokeWidth="5"/></svg><span className="ph-label">{a.label} · 기본</span></>}
   </div>;
 }
-export function Meter({label,value,bad=false}:{label:string;value:number;bad?:boolean}) {
-  return <div className="meter"><span>{label}</span><span className={`bar ${bad?'bad':''}`}><span style={{width:`${value}%`}}/></span><span className="num">{value}</span></div>;
+export function Meter({label,value,bad=false,max=100}:{label:string;value:number;bad?:boolean;max?:number}) {
+  return <div className="meter"><span>{label}</span><span className={`bar ${bad?'bad':''}`}><span style={{width:`${Math.max(0,Math.min(100,value/max*100))}%`}}/></span><span className="num">{value}</span></div>;
 }
 export function Records({s,match=s.match}:{s:GameState;match?:Match|null}) {
   if(!match)return <p className="muted">아직 출전 기록이 없습니다. 3월 4주차 토요일에 첫 연습경기가 열립니다.</p>;

@@ -38,8 +38,8 @@ test('후반 사건을 마쳐도 평일 성장·보상을 반복하지 않고 �
   assert.ok(found);
 });
 test('상위는 고유 사건으로 개방하고 일반 스킬과 SP를 갖춰야 배운다',()=>{
-  let s=start('batter');s.skillPoints=200;for(const key of Object.keys(s.attributes))s.attributes[key as keyof typeof s.attributes]=80;
-  for(const key of Object.keys(s.proficiency))s.proficiency[key as keyof typeof s.proficiency]=80;
+  let s=start('batter');s.skillPoints=200;for(const key of Object.keys(s.attributes))s.attributes[key as keyof typeof s.attributes]=923;
+  for(const key of Object.keys(s.proficiency))s.proficiency[key as keyof typeof s.proficiency]=800;
   s.skills=['contact_focus'];assert.equal(act(s,{type:'learn',id:'contact_master'}),s);
   s.rival=100;s.catcher=100;for(const key of Object.keys(s.bonds))s.bonds[key as keyof typeof s.bonds]=100;
   for(let i=0;i<200&&!(s as any).unlockedSkills?.includes('contact_master');i++)s=step(s);
@@ -48,22 +48,22 @@ test('상위는 고유 사건으로 개방하고 일반 스킬과 SP를 갖춰�
   const before=s.skillPoints;s=act(s,{type:'learn',id:'contact_master'});
   assert.ok(s.skills.includes('contact_master'));assert.equal(before-s.skillPoints,24);
   assert.equal(act(s,{type:'learn',id:'contact_master'}),s);
-  s.attributes.intelligence=80;s.match=createMatch();assert.deepEqual(eligibleSkills(s,'contact'),['contact_master']);
+  s.attributes.intelligence=1500;s.match=createMatch();assert.deepEqual(eligibleSkills(s,'contact'),['contact_master']);
   const boosted=tactics(s)[0].probabilities[3];s.skills=[];
-  assert.ok(Math.abs(boosted-tactics(s)[0].probabilities[3]-.075*.82)<1e-9);
+  assert.ok(Math.abs(boosted-tactics(s)[0].probabilities[3]-.075*.9)<1e-9);
 });
 test('외부 카드의 선언적 동행 효과가 실제 훈련 미리 보기에 적용된다',()=>{
-  const extra=structuredClone(builtinPack);extra.id='custom';extra.cards.find(c=>c.id==='sera')!.bonus.gains={mental:2};
+  const extra=structuredClone(builtinPack);extra.id='custom';extra.cards.find(c=>c.id==='sera')!.specialty='mental';
   const content=catalogFromPacks([builtinPack,extra]);
   const s=(createGame as any)('외부','batter',3,content,[...deck.slice(0,5),'custom/sera']) as GameState;
-  s.placements={'custom/sera':'batting'};
-  const p=previewActivity(s,'batting')!;assert.ok(p.gains.mental!>=2);assert.deepEqual(p.present,['custom/sera']);
-  extra.cards.find(c=>c.id==='sera')!.bonus.gains.mental=0;
-  assert.ok(previewActivity(s,'batting')!.gains.mental!>=2);
+  s.placements={'custom/sera':'train_sense'};
+  const p=previewActivity(s,'train_sense')!;assert.ok(p.gains.mental!>=2);assert.deepEqual(p.present,['custom/sera']);
+  extra.cards.find(c=>c.id==='sera')!.specialty='power';
+  assert.ok(previewActivity(s,'train_sense')!.gains.mental!>=2);
 });
 
 test('스킬 포인트 상한에서 실제 보상과 미리 보기가 일치한다',()=>{
- let s=start('pitcher',3);s.skillPoints=999;const p=previewActivity(s,'study')!;assert.equal(p.points,1);s=act(s,{type:'activity',id:'study'});assert.equal(s.skillPoints,1000);
+ let s=start('pitcher',3);s.skillPoints=999;const p=previewActivity(s,'train_intelligence')!;assert.equal(p.points,1);s=act(s,{type:'activity',id:'train_intelligence'});assert.equal(s.skillPoints,1000);
  if(s.phase==='supportEvent'){s=act(s,{type:'choice',index:0});assert.equal(s.skillPoints,1000);}
 });
 

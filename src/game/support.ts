@@ -2,16 +2,16 @@ import { activities } from '../content/activities.ts';
 import { bond, supportById } from '../content/supports.ts';
 import type { GameState, SupportId } from './types.ts';
 import { random } from './random.ts';
+import {SUPPORT_BONUS} from '../content/development-rules.ts';
 
 export function weeklyPlacements(s:Pick<GameState,'role'|'supports'|'trainingSeed'|'month'|'week'>&{weekdayPart?:1|2;content?:GameState['content']}):Record<string,string> {
-  const options=activities({role:s.role,phase:'weekday'}).map(a=>a.id);
+  const options=activities({role:s.role,phase:'weekday'}).filter(a=>a.id!=='rest').map(a=>a.id);
   return Object.fromEntries(s.supports.map(id=>{
     let hash=s.trainingSeed^(s.month*100+s.week);if(s.weekdayPart)hash^=Math.imul(s.weekdayPart,104729);
     for(const c of id)hash=Math.imul(hash^c.charCodeAt(0),16777619);
     const rng={rng:(hash>>>0)||1};
-    const preferred=supportById(id,s.content?{content:s.content}:undefined).training[s.role];
-    const pool=random(rng)<.75?preferred:options;
-    return [id,pool[Math.floor(random(rng)*pool.length)]];
+    if(random(rng)>=SUPPORT_BONUS.placement)return [id,''];
+    return [id,options[Math.floor(random(rng)*options.length)]];
   }));
 }
 export function participants(s:GameState,activityId:string):SupportId[] {
@@ -19,7 +19,7 @@ export function participants(s:GameState,activityId:string):SupportId[] {
 }
 export const isJoint=(s:GameState,id:SupportId)=>bond(s,id)>=40;
 // Added to each support character's primary specialty before the growth curve.
-export const bondTrainingBonus=(value:number)=>value>=80?3:value>=40?2:1;
+export const bondTrainingBonus=(value:number)=>value>=SUPPORT_BONUS.threshold?SUPPORT_BONUS.bond:0;
 export function addBond(s:GameState,id:SupportId,amount:number) {
   const next=Math.min(100,bond(s,id)+amount);
   if(id==='rival')s.rival=next;
