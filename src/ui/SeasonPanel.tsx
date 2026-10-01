@@ -8,7 +8,13 @@ import {Meter} from './common.tsx';
 export function DevelopmentPanel({s,detail=false}:{s:GameState;detail?:boolean}) {
   const style=developmentStyle(s);
   return <section className="panel development"><p className="eyebrow">훈련으로 만드는 나의 야구</p><h3>{style.name}</h3>
-    <div className="gap-top">{style.paths.map(p=><p key={p.name}>{p.name} · {grade(p.score)}</p>)}</div>
+    {(()=>{const [a,b]=style.paths,lean=Math.round(50+Math.max(-40,Math.min(40,(a.score-b.score)*2.5)));
+      // Only the direction of the lean is shown; the hidden ability scores never reach the screen.
+      return <div className="style-balance gap-top" role="img" aria-label={`${a.name} ${grade(a.score)} · ${b.name} ${grade(b.score)} · ${lean>55?`${a.name} 쪽`:lean<45?`${b.name} 쪽`:'균형'}`}>
+        <span className="style-side"><b>{a.name}</b><small>{grade(a.score)}</small></span>
+        <span className="style-track" aria-hidden="true"><i style={{left:`${100-lean}%`}}/></span>
+        <span className="style-side right"><b>{b.name}</b><small>{grade(b.score)}</small></span>
+      </div>;})()}
     <p className="reason gap-top">현재 능력으로 본 성장 방향입니다. 두 방향의 스킬을 모두 배워 혼합형으로 키울 수 있습니다.</p>
     {detail&&<><p className="reason gap-top">1차 능력이 800에 이르면 성장이 완만해지며 1학년 상한은 1000입니다. 같은 훈련만 반복하기보다 몸과 기술을 함께 키워 보세요. 실제 성장량은 활동 카드에 반영합니다.</p><div className="development-goals">{availableSkills(s).filter(k=>k.style).map(k=><div key={k.id}><strong>{k.style} · {k.name}</strong><p className="reason">{s.skills.includes(k.id)?'특화 스킬 습득 완료':skillRequirements(s,k.id).map(r=>`${r.met?'✓':'○'} ${r.label}`).join(' · ')}</p></div>)}</div></>}
   </section>;
