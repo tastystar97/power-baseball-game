@@ -8,23 +8,22 @@
       "description": "작은 계획을 실천하는 친구. 지능과 멘탈을 챙기며 생활의 균형을 돕습니다.",
       "color": "#987e41",
       "specialty": "intelligence",
+      "grade": 2,
       "training": {
         "batter": [
-          "study",
-          "tactics"
+          "train_intelligence",
+          "train_mental"
         ],
         "pitcher": [
-          "study",
-          "tactics"
+          "train_intelligence",
+          "train_mental"
         ]
       },
       "bonus": {
         "energy": 0,
         "stress": 0,
         "jointEnergy": 0,
-        "gains": {
-          "mental": 1
-        }
+        "gains": {}
       },
       "hints": {
         "batter": "focus_plan",
@@ -117,7 +116,7 @@
           "label": "함께 동작을 맞춰 본다",
           "reply": "윤유진와 짧게 집중하며 다음 연습에 쓸 감각을 찾았다.",
           "gains": {
-            "intelligence": 2
+            "intelligence": 17
           },
           "energy": -4,
           "stress": 0,
@@ -153,7 +152,7 @@
           "label": "다음에 해 볼 일을 적는다",
           "reply": "느낌으로 알던 변화를 말로 정리했다.",
           "gains": {
-            "intelligence": 1
+            "intelligence": 9
           },
           "energy": 0,
           "stress": 0,
@@ -167,7 +166,7 @@
           "label": "잘된 점을 서로 알려 준다",
           "reply": "작은 변화도 알아봐 주는 동료가 있다는 사실이 힘이 되었다.",
           "gains": {
-            "mental": 1
+            "mental": 9
           },
           "energy": 0,
           "stress": -4,
@@ -191,7 +190,7 @@
           "label": "내 연습에도 적용해 본다",
           "reply": "계획대로 되지 않은 일 옆에 바로 할 수 있는 일을 썼다. 실패를 곱씹기보다 다음 행동을 준비했다.",
           "gains": {
-            "intelligence": 2
+            "intelligence": 17
           },
           "energy": 0,
           "stress": 0,
@@ -232,7 +231,7 @@
           "label": "내 연습에도 적용해 본다",
           "reply": "유진과 만든 짧은 계획을 혼자 다시 적었다. 경기가 꼬여도 다음 승부를 차분히 고를 수 있을 것 같다.",
           "gains": {
-            "intelligence": 2
+            "intelligence": 17
           },
           "energy": 0,
           "stress": 0,
@@ -246,7 +245,7 @@
           "label": "내 생각을 이야기한다",
           "reply": "서로 다른 경험을 나누며 다음 시도를 함께 정했다.",
           "gains": {
-            "mental": 1
+            "mental": 9
           },
           "energy": 0,
           "stress": -6,
@@ -300,8 +299,8 @@
   ],
   "images": {},
   "format": "last-summer-cardpack",
-  "version": 1,
-  "ruleset": "summer-7",
+  "version": 2,
+  "ruleset": "first-year-1",
   "id": "example-team",
   "revision": 1,
   "name": "예제 서포트 카드",
