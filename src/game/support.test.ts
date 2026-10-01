@@ -72,7 +72,7 @@ test('rest has no growth or points even with partners; failed training preserves
  const n=act(s,{type:'activity',id:'train_sense'});
  assert.deepEqual(n.proficiency,s.proficiency);assert.equal(n.attributes.intelligence,s.attributes.intelligence);
  assert.equal(n.attributes.mental,s.attributes.mental-17);assert.equal(n.skillPoints,s.skillPoints);assert.equal(n.catcher,88);
- assert.match(n.log.at(-1)!.text,/인연 보너스 없음/);
+ assert.match(n.log.slice().reverse().find(e=>e.title==='함께 쌓은 연습')!.text,/인연 보너스 없음/);
 });
 
 test('support previews and rewards resume without rerolling or duplication',()=>{

@@ -44,12 +44,12 @@ export function LogPanel({s,since,mobile=false}:{s:GameState;since:number;mobile
   const lines=filterLines(logLines(s),filter);
   const list=<ol className="log-list">{lines.map((l,i)=><Fragment key={l.key}>
     {i>0&&lines[i-1].entry>=since&&l.entry<since&&<li className="log-divider" aria-hidden="true">마지막 행동 이후</li>}
-    <li className={`log-line ${l.kind} ${l.entry<since?'old':''}`}><time>{l.time}</time><span><span className={`log-kind ${l.kind}`}>{({act:'행동',talk:'사건',gain:'성장',loss:'손해',game:'경기'})[l.kind]}</span>{l.text}</span></li></Fragment>)}
+    <li className={`log-line ${l.kind} ${l.entry<since?'old':''}`}><time>{l.time}</time><span style={l.speakerColor?{color:l.speakerColor}:undefined}><span className={`log-kind ${l.kind}`}>{({act:'행동',talk:'대사',gain:'보상',loss:'손해',game:'경기',system:'안내'})[l.kind]}</span>{l.text}</span></li></Fragment>)}
     {!lines.length&&<li className="log-empty">아직 기록이 없습니다.</li>}</ol>;
   const tabs=<div className="log-tabs" role="group" aria-label="기록 분류">{logFilters.map(f=><button key={f.id} aria-pressed={filter===f.id} onClick={()=>setFilter(f.id)}>{f.label}</button>)}</div>;
   if(mobile){const latest=logLines(s)[0];return <><button className="log-strip" onClick={()=>setOpen(true)} aria-label="진행 기록 펼치기"><span>최근</span>{latest?latest.text:'아직 기록이 없습니다.'}<b>기록 ▲</b></button>
     {open&&<ChoicePopup title="진행 기록" onDismiss={()=>setOpen(false)}>{tabs}{list}</ChoicePopup>}</>;}
-  return <aside className="log-panel" aria-label="진행 기록"><h2>진행 기록</h2>{tabs}<div aria-live="polite">{list}</div></aside>;
+  return <aside className="log-panel" aria-label="진행 기록"><h2>진행 기록</h2>{tabs}<div className="log-scroll" tabIndex={0} role="region" aria-label="기록 내용">{list}</div></aside>;
 }
 
 export function CalendarDialog({s,onClose}:{s:GameState;onClose:()=>void}) {

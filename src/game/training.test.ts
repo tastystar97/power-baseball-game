@@ -58,15 +58,15 @@ test('rest, study, tactics and light catch stay safe at zero energy and recovery
   assert.equal(act(weekend,{type:'activity',id:'weekend_rest'}).energy,32);
 });
 
-test('failure saves and resumes exactly without reroll or duplicate cost; older logs remain valid',()=>{
+test('failure saves and resumes exactly without reroll or duplicate cost; missing committed roll results are rejected',()=>{
   const s=ready();s.energy=40;s.rng=1;
   const a={type:'activity',id:'train_sense',revision:s.revision} as const;
   const after=transition(s,a),resumed=parseSave(JSON.stringify(after));
   assert.equal(after.log[0].training?.outcome,'failure');
   assert.deepEqual(resumed,after);assert.deepEqual(transition(parseSave(JSON.stringify(s)),a),after);
   assert.equal(transition(resumed,a),resumed);
-  const legacy=structuredClone(after);delete legacy.log[0].training;
-  assert.deepEqual(parseSave(JSON.stringify(legacy)),legacy);
+  const missingResult=structuredClone(after);delete missingResult.log[0].training;
+  assert.throws(()=>parseSave(JSON.stringify(missingResult)),/훈련 주사위 기록/);
   const corrupt=structuredClone(after);corrupt.log[0].training!.failureChance=101;
   assert.throws(()=>parseSave(JSON.stringify(corrupt)));
 });
@@ -92,9 +92,11 @@ test('last March weekend practice can fail and preserves its result into April a
   assert.equal(s.phase,'weekend');s.energy=20;s.rng=1;
   const before=s.proficiency.power,n=act(s,{type:'activity',id:'practice',target:'primary_power'});
   assert.equal(n.proficiency.power,before);assert.equal(n.month,4);assert.equal(n.phase,'weekday');
-  assert.equal(n.log.at(-1)?.training?.outcome,'failure');assert.equal(n.log.at(-1)?.month,3);
+  assert.equal(n.log.slice().reverse().find(e=>e.training)?.training?.outcome,'failure');assert.equal(n.log.at(-1)?.month,3);
   assert.equal(n.schedule[3].weekend,'개인 연습 · 파워');assert.equal(n.records.length,1);
   assert.deepEqual(parseSave(JSON.stringify(n)),n);
+  const folded=act(n,{type:'activity',id:'rest'});
+  assert.equal(folded.log.filter(e=>e.month===3).reduce((count,e)=>count+(e.summary?.failures??0),0),1,'monthly totals also retain failed weekend practice');
 });
 
 test('failure costs and larger success rewards clamp at stat bounds and match the preview',()=>{

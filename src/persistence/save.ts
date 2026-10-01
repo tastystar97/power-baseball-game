@@ -1,3 +1,4 @@
+import {validateJournal} from './journal-validation.ts';
 import {validateMatch,validateCareer} from './match-validation.ts';
 import {summarizeMatch,isDecisionPoint} from '../game/match.ts';
 import {validateContent} from '../cards/pack.ts';
@@ -20,7 +21,7 @@ const unique=(items:unknown[])=>new Set(items).size===items.length;
 const same=equalData;
 export function parseSave(raw:string):GameState {
   const json=JSON.parse(raw);
-  if(json?.version!==9)throw Error('이전 버전 저장은 지원하지 않습니다. 새 게임을 시작해 주세요.');
+  if(json?.version!==10)throw Error('이전 버전 저장은 지원하지 않습니다. 새 게임을 시작해 주세요.');
   const s=stateSchema.parse(json);
   validateContent(s.content);
   if(s.phase!=='lineup'&&!same(s.content,catalogForDeck(s.content,s.supports)))throw Error('육성 덱과 콘텐츠가 다릅니다.');
@@ -38,7 +39,7 @@ export function parseSave(raw:string):GameState {
   if(s.phase==='lineup'&&(s.month!==3||s.week!==1||s.supports.length>0))throw Error('육성 시작에만 덱을 고를 수 있습니다.');
   if(s.phase==='complete'&&(s.month!==6||s.week!==4))throw Error('완료 시점이 아닙니다.');
   const plan=matchPlan(s);
-  validateLoop(s);
+  validateLoop(s);validateJournal(s);
   if(!unique(s.supports)||(s.phase!=='lineup'&&s.supports.length!==6))throw Error('서포트 편성이 올바르지 않습니다.');
   if(!unique(s.supportCompleted)||!unique(s.skills)||!unique(s.hints)||!unique(s.unlockedSkills))throw Error('중복된 성장 이력이 있습니다.');
   const validSkills=availableSkills(s).map(k=>k.id);
@@ -101,7 +102,7 @@ export function loadGame(storage:Pick<Storage,'getItem'>):LoadResult {
   try {raw=storage.getItem(SAVE_KEY);}catch{return {kind:'unavailable',message:'브라우저 저장소를 사용할 수 없습니다. 이번 플레이는 저장되지 않습니다.'};}
   if(raw===null)return {kind:'empty'};
   try{return {kind:'ok',state:parseSave(raw)};}catch{
-    let old=false;try{old=[1,2,3,4,5,6,7,8].includes(JSON.parse(raw)?.version);}catch{}
+    let old=false;try{old=[1,2,3,4,5,6,7,8,9].includes(JSON.parse(raw)?.version);}catch{}
     return {kind:'invalid',message:old?'이전 테스트 버전의 저장입니다. 능력 개편 버전은 새 선수로 시작해 주세요. 기존 저장은 새 게임을 확정하기 전까지 보관됩니다.':'저장 데이터가 손상되었거나 지원하지 않는 형식입니다. 기존 데이터는 그대로 보존했습니다.'};
   }
 }

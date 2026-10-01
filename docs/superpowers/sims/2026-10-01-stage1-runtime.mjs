@@ -28,7 +28,7 @@ for(const role of ['batter','pitcher'])for(const policy of policies){
   }
   if(s.phase!=='complete')throw Error('season did not finish');
   const score=evaluateSelection(s);
-  rows.push({primary:Object.values(s.attributes).reduce((a,b)=>a+b)/5,overall:overall(s),ability:score.ability,total:score.total,failures:s.log.filter(l=>l.training?.outcome==='failure').length});
+  rows.push({primary:Object.values(s.attributes).reduce((a,b)=>a+b)/5,overall:overall(s),ability:score.ability,total:score.total,failures:s.log.reduce((sum,l)=>sum+(l.summary?.failures??(l.training?.outcome==='failure'?1:0)),0)});
  }
  const means=Object.fromEntries(Object.keys(rows[0]).map(k=>[k,+(rows.reduce((sum,r)=>sum+r[k],0)/N).toFixed(2)]));
  console.log(JSON.stringify({role,policy,N,...means,weekend:{...WEEKEND_MULTIPLIERS}}));

@@ -14,13 +14,14 @@ export const activityKind=(id:string):Kind=>kinds[id]??kinds[id.replace(/^train_
 
 export function ActivityTile({s,id,title,description,preview,selected,onSelect}:{s:GameState;id:string;title:string;description:string;preview:Preview;selected:boolean;onSelect:()=>void}) {
   const kind=activityKind(id),chips=effectChips(preview);
+  const specialist=(p:string)=>id.startsWith('train_')&&supportById(p,s).specialty===kind;
   // Proficiency is hidden: it shows as one technique marker, never as a number.
   const visible=chips.filter(c=>c.key!=='energy'&&c.key!=='stress'&&c.value>0&&!c.key.startsWith('proficiency_'));
   const technique=chips.some(c=>c.key.startsWith('proficiency_')&&c.value>0);
   const gains=[...visible.slice(0,technique?1:2).map(c=>c.label),...(technique?['기술 ▲']:[])];
   const energy=chips.find(c=>c.key==='energy');
   return <button className={`card activity-tile ${kind}`} disabled={!!preview.disabledReason} aria-pressed={selected} onClick={onSelect} title={description}>
-    {preview.present.length>0&&<span className="tile-faces" aria-label={`함께: ${preview.present.map(p=>supportById(p,s).name).join(', ')}`}>{preview.present.map(p=><span key={p} className={`tile-face ${preview.joint.includes(p)?'joint':''}`} title={`${supportById(p,s).name} · 인연 ${bond(s,p)}`}><CardAvatar card={supportById(p,s)} content={s.content}/></span>)}</span>}
+    {preview.present.length>0&&<span className="tile-faces" aria-label={`함께: ${preview.present.map(p=>`${supportById(p,s).name}${specialist(p)?' · 전문 일치':''}`).join(', ')}`}>{preview.present.map(p=><span key={p} className={`tile-face ${preview.joint.includes(p)?'joint':''}`} title={`${supportById(p,s).name} · 인연 ${bond(s,p)}${specialist(p)?' · 전문 일치':''}`}><CardAvatar card={supportById(p,s)} content={s.content}/>{specialist(p)&&<small className="tile-specialty" aria-hidden="true">전문</small>}</span>)}</span>}
     <span className={`tile-icon ${kind}`} aria-hidden="true">{marks[kind]}</span>
     <strong className="tile-name">{title}</strong>
     <span className="tile-gain">{gains.length?gains.join(' · '):preview.points>0?`스킬 +${preview.points} Pt`:'컨디션 회복'}</span>

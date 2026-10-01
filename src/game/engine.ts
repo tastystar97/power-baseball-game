@@ -1,3 +1,4 @@
+import {appendJournal,compactJournal,logEncounter,logMatchPlays} from './journal.ts';
 import {initialCareer,pendingRoleEvent,applyRoleChoice,roleChoices} from './career-role.ts';
 import {careerEvents} from '../content/career-events.ts';
 import {builtinPack} from '../cards/builtin.ts';
@@ -33,9 +34,9 @@ export function createGame(rawName:string,role:Role,seed=42,content:CardContent=
   const name=rawName.trim();
   if(!name||[...name].length>8||!['batter','pitcher'].includes(role))throw new Error('이름은 1~8자로 입력하고 타자 또는 투수를 선택해 주세요.');
   const frozen=deck?catalogForDeck(content,deck):structuredClone(content);
-  const state:GameState={version:9,career:initialCareer(),content:frozen,weekdayPart:1,activeEncounter:null,encounterHistory:[],competitor:createCompetitor(role),selectionHistory:[],name,role,month:3,week:1,phase:deck?'weekday':'lineup',revision:0,rng:(seed>>>0)||1,attributes:initialAttributes(),proficiency:initialProficiency(role),
+  const state:GameState={version:10,career:initialCareer(),content:frozen,weekdayPart:1,activeEncounter:null,encounterHistory:[],competitor:createCompetitor(role),selectionHistory:[],name,role,month:3,week:1,phase:deck?'weekday':'lineup',revision:0,rng:(seed>>>0)||1,attributes:initialAttributes(),proficiency:initialProficiency(role),
     energy:80,stress:15,trust:20,rival:10,catcher:10,
-    log:[],schedule:[{month:3,week:1,weekday:'',weekday2:'',weekend:''}],initial:{},weekStart:{},monthStart:{},
+    logSequence:0,log:[],schedule:[{month:3,week:1,weekday:'',weekday2:'',weekend:''}],initial:{},weekStart:{},monthStart:{},
     notice:'함께 성장할 연습 파트너를 골라 보자.',eventReply:'',match:null,matchRecorded:false,
     supports:deck?[...deck]:[],bonds:Object.fromEntries(frozen.cards.filter(c=>!['rival','catcher'].includes(c.id)).map(c=>[c.id,10])),placements:{},trainingSeed:(seed>>>0)||1,
     supportCompleted:[],activeSupport:null,skillPoints:8,skills:[],hints:[],unlockedSkills:[],records:[],evaluation:null,tournament:{rounds:[]}};
@@ -91,10 +92,10 @@ export function previewActivity(s:GameState,id:string,target?:TrainingTarget,par
     warning,present,joint,points:Math.min(points,1000-s.skillPoints),failureChance,failure,bondBonuses,abilityChanges};
 }
 
-function logChange(s:GameState,before:Record<string,number>,title:string,text:string){
+function logChange(s:GameState,before:Record<string,number>,title:string,text:string,kind?:GameState['log'][number]['kind']){
   const now=snapshot(s),changes:Record<string,number>={};
   for(const key of Object.keys(now))if(now[key]!==before[key])changes[key]=now[key]-before[key];
-  s.log.push({month:s.month,week:s.week,title,text,changes,...(s.phase==='weekday'?{slot:s.weekdayPart===1?'first' as const:'second' as const}:s.phase==='weekend'?{slot:'weekend' as const}:{})});
+  appendJournal(s,{title,text,changes,...(kind?{kind,speaker:null}:{}),...(s.phase.startsWith('match')&&s.match?{matchRef:{id:s.match.id!,index:s.match.feed.length}}:{})});
   s.notice=`${title} · ${Object.entries(changes).filter(([k])=>!k.startsWith('proficiency_')).map(([k,v])=>`${changeLabel(s,k,labels[k])} ${v>0?'+':''}${v}`).join(' · ')||text}`;
 }
 function apply(s:GameState,effect:Partial<Choice>,title:string,text:string){
@@ -124,13 +125,16 @@ function recordMatch(s:GameState){
   apply(s,{...resolveGrowth(s,played?{sense:APPEARANCE_SENSE[m.appearance]}:{}),energy:played?(s.role==='pitcher'?-Math.ceil(m.load/4):-8):0,stress:won?-5:5,trust:played?clamp(2+achievement-(won?0:1),1,10):1},matchPlan(s)!.title,
     `청람고 ${m.score[1]} : ${m.score[0]} ${teamName(m.opponentId)} · ${won?'승리':'패배'}. 감독: “${!played?'오늘은 동료들의 승부를 배워 두자. 다음 기회를 향해 준비해.':achievement>=4?'연습한 것이 보이는구나. 오늘의 감각을 기억해.':'오늘 찾은 과제를 다음 훈련에 가져가자.'}”`);
   const before=snapshot(s);s.skillPoints=Math.min(1000,s.skillPoints+(played?8:2));
-  logChange(s,before,'경기에서 배운 것',played?'승부를 돌아보며 스킬 포인트를 얻었다.':'동료의 플레이를 관찰하며 스킬 포인트를 얻었다.');
+  logChange(s,before,'경기에서 배운 것',played?'승부를 돌아보며 스킬 포인트를 얻었다.':'동료의 플레이를 관찰하며 스킬 포인트를 얻었다.','reward');
   s.matchRecorded=true;s.records.push({month:s.month,match:summarizeMatch(m)});finishRound(s);
 }
+function advanceAndLog(s:GameState){const from=s.match!.feed.length;advanceMatch(s);logMatchPlays(s,from);}
+function chooseAndLog(s:GameState,id:string,source:'manual'|'auto'='manual'){const from=s.match!.feed.length,ok=chooseTactic(s,id,source);if(ok)logMatchPlays(s,from);return ok;}
 function startMatch(s:GameState){
   const plan=matchPlan(s)!;
   s.match={...createMatch(s.month===3?'starter':s.evaluation!.rank),id:plan.id,opponentId:plan.opponentId,duels:[],battingOrder:s.career.battingOrder,pitchingRole:s.career.pitchingRole};
-  advanceMatch(s);s.phase=s.match.over?'matchEnd':'match';if(s.match.over)recordMatch(s);
+  appendJournal(s,{title:`${plan.title} 시작`,text:`청람고 vs ${teamName(plan.opponentId)}`,changes:{},kind:'system',category:'match',slot:'match',speaker:null,matchRef:{id:plan.id,index:0}});
+  advanceAndLog(s);s.phase=s.match.over?'matchEnd':'match';if(s.match.over)recordMatch(s);
 }
 function finishWeekday(s:GameState){
   const plan=matchPlan(s);
@@ -154,7 +158,7 @@ export function transition(previous:GameState,action:Action):GameState {
     const skill=availableSkills(s).find(k=>k.id===action.id);
     if(!skill||skillRequirements(s,skill.id).some(r=>!r.met)||s.skills.includes(skill.id)||s.skillPoints<skillCost(s,skill.id))return previous;
     const before=snapshot(s);s.skillPoints-=skillCost(s,skill.id);s.skills.push(skill.id);
-    logChange(s,before,`스킬 습득 · ${skill.name}`,skill.description);
+    logChange(s,before,`스킬 습득 · ${skill.name}`,skill.description,'reward');
   }else if(action.type==='activity'&&(s.phase==='weekday'||s.phase==='weekend')){
     const effect=previewActivity(s,action.id||'',action.target,action.partner);if(!effect||effect.disabledReason)return previous;
     const activityBefore=snapshot(s);
@@ -165,16 +169,17 @@ export function transition(previous:GameState,action:Action):GameState {
     const title=effect.title+(action.target?` · ${labels[action.target]}`:'')+(effect.training?(failed?' · 훈련 실패':' · 훈련 성공'):'')+(!failed&&effect.joint.length?' · 합동 훈련':'');
     const sceneKey=effect.id.startsWith('train_')?effect.id.slice(6):action.target?.slice(8);
     apply(s,resolved,title,failed?'몸이 따라주지 않아 연습을 끝내지 못했다. 성장 없이 컨디션이 나빠졌다.':sceneKey?trainingScene(s.role,sceneKey as PrimaryKey,effect.present.map(id=>supportById(id,s).name)):effect.description);
-    if(effect.training)s.log.at(-1)!.training={outcome:failed?'failure':'success',energyBefore:activityBefore.energy,failureChance:effect.failureChance,points:resolved.points};
+    if(effect.training){const entry=s.log.at(-1)!;if(failed)entry.kind='loss';entry.training={outcome:failed?'failure':'success',energyBefore:activityBefore.energy,failureChance:effect.failureChance,points:resolved.points};if(effect.failureChance>0)entry.roll={kind:'training',outcome:entry.training.outcome};}
+    if(['rest','weekend_rest','outing'].includes(effect.id))s.log.at(-1)!.category='condition';
     const before=snapshot(s);s.skillPoints+=resolved.points;
     for(const id of effect.present)addBond(s,id,8);
     const bonusText=effect.bondBonuses.length?(failed?' 훈련 실패로 인연 보너스 없음.':` 인연 보너스 · ${effect.bondBonuses.map(b=>`${labels[b.stat]} +${b.amount}`).join(', ')} 포함.`):'';
-    if(resolved.points||effect.present.length)logChange(s,before,'함께 쌓은 연습',effect.present.length?`함께한 파트너: ${effect.present.map(id=>supportById(id,s).name).join(', ')}.${failed?' 결과는 아쉬워도 함께한 인연은 남았다.':''}${bonusText}`:'오늘의 경험이 스킬 포인트로 쌓였다.');
+    if(resolved.points||effect.present.length)logChange(s,before,'함께 쌓은 연습',effect.present.length?`함께한 파트너: ${effect.present.map(id=>supportById(id,s).name).join(', ')}.${failed?' 결과는 아쉬워도 함께한 인연은 남았다.':''}${bonusText}`:'오늘의 경험이 스킬 포인트로 쌓였다.','reward');
     s.notice=`${title} · ${Object.entries(snapshot(s)).filter(([k,v])=>v!==activityBefore[k]&&!k.startsWith('proficiency_')).map(([k,v])=>`${changeLabel(s,k,labels[k])} ${v>activityBefore[k]?'+':''}${v-activityBefore[k]}`).join(' · ')}`;
     s.schedule[scheduleIndex(s)][weekday?(s.weekdayPart===1?'weekday':'weekday2'):'weekend']=effect.title+(action.target?` · ${labels[action.target]}`:'');
     if(weekday){
-      if(s.weekdayPart===1){drawEncounter(s);if(!s.activeEncounter)beginSecond(s);}
-      else {s.competitor=growCompetitor(s.competitor,s.role,weekKey(s.month,s.week),sharedTraining(s,scheduleIndex(s),1),'v6',sharedTraining(s,scheduleIndex(s),2));drawEncounter(s);if(!s.activeEncounter)finishWeekday(s);}
+      if(s.weekdayPart===1){drawEncounter(s);logEncounter(s);if(!s.activeEncounter)beginSecond(s);}
+      else {s.competitor=growCompetitor(s.competitor,s.role,weekKey(s.month,s.week),sharedTraining(s,scheduleIndex(s),1),'v6',sharedTraining(s,scheduleIndex(s),2));drawEncounter(s);logEncounter(s);if(!s.activeEncounter)finishWeekday(s);}
     }else nextWeek(s);
   }else if(action.type==='choice'&&s.phase==='roleEvent'){
     const id=s.career.pending!,before=snapshot(s),choice=action.id??roleChoices(s)[action.index??-1]?.id;
@@ -186,7 +191,7 @@ export function transition(previous:GameState,action:Action):GameState {
     const encounter=s.activeEncounter?s.encounterHistory.at(-1):null;
     if(encounter?.choice!==null&&encounter)return previous;
     apply(s,choice,ev.title,choice.reply);s.eventReply=choice.reply;
-    if(choice.points){const before=snapshot(s);s.skillPoints=Math.min(1000,s.skillPoints+choice.points);logChange(s,before,'승부의 실마리','이야기에서 스킬 포인트를 얻었다.');}
+    if(choice.points){const before=snapshot(s);s.skillPoints=Math.min(1000,s.skillPoints+choice.points);logChange(s,before,'승부의 실마리','이야기에서 스킬 포인트를 얻었다.','reward');}
     {
       const id=s.activeSupport!,before=snapshot(s);
       addBond(s,id,choice.bond);
@@ -196,7 +201,7 @@ export function transition(previous:GameState,action:Action):GameState {
       const newly=choice.unlocks.filter(k=>valid.includes(k)&&!s.unlockedSkills.includes(k));
       s.unlockedSkills.push(...newly);
       if(encounter)encounter.choice=action.index as 0|1;
-      logChange(s,before,newly.length?'상위 스킬 개방':choice.hints.length?'스킬 힌트':'함께한 시간',`${supportById(id,s).name}와 인연이 깊어졌다.${newly.length?' '+newly.map(id=>s.content.skills.find(k=>k.id===id)!.name).join(', ')+'의 습득 조건이 개방되었다.':choice.hints.some(id=>valid.includes(id))?' 일반 스킬 비용이 4 Pt 줄었다.':''}`);
+      logChange(s,before,newly.length?'상위 스킬 개방':choice.hints.length?'스킬 힌트':'함께한 시간',`${supportById(id,s).name}와 인연이 깊어졌다.${newly.length?' '+newly.map(id=>s.content.skills.find(k=>k.id===id)!.name).join(', ')+'의 습득 조건이 개방되었다.':choice.hints.some(id=>valid.includes(id))?' 일반 스킬 비용이 4 Pt 줄었다.':''}`,'reward');
       s.phase='supportResult';
     }
   }else if(action.type==='intervene'&&['match','matchResult'].includes(s.phase)){
@@ -206,17 +211,17 @@ export function transition(previous:GameState,action:Action):GameState {
     if(index<=m.playbackIndex||index>m.feed.length||index===m.feed.length&&!m.over&&m.feed.at(-1)?.inning===m.inning&&m.feed.at(-1)?.half===m.half||index<m.feed.length&&index>0&&m.feed[index].inning===m.feed[index-1].inning&&m.feed[index].half===m.feed[index-1].half)return previous;
     m.playbackIndex=index;
   }else if(action.type==='delegate'&&s.phase==='match'){
-    if(!chooseTactic(s,s.role==='batter'?'contact':'control','auto'))return previous;s.phase='matchResult';
+    if(!chooseAndLog(s,s.role==='batter'?'contact':'control','auto'))return previous;s.phase='matchResult';
   }else if(action.type==='tactic'&&s.phase==='match'){
-    if(!chooseTactic(s,action.id||''))return previous;s.phase='matchResult';
+    if(!chooseAndLog(s,action.id||''))return previous;s.phase='matchResult';
   }else if(action.type==='continue'){
     if(s.phase==='supportResult'){if(s.weekdayPart===1)beginSecond(s);else{s.activeEncounter=null;s.activeSupport=null;finishWeekday(s);}}
     else if(s.phase==='selection')startMatch(s);
-    else if(s.phase==='matchResult'||s.phase==='match'&&!s.match!.awaiting){advanceMatch(s);s.phase=s.match!.over?'matchEnd':'match';if(s.match!.over)recordMatch(s);}
+    else if(s.phase==='matchResult'||s.phase==='match'&&!s.match!.awaiting){advanceAndLog(s);s.phase=s.match!.over?'matchEnd':'match';if(s.match!.over)recordMatch(s);}
     else if(s.phase==='matchEnd'){s.career.pending=pendingRoleEvent(s);s.phase=s.career.pending?'roleEvent':'weekend';}
     else return previous;
   }else return previous;
-  s.revision++;return s;
+  compactJournal(s,s.revision+1);s.revision++;return s;
 }
 export function effectChips(a:Activity){
   return [...Object.entries(growthChanges(a.gains,a.proficiency)),['catcher',a.catcher||0],['energy',a.energy],['stress',a.stress]]

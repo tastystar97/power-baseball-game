@@ -14,7 +14,7 @@ test('v8는 모든 경기 단계의 이벤트와 난수·기록을 그대로 왕
   const restored=parseSave(JSON.stringify(s));assert.deepEqual(restored,s);phases.add(s.phase);
   const a=next(s),b=next(restored);assert.deepEqual(a,b);assert.notEqual(a,s,`${role} ${s.phase}`);s=a;
  }
- assert.equal(s.phase,'complete');assert.equal(s.version,9);assert.deepEqual(parseSave(JSON.stringify(s)),s);
+ assert.equal(s.phase,'complete');assert.equal(s.version,10);assert.deepEqual(parseSave(JSON.stringify(s)),s);
  assert.ok(s.records.every(r=>r.match.summary&&r.match.feed.every(e=>e.playerBatter||e.playerPitcher)));
  assert.ok(JSON.stringify(s).length<600000);
  }

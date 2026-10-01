@@ -1,13 +1,18 @@
 import {labels,primaryLabels} from '../game/types.ts';
 import type {GameState,PrimaryKey} from '../game/types.ts';
 import {changeLabel} from '../content/supports.ts';
+import {visibleJournal} from '../game/journal.ts';
 
-export type LogCategory='training'|'event'|'match';
-export type LineKind='act'|'talk'|'gain'|'loss'|'game';
-export interface LogLine {key:string;entry:number;time:string;category:LogCategory;kind:LineKind;text:string;condition:boolean}
+export type LogCategory='training'|'event'|'match'|'condition';
+export type LineKind='act'|'talk'|'gain'|'loss'|'game'|'system';
+export interface LogLine {key:string;entry:number;time:string;category:LogCategory;kind:LineKind;text:string;condition:boolean;speakerColor?:string}
 
-const slotNames={first:'전반',second:'후반',weekend:'주말'} as const;
-const matchTitle=/경기|대회|리그/;
+export function journalSpeaker(s:GameState,id:string|null){
+  const card=s.content.cards.find(c=>c.id===id);
+  return id?{name:card?.name??(id==='coach'?'감독':id),color:card?.color??'#405f46'}:null;
+}
+
+const slotNames={first:'전반',second:'후반',weekend:'주말',match:'경기'} as const;
 
 function changeText(s:GameState,key:string,value:number):string|null {
   // Proficiency (hidden baseball skill) never shows a number; it is summarized once per entry.
@@ -23,13 +28,15 @@ const isGood=(key:string,value:number)=>key==='stress'?value<0:value>0;
  */
 export function logLines(s:GameState):LogLine[] {
   const lines:LogLine[]=[];
-  s.log.forEach((e,i)=>{
-    const category:LogCategory=e.slot?'training':matchTitle.test(e.title)?'match':'event';
-    const time=`${e.month}월 ${e.week}주${e.slot?` · ${slotNames[e.slot]}`:category==='match'?' · 경기':' · 사건'}`;
+  visibleJournal(s).forEach(e=>{
+    const i=e.id,category=e.category;
+    const time=e.summary?`${e.month}월 · 월 요약`:`${e.month}월 ${e.week}주${e.slot?` · ${slotNames[e.slot]}`:''}`;
     const entries=Object.entries(e.changes).filter(([,v])=>v!==0);
-    const condition=entries.some(([k])=>k==='energy'||k==='stress');
-    const kind:LineKind=category==='match'?'game':category==='event'?'talk':'act';
-    lines.push({key:`${i}-a`,entry:i,time,category,kind,text:e.title===e.text||!e.text?e.title:`${e.title} · ${e.text}`,condition});
+    const condition=category==='condition'||entries.some(([k])=>k==='energy'||k==='stress');
+    const kind:LineKind=category==='match'?'game':({action:'act',dialogue:'talk',reward:'gain',loss:'loss',system:'system'} as const)[e.kind];
+    const person=journalSpeaker(s,e.speaker);
+    const text=person?`${e.title} · ${person.name}: “${e.text}”`:e.title===e.text||!e.text?e.title:`${e.title} · ${e.text}`;
+    lines.push({key:`${i}-a`,entry:i,time,category,kind,text,condition,...(person?{speakerColor:person.color}:{})});
     const technical=entries.some(([k,v])=>k.startsWith('proficiency_')&&v>0);
     const good=entries.filter(([k,v])=>isGood(k,v)).map(([k,v])=>changeText(s,k,v)).filter(Boolean) as string[];
     const bad=entries.filter(([k,v])=>!isGood(k,v)).map(([k,v])=>changeText(s,k,v)).filter(Boolean) as string[];

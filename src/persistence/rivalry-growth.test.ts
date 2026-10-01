@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import {createGame,transition,previewActivity} from '../game/engine.ts';
 import {parseSave} from './save.ts';
 test('weekday rival growth matches previews and cannot be repeated by old actions',()=>{
- let s=createGame('경쟁','pitcher',71);assert.equal(s.version,9);
+ let s=createGame('경쟁','pitcher',71);assert.equal(s.version,10);
  s=transition(s,{type:'lineup',supports:defaultSupports('pitcher'),revision:s.revision});
  s=transition(s,{type:'activity',id:'rest',revision:s.revision});
  while(s.phase==='supportEvent'||s.phase==='supportResult')s=transition(s,{type:s.phase==='supportEvent'?'choice':'continue',index:0,revision:s.revision});

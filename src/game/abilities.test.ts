@@ -6,7 +6,7 @@ import {derivedStats,resolveGrowth,proficiencyMultiplier,secondaryKeys,effective
 import {primaryKeys} from './types.ts';
 import {skillRequirements} from '../content/skills.ts';
 test('새 선수는 v9 원본 능력과 역할 숙련만 저장하고 구형 진행은 변환하지 않는다',()=>{
- for(const role of ['batter','pitcher'] as const){const s=createGame('선수',role);assert.equal(s.version,9);assert.equal(Object.keys(s.proficiency).length,5);assert.equal('stats' in s,false);assert.deepEqual(parseSave(JSON.stringify(s)),s);}
+ for(const role of ['batter','pitcher'] as const){const s=createGame('선수',role);assert.equal(s.version,10);assert.equal(Object.keys(s.proficiency).length,5);assert.equal('stats' in s,false);assert.deepEqual(parseSave(JSON.stringify(s)),s);}
  assert.throws(()=>parseSave(JSON.stringify({...createGame('선수','batter'),version:8})),/새 게임|지원/);
 });
 test('스트레스는 멘탈을 쓰는 파생 능력만 낮추고 원본을 바꾸지 않는다',()=>{
